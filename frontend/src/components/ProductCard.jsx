@@ -217,7 +217,7 @@ const ProductCard = ({ product }) => {
         />
         
         {product.featured && (
-          <Badge type="featured">Nổi bật</Badge>
+          <Badge type="featured">Featured</Badge>
         )}
         
         {discountPercentage > 0 && (
@@ -254,7 +254,7 @@ const ProductCard = ({ product }) => {
         
         <AddToCartButton disabled={!product.inStock}>
           <ShoppingCart />
-          {product.inStock ? 'Thêm vào giỏ' : 'Hết hàng'}
+          {product.inStock ? 'Add to Cart' : 'Out of Stock'}
         </AddToCartButton>
       </ProductInfo>
     </CardContainer>

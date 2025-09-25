@@ -11,48 +11,65 @@ import {
 } from '../data/mockData';
 
 const HomeContainer = styled.div`
+  width: 100%;
+`;
+
+const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 `;
 
 const HeroSection = styled.section`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000;
   color: white;
-  padding: 80px 0;
+  padding: 100px 0;
   text-align: center;
   margin-bottom: 60px;
-  border-radius: 10px;
-  margin: 20px 0 60px 0;
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+`;
+
+const HeroContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
 `;
 
 const HeroTitle = styled.h1`
-  font-size: 48px;
-  font-weight: bold;
+  font-size: 72px;
+  font-weight: 900;
   margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  letter-spacing: -3px;
+  line-height: 1.1;
 `;
 
 const HeroSubtitle = styled.p`
-  font-size: 20px;
-  margin-bottom: 30px;
-  opacity: 0.9;
+  font-size: 24px;
+  margin-bottom: 40px;
+  font-weight: 300;
+  letter-spacing: 1px;
 `;
 
 const HeroButton = styled.button`
   background: white;
-  color: #667eea;
+  color: #000;
   border: none;
-  padding: 15px 30px;
-  border-radius: 25px;
+  padding: 18px 40px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: all 0.3s ease;
   
   &:hover {
+    background: #f0f0f0;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
   }
 `;
 
@@ -66,17 +83,20 @@ const SectionHeader = styled.div`
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 32px;
-  font-weight: bold;
-  color: #2c3e50;
-  margin-bottom: 10px;
+  font-size: 36px;
+  font-weight: 900;
+  color: #000;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: -1px;
 `;
 
 const SectionSubtitle = styled.p`
   font-size: 16px;
-  color: #6c757d;
+  color: #666;
   max-width: 600px;
   margin: 0 auto;
+  font-weight: 300;
 `;
 
 const ProductsGrid = styled.div`
@@ -101,42 +121,44 @@ const BrandGrid = styled.div`
 
 const CategoryCard = styled.div`
   background: white;
-  border-radius: 10px;
+  border: 1px solid #e5e5e5;
   padding: 30px 20px;
   text-align: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: all 0.3s ease;
   cursor: pointer;
   
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    border-color: #000;
+    transform: translateY(-2px);
   }
 `;
 
 const CategoryIcon = styled.div`
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: #f8f8f8;
   border-radius: 50%;
   margin: 0 auto 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #000;
   font-size: 24px;
 `;
 
 const CategoryName = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
   margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;
 
 const CategoryCount = styled.p`
-  color: #6c757d;
+  color: #666;
   font-size: 14px;
+  font-weight: 300;
 `;
 
 const FeaturesGrid = styled.div`
@@ -147,16 +169,16 @@ const FeaturesGrid = styled.div`
 `;
 
 const FeatureCard = styled.div`
-  background: #f8f9fa;
-  padding: 30px;
-  border-radius: 10px;
+  background: white;
+  padding: 40px 30px;
   text-align: center;
+  border: 1px solid #e5e5e5;
 `;
 
 const FeatureIcon = styled.div`
   width: 50px;
   height: 50px;
-  background: #007bff;
+  background: #000;
   border-radius: 50%;
   margin: 0 auto 20px;
   display: flex;
@@ -168,14 +190,17 @@ const FeatureIcon = styled.div`
 
 const FeatureTitle = styled.h3`
   font-size: 18px;
-  font-weight: 600;
-  color: #2c3e50;
+  font-weight: 700;
+  color: #000;
   margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;
 
 const FeatureDescription = styled.p`
-  color: #6c757d;
+  color: #666;
   line-height: 1.6;
+  font-weight: 300;
 `;
 
 const Home = () => {
@@ -197,113 +222,117 @@ const Home = () => {
   const features = [
     {
       icon: '🚚',
-      title: 'Miễn phí vận chuyển',
-      description: 'Miễn phí vận chuyển cho đơn hàng từ 500.000đ'
+      title: 'Free Shipping',
+      description: 'Free shipping on orders over $50'
     },
     {
       icon: '🔄',
-      title: 'Đổi trả dễ dàng',
-      description: 'Đổi trả miễn phí trong vòng 30 ngày'
+      title: 'Easy Returns',
+      description: 'Free returns within 30 days'
     },
     {
       icon: '💎',
-      title: 'Chất lượng cao',
-      description: 'Cam kết chất lượng sản phẩm tốt nhất'
+      title: 'Quality Guarantee',
+      description: 'Premium quality products guaranteed'
     },
     {
       icon: '🎁',
-      title: 'Khuyến mãi hấp dẫn',
-      description: 'Nhiều chương trình khuyến mãi hấp dẫn'
+      title: 'Great Deals',
+      description: 'Amazing deals and promotions'
     }
   ];
 
   return (
     <HomeContainer>
       <HeroSection>
-        <HeroTitle>Thời trang hiện đại</HeroTitle>
-        <HeroSubtitle>Khám phá bộ sưu tập mới nhất với thiết kế độc đáo và chất lượng cao</HeroSubtitle>
-        <HeroButton>Mua sắm ngay</HeroButton>
+        <HeroContent>
+          <HeroTitle>FASHION HUB</HeroTitle>
+          <HeroSubtitle>Discover the latest collection with unique designs and premium quality</HeroSubtitle>
+          <HeroButton>Shop Now</HeroButton>
+        </HeroContent>
       </HeroSection>
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle>Sản phẩm nổi bật</SectionTitle>
-          <SectionSubtitle>Những sản phẩm được yêu thích nhất từ bộ sưu tập của chúng tôi</SectionSubtitle>
-        </SectionHeader>
-        <ProductsGrid>
-          {getFeaturedProducts().map(product => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </ProductsGrid>
-      </Section>
+      <Container>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>Featured Products</SectionTitle>
+            <SectionSubtitle>The most loved products from our collection</SectionSubtitle>
+          </SectionHeader>
+          <ProductsGrid>
+            {getFeaturedProducts().map(product => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </ProductsGrid>
+        </Section>
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle>Danh mục sản phẩm</SectionTitle>
-          <SectionSubtitle>Khám phá đa dạng các danh mục sản phẩm thời trang</SectionSubtitle>
-        </SectionHeader>
-        <CategoryGrid>
-          {categories.map((category) => (
-            <CategoryCard key={category._id}>
-              <CategoryIcon>{getCategoryIcon(category.articleType)}</CategoryIcon>
-              <CategoryName>{category.displayName}</CategoryName>
-              <CategoryCount>{category.description}</CategoryCount>
-            </CategoryCard>
-          ))}
-        </CategoryGrid>
-      </Section>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>Shop Categories</SectionTitle>
+            <SectionSubtitle>Explore our diverse range of fashion categories</SectionSubtitle>
+          </SectionHeader>
+          <CategoryGrid>
+            {categories.map((category) => (
+              <CategoryCard key={category._id}>
+                <CategoryIcon>{getCategoryIcon(category.articleType)}</CategoryIcon>
+                <CategoryName>{category.displayName}</CategoryName>
+                <CategoryCount>{category.description}</CategoryCount>
+              </CategoryCard>
+            ))}
+          </CategoryGrid>
+        </Section>
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle>Thương hiệu nổi bật</SectionTitle>
-          <SectionSubtitle>Khám phá các thương hiệu thời trang hàng đầu thế giới</SectionSubtitle>
-        </SectionHeader>
-        <BrandGrid>
-          {brands.slice(0, 8).map(brand => (
-            <BrandCard key={brand._id} brand={brand} />
-          ))}
-        </BrandGrid>
-      </Section>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>Featured Brands</SectionTitle>
+            <SectionSubtitle>Discover the world's leading fashion brands</SectionSubtitle>
+          </SectionHeader>
+          <BrandGrid>
+            {brands.slice(0, 8).map(brand => (
+              <BrandCard key={brand._id} brand={brand} />
+            ))}
+          </BrandGrid>
+        </Section>
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle>Sản phẩm mới</SectionTitle>
-          <SectionSubtitle>Những sản phẩm mới nhất vừa được cập nhật</SectionSubtitle>
-        </SectionHeader>
-        <ProductsGrid>
-          {getNewProducts().map(product => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </ProductsGrid>
-      </Section>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>New Arrivals</SectionTitle>
+            <SectionSubtitle>The latest products just added to our collection</SectionSubtitle>
+          </SectionHeader>
+          <ProductsGrid>
+            {getNewProducts().map(product => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </ProductsGrid>
+        </Section>
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle>Đang giảm giá</SectionTitle>
-          <SectionSubtitle>Những sản phẩm đang được giảm giá hấp dẫn</SectionSubtitle>
-        </SectionHeader>
-        <ProductsGrid>
-          {getSaleProducts().map(product => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </ProductsGrid>
-      </Section>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>On Sale</SectionTitle>
+            <SectionSubtitle>Amazing deals on your favorite items</SectionSubtitle>
+          </SectionHeader>
+          <ProductsGrid>
+            {getSaleProducts().map(product => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </ProductsGrid>
+        </Section>
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle>Tại sao chọn chúng tôi?</SectionTitle>
-          <SectionSubtitle>Những lý do khiến khách hàng tin tưởng và lựa chọn FashionHub</SectionSubtitle>
-        </SectionHeader>
-        <FeaturesGrid>
-          {features.map((feature, index) => (
-            <FeatureCard key={index}>
-              <FeatureIcon>{feature.icon}</FeatureIcon>
-              <FeatureTitle>{feature.title}</FeatureTitle>
-              <FeatureDescription>{feature.description}</FeatureDescription>
-            </FeatureCard>
-          ))}
-        </FeaturesGrid>
-      </Section>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>Why Choose Us?</SectionTitle>
+            <SectionSubtitle>Reasons why customers trust and choose FashionHub</SectionSubtitle>
+          </SectionHeader>
+          <FeaturesGrid>
+            {features.map((feature, index) => (
+              <FeatureCard key={index}>
+                <FeatureIcon>{feature.icon}</FeatureIcon>
+                <FeatureTitle>{feature.title}</FeatureTitle>
+                <FeatureDescription>{feature.description}</FeatureDescription>
+              </FeatureCard>
+            ))}
+          </FeaturesGrid>
+        </Section>
+      </Container>
     </HomeContainer>
   );
 };

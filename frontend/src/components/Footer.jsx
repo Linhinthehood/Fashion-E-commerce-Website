@@ -128,8 +128,8 @@ const Footer = () => {
           <FooterSection>
             <h3>FashionHub</h3>
             <p style={{ color: '#bdc3c7', lineHeight: '1.6' }}>
-              Thương hiệu thời trang hàng đầu Việt Nam, mang đến những sản phẩm 
-              chất lượng cao với thiết kế hiện đại và giá cả hợp lý.
+              Leading fashion brand, bringing you high-quality products 
+              with modern designs and affordable prices.
             </p>
             <SocialLinks>
               <SocialLink href="#">
@@ -145,38 +145,38 @@ const Footer = () => {
           </FooterSection>
           
           <FooterSection>
-            <h3>Liên kết nhanh</h3>
+            <h3>Quick Links</h3>
             <ul>
-              <li><Link to="/">Trang chủ</Link></li>
-              <li><Link to="/products">Sản phẩm</Link></li>
-              <li><Link to="/categories">Danh mục</Link></li>
-              <li><Link to="/sale">Khuyến mãi</Link></li>
-              <li><Link to="/about">Về chúng tôi</Link></li>
-              <li><Link to="/contact">Liên hệ</Link></li>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/products">Products</Link></li>
+              <li><Link to="/categories">Categories</Link></li>
+              <li><Link to="/sale">Sale</Link></li>
+              <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
             </ul>
           </FooterSection>
           
           <FooterSection>
-            <h3>Hỗ trợ khách hàng</h3>
+            <h3>Customer Support</h3>
             <ul>
-              <li><Link to="/shipping">Chính sách vận chuyển</Link></li>
-              <li><Link to="/returns">Chính sách đổi trả</Link></li>
-              <li><Link to="/size-guide">Hướng dẫn chọn size</Link></li>
-              <li><Link to="/faq">Câu hỏi thường gặp</Link></li>
-              <li><Link to="/privacy">Chính sách bảo mật</Link></li>
-              <li><Link to="/terms">Điều khoản sử dụng</Link></li>
+              <li><Link to="/shipping">Shipping Policy</Link></li>
+              <li><Link to="/returns">Return Policy</Link></li>
+              <li><Link to="/size-guide">Size Guide</Link></li>
+              <li><Link to="/faq">FAQ</Link></li>
+              <li><Link to="/privacy">Privacy Policy</Link></li>
+              <li><Link to="/terms">Terms of Service</Link></li>
             </ul>
           </FooterSection>
           
           <FooterSection>
-            <h3>Liên hệ</h3>
+            <h3>Contact</h3>
             <ContactInfo>
               <MapPin />
-              <span>123 Đường ABC, Quận 1, TP.HCM</span>
+              <span>123 Fashion Street, New York, NY 10001</span>
             </ContactInfo>
             <ContactInfo>
               <Phone />
-              <span>0123 456 789</span>
+              <span>+1 (555) 123-4567</span>
             </ContactInfo>
             <ContactInfo>
               <Mail />
@@ -185,19 +185,19 @@ const Footer = () => {
             
             <Newsletter>
               <h4 style={{ marginBottom: '15px', color: '#ecf0f1' }}>
-                Đăng ký nhận tin
+                Newsletter
               </h4>
               <input 
                 type="email" 
-                placeholder="Nhập email của bạn..." 
+                placeholder="Enter your email..." 
               />
-              <button>Đăng ký</button>
+              <button>Subscribe</button>
             </Newsletter>
           </FooterSection>
         </FooterGrid>
         
         <FooterBottom>
-          <p>&copy; 2024 FashionHub. Tất cả quyền được bảo lưu.</p>
+          <p>&copy; 2024 FashionHub. All rights reserved.</p>
         </FooterBottom>
       </FooterContent>
     </FooterContainer>

@@ -1,135 +1,43 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, User, ChevronDown } from 'lucide-react';
+import { categories } from '../data/mockData';
 
 const HeaderContainer = styled.header`
   background: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-bottom: 1px solid #e5e5e5;
   position: sticky;
   top: 0;
   z-index: 1000;
 `;
 
-const TopBar = styled.div`
-  background: #f8f9fa;
-  padding: 8px 0;
-  font-size: 14px;
-  text-align: center;
-  color: #666;
-`;
-
-const MainHeader = styled.div`
+const HeaderContent = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-`;
-
-const HeaderContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 0;
+  height: 70px;
 `;
 
 const Logo = styled(Link)`
-  font-size: 28px;
-  font-weight: bold;
-  color: #2c3e50;
+  font-size: 32px;
+  font-weight: 900;
+  color: #000;
   text-decoration: none;
-  letter-spacing: -1px;
-`;
-
-const SearchContainer = styled.div`
-  flex: 1;
-  max-width: 500px;
-  margin: 0 40px;
-  position: relative;
-`;
-
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 12px 45px 12px 15px;
-  border: 2px solid #e9ecef;
-  border-radius: 25px;
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.3s;
-
-  &:focus {
-    border-color: #007bff;
-  }
-`;
-
-const SearchButton = styled.button`
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #007bff;
-  border: none;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-  transition: background 0.3s;
-
+  letter-spacing: -2px;
+  
   &:hover {
-    background: #0056b3;
+    color: #000;
   }
-`;
-
-const HeaderActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 20px;
-`;
-
-const ActionButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s;
-  position: relative;
-
-  &:hover {
-    background: #f8f9fa;
-  }
-
-  svg {
-    width: 24px;
-    height: 24px;
-    color: #2c3e50;
-  }
-`;
-
-const CartBadge = styled.span`
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #dc3545;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 const Navigation = styled.nav`
-  border-top: 1px solid #e9ecef;
-  padding: 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 40px;
 `;
 
 const NavList = styled.ul`
@@ -137,22 +45,121 @@ const NavList = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 30px;
-  justify-content: center;
+  gap: 35px;
+  align-items: center;
 `;
 
 const NavItem = styled.li`
+  position: relative;
+  
   a {
     text-decoration: none;
-    color: #2c3e50;
+    color: #000;
     font-weight: 500;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     padding: 10px 0;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     
     &:hover {
-      color: #007bff;
+      color: #333;
     }
   }
+`;
+
+const DropdownContainer = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-top: 2px solid #000;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  min-width: 250px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1001;
+  
+  ${NavItem}:hover & {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+`;
+
+const DropdownList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 15px 0;
+`;
+
+const DropdownItem = styled.li`
+  a {
+    display: block;
+    padding: 8px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    transition: background 0.2s ease;
+    
+    &:hover {
+      background: #f8f8f8;
+      color: #000;
+    }
+  }
+`;
+
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 25px;
+`;
+
+const ActionButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+  position: relative;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+    color: #000;
+  }
+`;
+
+const CartBadge = styled.span`
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #000;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const MobileMenuButton = styled.button`
@@ -162,7 +169,7 @@ const MobileMenuButton = styled.button`
   cursor: pointer;
   padding: 8px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     display: block;
   }
 `;
@@ -170,10 +177,10 @@ const MobileMenuButton = styled.button`
 const MobileNav = styled.div`
   display: none;
   background: #fff;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid #e5e5e5;
   padding: 20px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     display: ${props => props.isOpen ? 'block' : 'none'};
   }
 `;
@@ -186,64 +193,90 @@ const Header = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  // Group categories by masterCategory
+  const masterCategories = {
+    'Apparel': categories.filter(cat => cat.masterCategory === 'Apparel'),
+    'Footwear': categories.filter(cat => cat.masterCategory === 'Footwear'),
+    'Accessories': categories.filter(cat => cat.masterCategory === 'Accessories')
+  };
+
   return (
     <HeaderContainer>
-      <TopBar>
-        Miễn phí vận chuyển cho đơn hàng từ 500.000đ
-      </TopBar>
-      
-      <MainHeader>
-        <HeaderContent>
-          <Logo to="/">FashionHub</Logo>
-          
-          <SearchContainer>
-            <SearchInput 
-              type="text" 
-              placeholder="Tìm kiếm sản phẩm..." 
-            />
-            <SearchButton>
-              <Search size={18} />
-            </SearchButton>
-          </SearchContainer>
-          
-          <HeaderActions>
-            <ActionButton>
-              <User size={24} />
-            </ActionButton>
-            
-            <ActionButton>
-              <ShoppingCart size={24} />
-              <CartBadge>{cartItemCount}</CartBadge>
-            </ActionButton>
-            
-            <MobileMenuButton onClick={toggleMobileMenu}>
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </MobileMenuButton>
-          </HeaderActions>
-        </HeaderContent>
+      <HeaderContent>
+        <Logo to="/">FASHIONHUB</Logo>
         
         <Navigation>
           <NavList>
-            <NavItem><Link to="/">Trang chủ</Link></NavItem>
-            <NavItem><Link to="/products">Sản phẩm</Link></NavItem>
-            <NavItem><Link to="/categories">Danh mục</Link></NavItem>
-            <NavItem><Link to="/sale">Khuyến mãi</Link></NavItem>
-            <NavItem><Link to="/about">Về chúng tôi</Link></NavItem>
-            <NavItem><Link to="/contact">Liên hệ</Link></NavItem>
+            {Object.keys(masterCategories).map(masterCat => (
+              <NavItem key={masterCat}>
+                <Link to={`/category/${masterCat.toLowerCase()}`}>
+                  {masterCat}
+                  <ChevronDown size={14} />
+                </Link>
+                <DropdownContainer>
+                  <DropdownList>
+                    <DropdownItem>
+                      <Link to={`/category/${masterCat.toLowerCase()}`}>
+                        Shop All {masterCat}
+                      </Link>
+                    </DropdownItem>
+                    {masterCategories[masterCat].map(category => (
+                      <DropdownItem key={category._id}>
+                        <Link to={`/category/${category.articleType.toLowerCase()}`}>
+                          {category.displayName}
+                        </Link>
+                      </DropdownItem>
+                    ))}
+                  </DropdownList>
+                </DropdownContainer>
+              </NavItem>
+            ))}
+            <NavItem>
+              <Link to="/brands">BRANDS</Link>
+            </NavItem>
+            <NavItem>
+              <Link to="/sale">SALE</Link>
+            </NavItem>
           </NavList>
         </Navigation>
         
-        <MobileNav isOpen={isMobileMenuOpen}>
-          <NavList style={{ flexDirection: 'column', gap: '15px' }}>
-            <NavItem><Link to="/">Trang chủ</Link></NavItem>
-            <NavItem><Link to="/products">Sản phẩm</Link></NavItem>
-            <NavItem><Link to="/categories">Danh mục</Link></NavItem>
-            <NavItem><Link to="/sale">Khuyến mãi</Link></NavItem>
-            <NavItem><Link to="/about">Về chúng tôi</Link></NavItem>
-            <NavItem><Link to="/contact">Liên hệ</Link></NavItem>
-          </NavList>
-        </MobileNav>
-      </MainHeader>
+        <HeaderActions>
+          <ActionButton>
+            <Search size={22} />
+          </ActionButton>
+          
+          <ActionButton>
+            <User size={22} />
+          </ActionButton>
+          
+          <ActionButton>
+            <ShoppingCart size={22} />
+            <CartBadge>{cartItemCount}</CartBadge>
+          </ActionButton>
+          
+          <MobileMenuButton onClick={toggleMobileMenu}>
+            ☰
+          </MobileMenuButton>
+        </HeaderActions>
+      </HeaderContent>
+      
+      <MobileNav isOpen={isMobileMenuOpen}>
+        <NavList style={{ flexDirection: 'column', gap: '15px', alignItems: 'flex-start' }}>
+          {Object.keys(masterCategories).map(masterCat => (
+            <NavItem key={masterCat}>
+              <Link to={`/category/${masterCat.toLowerCase()}`}>
+                {masterCat}
+              </Link>
+            </NavItem>
+          ))}
+          <NavItem>
+            <Link to="/brands">BRANDS</Link>
+          </NavItem>
+          <NavItem>
+            <Link to="/sale">SALE</Link>
+          </NavItem>
+        </NavList>
+      </MobileNav>
     </HeaderContainer>
   );
 };

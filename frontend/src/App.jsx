@@ -13,11 +13,19 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  body {
+  html, body {
+    width: 100%;
+    height: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
     background-color: #f8f9fa;
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
   }
 
   a {
@@ -49,7 +57,6 @@ const AppContainer = styled.div`
 
 const MainContent = styled.main`
   flex: 1;
-  padding-top: 20px;
 `;
 
 const LoadingPage = styled.div`
