@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: mongoose.Types.ObjectId,
+    unique: true
+  },
   name: {
     type: String,
     required: [true, 'Product name is required'],
@@ -13,217 +18,119 @@ const productSchema = new mongoose.Schema({
     trim: true,
     maxlength: [2000, 'Description cannot exceed 2000 characters']
   },
-  price: {
-    type: Number,
-    required: [true, 'Product price is required'],
-    min: [0, 'Price cannot be negative']
-  },
-  originalPrice: {
-    type: Number,
-    min: [0, 'Original price cannot be negative']
-  },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    required: [true, 'Product category is required']
-  },
   brand: {
     type: String,
     required: [true, 'Product brand is required'],
     trim: true,
     maxlength: [50, 'Brand name cannot exceed 50 characters']
   },
-  sku: {
+  gender: {
     type: String,
-    required: [true, 'SKU is required'],
-    unique: true,
-    trim: true,
-    uppercase: true
+    required: [true, 'Gender is required'],
+    enum: {
+      values: ['Male', 'Female', 'Unisex'],
+      message: 'Gender must be one of: Male, Female, Unisex'
+    }
   },
-  images: [{
-    url: {
-      type: String,
-      required: true
-    },
-    alt: {
-      type: String,
-      default: ''
-    },
-    isPrimary: {
-      type: Boolean,
-      default: false
-    }
-  }],
-  variants: [{
-    color: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    size: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    stock: {
-      type: Number,
-      required: true,
-      min: [0, 'Stock cannot be negative'],
-      default: 0
-    },
-    sku: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      uppercase: true
-    },
-    price: {
-      type: Number,
-      min: [0, 'Variant price cannot be negative']
-    }
-  }],
-  tags: [{
+  season: {
     type: String,
-    trim: true,
-    lowercase: true
-  }],
-  specifications: {
-    material: String,
-    care: String,
-    origin: String,
-    weight: String,
-    dimensions: String
-  },
-  rating: {
-    average: {
-      type: Number,
-      default: 0,
-      min: [0, 'Rating cannot be negative'],
-      max: [5, 'Rating cannot exceed 5']
-    },
-    count: {
-      type: Number,
-      default: 0,
-      min: [0, 'Rating count cannot be negative']
+    required: [true, 'Season is required'],
+    enum: {
+      values: ['Spring/Summer', 'Fall/Winter'],
+      message: 'Season must be one of: Spring/Summer, Fall/Winter'
     }
+  },
+  usage: {
+    type: String,
+    required: [true, 'Usage is required'],
+    trim: true,
+    maxlength: [100, 'Usage cannot exceed 100 characters']
+  },
+  hasImage: {
+    type: Boolean,
+    default: false
+  },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: [true, 'Product category is required']
   },
   isActive: {
     type: Boolean,
     default: true
   },
-  isFeatured: {
-    type: Boolean,
-    default: false
-  },
-  isNew: {
-    type: Boolean,
-    default: true
-  },
-  discount: {
-    type: Number,
-    min: [0, 'Discount cannot be negative'],
-    max: [100, 'Discount cannot exceed 100%'],
-    default: 0
-  },
-  seo: {
-    title: String,
-    description: String,
-    keywords: [String]
-  },
-  viewCount: {
-    type: Number,
-    default: 0,
-    min: [0, 'View count cannot be negative']
-  },
-  salesCount: {
-    type: Number,
-    default: 0,
-    min: [0, 'Sales count cannot be negative']
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 }, {
   timestamps: true
 });
 
 // Indexes for better query performance
-productSchema.index({ name: 'text', description: 'text', tags: 'text' });
-productSchema.index({ category: 1, isActive: 1 });
+productSchema.index({ name: 'text', description: 'text' });
+productSchema.index({ categoryId: 1, isActive: 1 });
 productSchema.index({ brand: 1, isActive: 1 });
-productSchema.index({ price: 1, isActive: 1 });
-productSchema.index({ 'rating.average': -1, isActive: 1 });
+productSchema.index({ gender: 1, isActive: 1 });
+productSchema.index({ season: 1, isActive: 1 });
 productSchema.index({ createdAt: -1, isActive: 1 });
-productSchema.index({ salesCount: -1, isActive: 1 });
+productSchema.index({ brand: 1, gender: 1, season: 1 });
 
-// Virtual for total stock
-productSchema.virtual('totalStock').get(function() {
-  return this.variants.reduce((total, variant) => total + variant.stock, 0);
-});
-
-// Virtual for primary image
-productSchema.virtual('primaryImage').get(function() {
-  const primary = this.images.find(img => img.isPrimary);
-  return primary ? primary.url : (this.images[0] ? this.images[0].url : null);
-});
-
-// Virtual for discount price
-productSchema.virtual('discountPrice').get(function() {
-  if (this.discount > 0) {
-    return this.price * (1 - this.discount / 100);
+// Virtual for total stock (from variants)
+productSchema.virtual('totalStock', {
+  ref: 'Variant',
+  localField: '_id',
+  foreignField: 'productId',
+  options: { match: { status: 'Active' } }
+}).get(function() {
+  if (this.variants) {
+    return this.variants.reduce((total, variant) => total + variant.stock, 0);
   }
-  return this.price;
+  return 0;
 });
 
-// Method to check if product is in stock
-productSchema.methods.isInStock = function(color, size) {
-  if (!color || !size) return this.totalStock > 0;
-  
-  const variant = this.variants.find(v => 
-    v.color.toLowerCase() === color.toLowerCase() && 
-    v.size.toLowerCase() === size.toLowerCase()
-  );
-  
-  return variant ? variant.stock > 0 : false;
+// Method to get all variants for this product
+productSchema.methods.getVariants = async function() {
+  const Variant = mongoose.model('Variant');
+  return Variant.find({ productId: this._id, status: 'Active' });
 };
 
-// Method to get variant by color and size
-productSchema.methods.getVariant = function(color, size) {
-  return this.variants.find(v => 
-    v.color.toLowerCase() === color.toLowerCase() && 
-    v.size.toLowerCase() === size.toLowerCase()
-  );
+// Method to check if product has any active variants
+productSchema.methods.hasActiveVariants = async function() {
+  const Variant = mongoose.model('Variant');
+  const count = await Variant.countDocuments({ productId: this._id, status: 'Active' });
+  return count > 0;
 };
 
-// Method to update stock
-productSchema.methods.updateStock = function(color, size, quantity) {
-  const variant = this.getVariant(color, size);
-  if (variant) {
-    variant.stock = Math.max(0, variant.stock + quantity);
-    return this.save();
-  }
-  throw new Error('Variant not found');
-};
-
-// Static method to get featured products
-productSchema.statics.getFeatured = function(limit = 10) {
-  return this.find({ isActive: true, isFeatured: true })
-    .populate('category', 'name')
+// Static method to get products by category
+productSchema.statics.getByCategory = function(categoryId, limit = 20) {
+  return this.find({ categoryId, isActive: true })
+    .populate('categoryId', 'masterCategory subCategory articleType')
     .sort({ createdAt: -1 })
     .limit(limit);
 };
 
-// Static method to get new products
-productSchema.statics.getNew = function(limit = 10) {
-  return this.find({ isActive: true, isNew: true })
-    .populate('category', 'name')
+// Static method to get products by brand
+productSchema.statics.getByBrand = function(brand, limit = 20) {
+  return this.find({ brand: new RegExp(brand, 'i'), isActive: true })
+    .populate('categoryId', 'masterCategory subCategory articleType')
     .sort({ createdAt: -1 })
     .limit(limit);
 };
 
-// Static method to get best sellers
-productSchema.statics.getBestSellers = function(limit = 10) {
-  return this.find({ isActive: true })
-    .populate('category', 'name')
-    .sort({ salesCount: -1 })
+// Static method to get products by gender
+productSchema.statics.getByGender = function(gender, limit = 20) {
+  return this.find({ gender, isActive: true })
+    .populate('categoryId', 'masterCategory subCategory articleType')
+    .sort({ createdAt: -1 })
+    .limit(limit);
+};
+
+// Static method to get products by season
+productSchema.statics.getBySeason = function(season, limit = 20) {
+  return this.find({ season, isActive: true })
+    .populate('categoryId', 'masterCategory subCategory articleType')
+    .sort({ createdAt: -1 })
     .limit(limit);
 };
 
@@ -235,20 +142,27 @@ productSchema.statics.search = function(query, filters = {}) {
   };
 
   // Apply filters
-  if (filters.category) searchQuery.category = filters.category;
+  if (filters.categoryId) searchQuery.categoryId = filters.categoryId;
   if (filters.brand) searchQuery.brand = new RegExp(filters.brand, 'i');
-  if (filters.minPrice || filters.maxPrice) {
-    searchQuery.price = {};
-    if (filters.minPrice) searchQuery.price.$gte = filters.minPrice;
-    if (filters.maxPrice) searchQuery.price.$lte = filters.maxPrice;
-  }
-  if (filters.tags && filters.tags.length > 0) {
-    searchQuery.tags = { $in: filters.tags };
-  }
+  if (filters.gender) searchQuery.gender = filters.gender;
+  if (filters.season) searchQuery.season = filters.season;
 
   return this.find(searchQuery)
-    .populate('category', 'name')
+    .populate('categoryId', 'masterCategory subCategory articleType')
     .sort({ score: { $meta: 'textScore' }, createdAt: -1 });
+};
+
+// Static method to get products with variants
+productSchema.statics.getWithVariants = function(limit = 20) {
+  return this.find({ isActive: true })
+    .populate('categoryId', 'masterCategory subCategory articleType')
+    .populate({
+      path: 'variants',
+      model: 'Variant',
+      match: { status: 'Active' }
+    })
+    .sort({ createdAt: -1 })
+    .limit(limit);
 };
 
 module.exports = mongoose.model('Product', productSchema);

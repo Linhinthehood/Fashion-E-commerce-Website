@@ -1,43 +1,43 @@
 const mongoose = require('mongoose');
 
 const categorySchema = new mongoose.Schema({
-  name: {
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: mongoose.Types.ObjectId,
+    unique: true
+  },
+  masterCategory: {
     type: String,
-    required: [true, 'Category name is required'],
-    unique: true,
-    trim: true,
-    maxlength: [50, 'Category name cannot exceed 50 characters']
+    required: [true, 'Master category is required'],
+    enum: {
+      values: ['Apparel', 'Accessories', 'Footwear'],
+      message: 'Master category must be one of: Apparel, Accessories, Footwear'
+    }
+  },
+  subCategory: {
+    type: String,
+    required: [true, 'Sub category is required'],
+    enum: {
+      values: ['Topwear', 'Bottomwear', 'Shoes'],
+      message: 'Sub category must be one of: Topwear, Bottomwear, Shoes'
+    }
+  },
+  articleType: {
+    type: String,
+    required: [true, 'Article type is required'],
+    enum: {
+      values: ['Shirts', 'Jeans', 'Sneakers'],
+      message: 'Article type must be one of: Shirts, Jeans, Sneakers'
+    }
   },
   description: {
     type: String,
     trim: true,
     maxlength: [500, 'Description cannot exceed 500 characters']
   },
-  parent: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    default: null
-  },
-  image: {
-    url: String,
-    alt: String
-  },
-  icon: {
-    type: String,
-    default: null
-  },
   isActive: {
     type: Boolean,
     default: true
-  },
-  sortOrder: {
-    type: Number,
-    default: 0
-  },
-  seo: {
-    title: String,
-    description: String,
-    keywords: [String]
   },
   productCount: {
     type: Number,
@@ -49,78 +49,57 @@ const categorySchema = new mongoose.Schema({
 });
 
 // Indexes
-categorySchema.index({ name: 1, isActive: 1 });
-categorySchema.index({ parent: 1, isActive: 1 });
-categorySchema.index({ sortOrder: 1, isActive: 1 });
+categorySchema.index({ masterCategory: 1, subCategory: 1, articleType: 1 });
+categorySchema.index({ masterCategory: 1, isActive: 1 });
+categorySchema.index({ subCategory: 1, isActive: 1 });
+categorySchema.index({ articleType: 1, isActive: 1 });
 
-// Virtual for subcategories
-categorySchema.virtual('subcategories', {
-  ref: 'Category',
-  localField: '_id',
-  foreignField: 'parent'
-});
-
-// Virtual for full path
+// Virtual for category hierarchy path
 categorySchema.virtual('path').get(function() {
-  if (this.parent) {
-    return `${this.parent.name} > ${this.name}`;
-  }
-  return this.name;
+  return `${this.masterCategory} > ${this.subCategory} > ${this.articleType}`;
 });
 
-// Method to get all subcategories recursively
-categorySchema.methods.getAllSubcategories = async function() {
-  const subcategories = await this.constructor.find({ parent: this._id, isActive: true });
-  let allSubcategories = [...subcategories];
-  
-  for (const subcategory of subcategories) {
-    const nestedSubcategories = await subcategory.getAllSubcategories();
-    allSubcategories = allSubcategories.concat(nestedSubcategories);
-  }
-  
-  return allSubcategories;
-};
+// Virtual for full category name
+categorySchema.virtual('fullName').get(function() {
+  return `${this.masterCategory} - ${this.subCategory} - ${this.articleType}`;
+});
 
-// Method to get all products in this category and subcategories
+// Method to get all products in this category
 categorySchema.methods.getAllProducts = async function() {
   const Product = mongoose.model('Product');
-  const subcategories = await this.getAllSubcategories();
-  const categoryIds = [this._id, ...subcategories.map(sub => sub._id)];
-  
-  return Product.find({ category: { $in: categoryIds }, isActive: true });
+  return Product.find({ categoryId: this._id, isActive: true });
 };
 
-// Static method to get root categories
-categorySchema.statics.getRootCategories = function() {
-  return this.find({ parent: null, isActive: true })
-    .sort({ sortOrder: 1, name: 1 });
+// Static method to get categories by master category
+categorySchema.statics.getByMasterCategory = function(masterCategory) {
+  return this.find({ masterCategory, isActive: true })
+    .sort({ subCategory: 1, articleType: 1 });
 };
 
-// Static method to get category tree
-categorySchema.statics.getCategoryTree = async function() {
-  const rootCategories = await this.getRootCategories();
-  
-  const buildTree = async (categories) => {
-    const tree = [];
-    
-    for (const category of categories) {
-      const subcategories = await this.find({ parent: category._id, isActive: true })
-        .sort({ sortOrder: 1, name: 1 });
-      
-      const categoryObj = category.toObject();
-      if (subcategories.length > 0) {
-        categoryObj.subcategories = await buildTree(subcategories);
-      } else {
-        categoryObj.subcategories = [];
-      }
-      
-      tree.push(categoryObj);
-    }
-    
-    return tree;
-  };
-  
-  return buildTree(rootCategories);
+// Static method to get categories by sub category
+categorySchema.statics.getBySubCategory = function(subCategory) {
+  return this.find({ subCategory, isActive: true })
+    .sort({ masterCategory: 1, articleType: 1 });
+};
+
+// Static method to get all master categories
+categorySchema.statics.getMasterCategories = function() {
+  return this.distinct('masterCategory', { isActive: true });
+};
+
+// Static method to get all sub categories
+categorySchema.statics.getSubCategories = function(masterCategory = null) {
+  const query = { isActive: true };
+  if (masterCategory) query.masterCategory = masterCategory;
+  return this.distinct('subCategory', query);
+};
+
+// Static method to get all article types
+categorySchema.statics.getArticleTypes = function(masterCategory = null, subCategory = null) {
+  const query = { isActive: true };
+  if (masterCategory) query.masterCategory = masterCategory;
+  if (subCategory) query.subCategory = subCategory;
+  return this.distinct('articleType', query);
 };
 
 // Pre-save middleware to update product count
@@ -128,7 +107,7 @@ categorySchema.pre('save', async function(next) {
   if (this.isModified('isActive')) {
     const Product = mongoose.model('Product');
     this.productCount = await Product.countDocuments({ 
-      category: this._id, 
+      categoryId: this._id, 
       isActive: true 
     });
   }
@@ -139,37 +118,11 @@ categorySchema.pre('save', async function(next) {
 categorySchema.pre('remove', async function(next) {
   const Product = mongoose.model('Product');
   
-  // Move products to parent category or mark as inactive
-  const products = await Product.find({ category: this._id });
-  
-  if (this.parent) {
-    // Move to parent category
-    await Product.updateMany(
-      { category: this._id },
-      { category: this.parent }
-    );
-  } else {
-    // Mark products as inactive
-    await Product.updateMany(
-      { category: this._id },
-      { isActive: false }
-    );
-  }
-  
-  // Move subcategories to parent or mark as inactive
-  const subcategories = await this.constructor.find({ parent: this._id });
-  
-  if (this.parent) {
-    await this.constructor.updateMany(
-      { parent: this._id },
-      { parent: this.parent }
-    );
-  } else {
-    await this.constructor.updateMany(
-      { parent: this._id },
-      { isActive: false }
-    );
-  }
+  // Mark products as inactive when category is deleted
+  await Product.updateMany(
+    { categoryId: this._id },
+    { isActive: false }
+  );
   
   next();
 });

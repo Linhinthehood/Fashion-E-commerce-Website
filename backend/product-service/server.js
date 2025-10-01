@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const productRoutes = require('./routes/products');
 const categoryRoutes = require('./routes/categories');
+const variantRoutes = require('./routes/variants');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -49,6 +50,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/variants', variantRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

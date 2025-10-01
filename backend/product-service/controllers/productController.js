@@ -8,17 +8,14 @@ const getProducts = async (req, res) => {
     const {
       page = 1,
       limit = 12,
-      category,
+      categoryId,
       brand,
-      minPrice,
-      maxPrice,
-      tags,
+      gender,
+      season,
       sortBy = 'createdAt',
       sortOrder = 'desc',
       search,
-      isFeatured,
-      isNew,
-      isOnSale
+      hasVariants = false
     } = req.query;
 
     const pageNum = parseInt(page);
@@ -28,34 +25,16 @@ const getProducts = async (req, res) => {
     // Build filter object
     const filter = { isActive: true };
 
-    if (category) filter.category = category;
+    if (categoryId) filter.categoryId = categoryId;
     if (brand) filter.brand = new RegExp(brand, 'i');
-    if (minPrice || maxPrice) {
-      filter.price = {};
-      if (minPrice) filter.price.$gte = parseFloat(minPrice);
-      if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
-    }
-    if (tags) {
-      const tagArray = Array.isArray(tags) ? tags : tags.split(',');
-      filter.tags = { $in: tagArray };
-    }
-    if (isFeatured === 'true') filter.isFeatured = true;
-    if (isNew === 'true') filter.isNew = true;
-    if (isOnSale === 'true') filter.discount = { $gt: 0 };
+    if (gender) filter.gender = gender;
+    if (season) filter.season = season;
 
     // Build sort object
     const sort = {};
-    if (sortBy === 'price') {
-      sort.price = sortOrder === 'asc' ? 1 : -1;
-    } else if (sortBy === 'rating') {
-      sort['rating.average'] = sortOrder === 'asc' ? 1 : -1;
-    } else if (sortBy === 'sales') {
-      sort.salesCount = sortOrder === 'asc' ? 1 : -1;
-    } else {
-      sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
-    }
+    sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    let query = Product.find(filter).populate('category', 'name');
+    let query = Product.find(filter).populate('categoryId', 'masterCategory subCategory articleType');
 
     // Add search functionality
     if (search) {
@@ -99,13 +78,64 @@ const getProducts = async (req, res) => {
   }
 };
 
+// Create new product
+const createProduct = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors',
+        errors: errors.array()
+      });
+    }
+
+    const { name, description, brand, gender, season, usage, categoryId } = req.body;
+
+    // Verify category exists
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Category not found'
+      });
+    }
+
+    const product = new Product({
+      name,
+      description,
+      brand,
+      gender,
+      season,
+      usage,
+      categoryId,
+      hasImage: false
+    });
+
+    await product.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Product created successfully',
+      data: { product }
+    });
+  } catch (error) {
+    console.error('Create product error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 // Get single product by ID
 const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
 
     const product = await Product.findById(id)
-      .populate('category', 'name description')
+      .populate('categoryId', 'masterCategory subCategory articleType description')
       .lean();
 
     if (!product) {
@@ -114,9 +144,6 @@ const getProductById = async (req, res) => {
         message: 'Product not found'
       });
     }
-
-    // Increment view count
-    await Product.findByIdAndUpdate(id, { $inc: { viewCount: 1 } });
 
     res.json({
       success: true,
@@ -132,18 +159,60 @@ const getProductById = async (req, res) => {
   }
 };
 
-// Get featured products
-const getFeaturedProducts = async (req, res) => {
+// Update product
+const updateProduct = async (req, res) => {
   try {
-    const { limit = 10 } = req.query;
-    const products = await Product.getFeatured(parseInt(limit));
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors',
+        errors: errors.array()
+      });
+    }
+
+    const { id } = req.params;
+    const { name, description, brand, gender, season, usage, categoryId, hasImage, isActive } = req.body;
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Verify category exists if provided
+    if (categoryId) {
+      const category = await Category.findById(categoryId);
+      if (!category) {
+        return res.status(400).json({
+          success: false,
+          message: 'Category not found'
+        });
+      }
+    }
+
+    // Update fields
+    if (name) product.name = name;
+    if (description) product.description = description;
+    if (brand) product.brand = brand;
+    if (gender) product.gender = gender;
+    if (season) product.season = season;
+    if (usage) product.usage = usage;
+    if (categoryId) product.categoryId = categoryId;
+    if (hasImage !== undefined) product.hasImage = hasImage;
+    if (isActive !== undefined) product.isActive = isActive;
+
+    await product.save();
 
     res.json({
       success: true,
-      data: { products }
+      message: 'Product updated successfully',
+      data: { product }
     });
   } catch (error) {
-    console.error('Get featured products error:', error);
+    console.error('Update product error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -152,18 +221,27 @@ const getFeaturedProducts = async (req, res) => {
   }
 };
 
-// Get new products
-const getNewProducts = async (req, res) => {
+// Delete product
+const deleteProduct = async (req, res) => {
   try {
-    const { limit = 10 } = req.query;
-    const products = await Product.getNew(parseInt(limit));
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    await Product.findByIdAndDelete(id);
 
     res.json({
       success: true,
-      data: { products }
+      message: 'Product deleted successfully'
     });
   } catch (error) {
-    console.error('Get new products error:', error);
+    console.error('Delete product error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -172,18 +250,107 @@ const getNewProducts = async (req, res) => {
   }
 };
 
-// Get best sellers
-const getBestSellers = async (req, res) => {
+// Get products by category
+const getProductsByCategory = async (req, res) => {
   try {
-    const { limit = 10 } = req.query;
-    const products = await Product.getBestSellers(parseInt(limit));
+    const { categoryId } = req.params;
+    const { limit = 20 } = req.query;
+    
+    const products = await Product.getByCategory(categoryId, parseInt(limit));
 
     res.json({
       success: true,
       data: { products }
     });
   } catch (error) {
-    console.error('Get best sellers error:', error);
+    console.error('Get products by category error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Get products by brand
+const getProductsByBrand = async (req, res) => {
+  try {
+    const { brand } = req.params;
+    const { limit = 20 } = req.query;
+    
+    const products = await Product.getByBrand(brand, parseInt(limit));
+
+    res.json({
+      success: true,
+      data: { products }
+    });
+  } catch (error) {
+    console.error('Get products by brand error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Get products by gender
+const getProductsByGender = async (req, res) => {
+  try {
+    const { gender } = req.params;
+    const { limit = 20 } = req.query;
+    
+    const products = await Product.getByGender(gender, parseInt(limit));
+
+    res.json({
+      success: true,
+      data: { products }
+    });
+  } catch (error) {
+    console.error('Get products by gender error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Get products by season
+const getProductsBySeason = async (req, res) => {
+  try {
+    const { season } = req.params;
+    const { limit = 20 } = req.query;
+    
+    const products = await Product.getBySeason(season, parseInt(limit));
+
+    res.json({
+      success: true,
+      data: { products }
+    });
+  } catch (error) {
+    console.error('Get products by season error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Get products with variants
+const getProductsWithVariants = async (req, res) => {
+  try {
+    const { limit = 20 } = req.query;
+    
+    const products = await Product.getWithVariants(parseInt(limit));
+
+    res.json({
+      success: true,
+      data: { products }
+    });
+  } catch (error) {
+    console.error('Get products with variants error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -220,77 +387,6 @@ const searchProducts = async (req, res) => {
   }
 };
 
-// Get related products
-const getRelatedProducts = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { limit = 8 } = req.query;
-
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found'
-      });
-    }
-
-    const relatedProducts = await Product.find({
-      _id: { $ne: id },
-      category: product.category,
-      isActive: true
-    })
-      .populate('category', 'name')
-      .limit(parseInt(limit))
-      .lean();
-
-    res.json({
-      success: true,
-      data: { products: relatedProducts }
-    });
-  } catch (error) {
-    console.error('Get related products error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
-
-// Check product availability
-const checkAvailability = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { color, size } = req.query;
-
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found'
-      });
-    }
-
-    const isAvailable = product.isInStock(color, size);
-    const variant = product.getVariant(color, size);
-
-    res.json({
-      success: true,
-      data: {
-        isAvailable,
-        stock: variant ? variant.stock : product.totalStock,
-        variant: variant || null
-      }
-    });
-  } catch (error) {
-    console.error('Check availability error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
 
 // Get product statistics
 const getProductStats = async (req, res) => {
@@ -300,12 +396,7 @@ const getProductStats = async (req, res) => {
       {
         $group: {
           _id: null,
-          totalProducts: { $sum: 1 },
-          averagePrice: { $avg: '$price' },
-          minPrice: { $min: '$price' },
-          maxPrice: { $max: '$price' },
-          totalViews: { $sum: '$viewCount' },
-          totalSales: { $sum: '$salesCount' }
+          totalProducts: { $sum: 1 }
         }
       }
     ]);
@@ -314,7 +405,7 @@ const getProductStats = async (req, res) => {
       { $match: { isActive: true } },
       {
         $group: {
-          _id: '$category',
+          _id: '$categoryId',
           count: { $sum: 1 }
         }
       },
@@ -331,7 +422,15 @@ const getProductStats = async (req, res) => {
       },
       {
         $project: {
-          categoryName: '$categoryInfo.name',
+          categoryName: {
+            $concat: [
+              '$categoryInfo.masterCategory',
+              ' - ',
+              '$categoryInfo.subCategory',
+              ' - ',
+              '$categoryInfo.articleType'
+            ]
+          },
           count: 1
         }
       },
@@ -339,18 +438,50 @@ const getProductStats = async (req, res) => {
       { $limit: 10 }
     ]);
 
+    const brandStats = await Product.aggregate([
+      { $match: { isActive: true } },
+      {
+        $group: {
+          _id: '$brand',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+
+    const genderStats = await Product.aggregate([
+      { $match: { isActive: true } },
+      {
+        $group: {
+          _id: '$gender',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    const seasonStats = await Product.aggregate([
+      { $match: { isActive: true } },
+      {
+        $group: {
+          _id: '$season',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
     res.json({
       success: true,
       data: {
         general: stats[0] || {
-          totalProducts: 0,
-          averagePrice: 0,
-          minPrice: 0,
-          maxPrice: 0,
-          totalViews: 0,
-          totalSales: 0
+          totalProducts: 0
         },
-        categories: categoryStats
+        categories: categoryStats,
+        brands: brandStats,
+        genders: genderStats,
+        seasons: seasonStats
       }
     });
   } catch (error) {
@@ -365,12 +496,15 @@ const getProductStats = async (req, res) => {
 
 module.exports = {
   getProducts,
+  createProduct,
   getProductById,
-  getFeaturedProducts,
-  getNewProducts,
-  getBestSellers,
+  updateProduct,
+  deleteProduct,
+  getProductsByCategory,
+  getProductsByBrand,
+  getProductsByGender,
+  getProductsBySeason,
+  getProductsWithVariants,
   searchProducts,
-  getRelatedProducts,
-  checkAvailability,
   getProductStats
 };
