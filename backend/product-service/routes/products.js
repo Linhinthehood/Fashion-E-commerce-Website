@@ -9,10 +9,12 @@ const {
   getProductsByCategory,
   getProductsByBrand,
   getProductsByGender,
-  getProductsBySeason,
   getProductsWithVariants,
   searchProducts,
-  getProductStats
+  getProductStats,
+  uploadProductImages,
+  deleteProductImage,
+  upload
 } = require('../controllers/productController');
 
 const router = express.Router();
@@ -23,8 +25,8 @@ const createProductValidation = [
   body('description').notEmpty().isLength({ max: 2000 }).withMessage('Product description is required and cannot exceed 2000 characters'),
   body('brand').notEmpty().isLength({ max: 50 }).withMessage('Brand is required and cannot exceed 50 characters'),
   body('gender').isIn(['Male', 'Female', 'Unisex']).withMessage('Invalid gender'),
-  body('season').isIn(['Spring/Summer', 'Fall/Winter']).withMessage('Invalid season'),
   body('usage').notEmpty().isLength({ max: 100 }).withMessage('Usage is required and cannot exceed 100 characters'),
+  body('color').notEmpty().isLength({ max: 50 }).withMessage('Color is required and cannot exceed 50 characters'),
   body('categoryId').isMongoId().withMessage('Invalid category ID')
 ];
 
@@ -34,7 +36,7 @@ const getProductsValidation = [
   query('categoryId').optional().isMongoId().withMessage('Invalid category ID'),
   query('brand').optional().isLength({ max: 50 }).withMessage('Brand cannot exceed 50 characters'),
   query('gender').optional().isIn(['Male', 'Female', 'Unisex']).withMessage('Invalid gender'),
-  query('season').optional().isIn(['Spring/Summer', 'Fall/Winter']).withMessage('Invalid season'),
+  query('color').optional().isLength({ max: 50 }).withMessage('Color cannot exceed 50 characters'),
   query('sortBy').optional().isIn(['createdAt', 'name', 'brand']).withMessage('Invalid sort field'),
   query('sortOrder').optional().isIn(['asc', 'desc']).withMessage('Sort order must be asc or desc')
 ];
@@ -49,8 +51,8 @@ const updateProductValidation = [
   body('description').optional().isLength({ max: 2000 }).withMessage('Description cannot exceed 2000 characters'),
   body('brand').optional().isLength({ max: 50 }).withMessage('Brand cannot exceed 50 characters'),
   body('gender').optional().isIn(['Male', 'Female', 'Unisex']).withMessage('Invalid gender'),
-  body('season').optional().isIn(['Spring/Summer', 'Fall/Winter']).withMessage('Invalid season'),
   body('usage').optional().isLength({ max: 100 }).withMessage('Usage cannot exceed 100 characters'),
+  body('color').optional().isLength({ max: 50 }).withMessage('Color cannot exceed 50 characters'),
   body('categoryId').optional().isMongoId().withMessage('Invalid category ID'),
   body('hasImage').optional().isBoolean().withMessage('hasImage must be a boolean'),
   body('isActive').optional().isBoolean().withMessage('isActive must be a boolean')
@@ -72,23 +74,21 @@ const getProductsByGenderValidation = [
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
 ];
 
-const getProductsBySeasonValidation = [
-  param('season').isIn(['Spring/Summer', 'Fall/Winter']).withMessage('Invalid season'),
-  query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
-];
-
 // Routes
 router.get('/', getProductsValidation, getProducts);
-router.post('/', createProductValidation, createProduct);
+router.post('/', upload.array('images', 10), createProductValidation, createProduct);
 router.get('/search', searchValidation, searchProducts);
 router.get('/stats', getProductStats);
 router.get('/with-variants', getProductsWithVariants);
 router.get('/brand/:brand', getProductsByBrandValidation, getProductsByBrand);
-router.get('/gender/:gender', getProductsByGenderValidation, getProductsByGender);
-router.get('/season/:season', getProductsBySeasonValidation, getProductsBySeason);
+router.get('/gender/:gender', getProductsByGenderValidation, getProductsByGender);  
 router.get('/category/:categoryId', getProductsByCategory);
 router.get('/:id', getProductByIdValidation, getProductById);
-router.put('/:id', updateProductValidation, updateProduct);
+router.put('/:id', upload.array('images', 10), updateProductValidation, updateProduct);
 router.delete('/:id', getProductByIdValidation, deleteProduct);
+
+// Image upload routes
+router.post('/:productId/images', upload.array('images', 10), uploadProductImages);
+router.delete('/:productId/images/:imageUrl(*)', deleteProductImage);
 
 module.exports = router;

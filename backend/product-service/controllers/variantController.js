@@ -11,7 +11,6 @@ const getVariants = async (req, res) => {
       productId,
       status = 'Active',
       size,
-      color,
       hasStock = false
     } = req.query;
 
@@ -25,7 +24,6 @@ const getVariants = async (req, res) => {
     if (productId) filter.productId = productId;
     if (status) filter.status = status;
     if (size) filter.size = size;
-    if (color) filter.color = color;
     if (hasStock === 'true') filter.stock = { $gt: 0 };
 
     const variants = await Variant.find(filter)
@@ -60,7 +58,7 @@ const getVariants = async (req, res) => {
   }
 };
 
-// Create new variant
+// Create new variant (with optional image upload)
 const createVariant = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -72,7 +70,7 @@ const createVariant = async (req, res) => {
       });
     }
 
-    const { productId, size, color, stock, images, status = 'Active', price } = req.body;
+    const { productId, size, stock, status = 'Active', price } = req.body;
 
     // Verify product exists
     const product = await Product.findById(productId);
@@ -83,36 +81,28 @@ const createVariant = async (req, res) => {
       });
     }
 
-    // Check if variant already exists for this product with same size and color
+    // Check if variant already exists for this product with same size
     const existingVariant = await Variant.findOne({
       productId,
-      size,
-      color: { $all: color }
+      size
     });
 
     if (existingVariant) {
       return res.status(400).json({
         success: false,
-        message: 'Variant already exists for this product with same size and color combination'
+        message: 'Variant already exists for this product with same size'
       });
     }
 
     const variant = new Variant({
       productId,
       size,
-      color,
       stock,
-      images: images || [],
       status,
       price
     });
 
     await variant.save();
-
-    // Update product's hasImage flag if variant has images
-    if (images && images.length > 0 && !product.hasImage) {
-      await Product.findByIdAndUpdate(productId, { hasImage: true });
-    }
 
     res.status(201).json({
       success: true,
@@ -172,7 +162,7 @@ const updateVariant = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { size, color, stock, images, status, price, sku } = req.body;
+    const { size, stock, status, price, sku } = req.body;
 
     const variant = await Variant.findById(id);
     if (!variant) {
@@ -183,27 +173,24 @@ const updateVariant = async (req, res) => {
     }
 
     // Check if updated variant already exists (excluding current variant)
-    if (size || color) {
+    if (size) {
       const existingVariant = await Variant.findOne({
         _id: { $ne: id },
         productId: variant.productId,
-        size: size || variant.size,
-        color: color || variant.color
+        size: size
       });
 
       if (existingVariant) {
         return res.status(400).json({
           success: false,
-          message: 'Variant already exists for this product with same size and color combination'
+          message: 'Variant already exists for this product with same size'
         });
       }
     }
 
     // Update fields
     if (size) variant.size = size;
-    if (color) variant.color = color;
     if (stock !== undefined) variant.stock = stock;
-    if (images !== undefined) variant.images = images;
     if (status) variant.status = status;
     if (price !== undefined) variant.price = price;
     if (sku) variant.sku = sku;
@@ -307,27 +294,6 @@ const getVariantsBySize = async (req, res) => {
   }
 };
 
-// Get variants by color
-const getVariantsByColor = async (req, res) => {
-  try {
-    const { color } = req.params;
-    const { status = 'Active' } = req.query;
-
-    const variants = await Variant.getByColor(color, status);
-
-    res.json({
-      success: true,
-      data: { variants }
-    });
-  } catch (error) {
-    console.error('Get variants by color error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
 
 // Get available variants (in stock)
 const getAvailableVariants = async (req, res) => {
@@ -529,9 +495,6 @@ const getVariantStats = async (req, res) => {
             $sum: { $cond: [{ $eq: ['$status', 'Active'] }, 1, 0] }
           },
           totalStock: { $sum: '$stock' },
-          totalImages: {
-            $sum: { $size: { $ifNull: ['$images', []] } }
-          }
         }
       }
     ]);
@@ -556,17 +519,6 @@ const getVariantStats = async (req, res) => {
       { $limit: 10 }
     ]);
 
-    const colorBreakdown = await Variant.aggregate([
-      { $unwind: '$color' },
-      {
-        $group: {
-          _id: '$color',
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { count: -1 } },
-      { $limit: 10 }
-    ]);
 
     res.json({
       success: true,
@@ -574,12 +526,10 @@ const getVariantStats = async (req, res) => {
         general: stats[0] || {
           totalVariants: 0,
           activeVariants: 0,
-          totalStock: 0,
-          totalImages: 0
+          totalStock: 0
         },
         statusBreakdown,
-        sizeBreakdown,
-        colorBreakdown
+        sizeBreakdown
       }
     });
   } catch (error) {
@@ -600,7 +550,6 @@ module.exports = {
   deleteVariant,
   getVariantsByProduct,
   getVariantsBySize,
-  getVariantsByColor,
   getAvailableVariants,
   getLowStockVariants,
   getOutOfStockVariants,

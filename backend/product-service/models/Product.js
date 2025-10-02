@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
-    default: mongoose.Types.ObjectId,
+    default: () => new mongoose.Types.ObjectId(),
     unique: true
   },
   name: {
@@ -32,19 +32,27 @@ const productSchema = new mongoose.Schema({
       message: 'Gender must be one of: Male, Female, Unisex'
     }
   },
-  season: {
-    type: String,
-    required: [true, 'Season is required'],
-    enum: {
-      values: ['Spring/Summer', 'Fall/Winter'],
-      message: 'Season must be one of: Spring/Summer, Fall/Winter'
-    }
-  },
   usage: {
     type: String,
     required: [true, 'Usage is required'],
     trim: true,
     maxlength: [100, 'Usage cannot exceed 100 characters']
+  },
+  color: {
+    type: String,
+    required: [true, 'Color is required'],
+    trim: true,
+    maxlength: [50, 'Color cannot exceed 50 characters']
+  },
+  images: {
+    type: [String],
+    default: [],
+    validate: {
+      validator: function(imgs) {
+        return Array.isArray(imgs);
+      },
+      message: 'Images must be an array'
+    }
   },
   hasImage: {
     type: Boolean,
@@ -89,6 +97,11 @@ productSchema.virtual('totalStock', {
   return 0;
 });
 
+// Virtual for primary image (first image from product's images array)
+productSchema.virtual('primaryImage').get(function() {
+  return this.images && this.images.length > 0 ? this.images[0] : null;
+});
+
 // Method to get all variants for this product
 productSchema.methods.getVariants = async function() {
   const Variant = mongoose.model('Variant');
@@ -100,6 +113,11 @@ productSchema.methods.hasActiveVariants = async function() {
   const Variant = mongoose.model('Variant');
   const count = await Variant.countDocuments({ productId: this._id, status: 'Active' });
   return count > 0;
+};
+
+// Method to get primary image URL
+productSchema.methods.getPrimaryImage = function() {
+  return this.images && this.images.length > 0 ? this.images[0] : null;
 };
 
 // Static method to get products by category

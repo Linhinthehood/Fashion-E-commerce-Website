@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const variantSchema = new mongoose.Schema({
   variantId: {
     type: mongoose.Schema.Types.ObjectId,
-    default: mongoose.Types.ObjectId,
+    default: () => new mongoose.Types.ObjectId(),
     unique: true
   },
   productId: {
@@ -17,31 +17,11 @@ const variantSchema = new mongoose.Schema({
     trim: true,
     maxlength: [20, 'Size cannot exceed 20 characters']
   },
-  color: {
-    type: [String],
-    required: [true, 'Color is required'],
-    validate: {
-      validator: function(colors) {
-        return colors && colors.length > 0;
-      },
-      message: 'At least one color must be specified'
-    }
-  },
   stock: {
     type: Number,
     required: [true, 'Stock is required'],
     min: [0, 'Stock cannot be negative'],
     default: 0
-  },
-  images: {
-    type: [String],
-    default: [],
-    validate: {
-      validator: function(imgs) {
-        return Array.isArray(imgs);
-      },
-      message: 'Images must be an array'
-    }
   },
   status: {
     type: String,
@@ -74,30 +54,17 @@ const variantSchema = new mongoose.Schema({
 // Indexes for better query performance
 variantSchema.index({ productId: 1, status: 1 });
 variantSchema.index({ size: 1, status: 1 });
-variantSchema.index({ color: 1, status: 1 });
 variantSchema.index({ stock: 1, status: 1 });
 variantSchema.index({ sku: 1 }, { sparse: true });
-variantSchema.index({ productId: 1, size: 1, color: 1 });
+variantSchema.index({ productId: 1, size: 1 });
 
 // Virtual for variant availability
 variantSchema.virtual('isAvailable').get(function() {
   return this.status === 'Active' && this.stock > 0;
 });
 
-// Virtual for primary color (first color in array)
-variantSchema.virtual('primaryColor').get(function() {
-  return this.color && this.color.length > 0 ? this.color[0] : null;
-});
 
-// Virtual for primary image (first image in array)
-variantSchema.virtual('primaryImage').get(function() {
-  return this.images && this.images.length > 0 ? this.images[0] : null;
-});
 
-// Method to check if variant has specific color
-variantSchema.methods.hasColor = function(color) {
-  return this.color && this.color.includes(color);
-};
 
 // Method to check if variant is in stock
 variantSchema.methods.isInStock = function() {
@@ -144,10 +111,6 @@ variantSchema.statics.getBySize = function(size, status = 'Active') {
   return this.find({ size, status });
 };
 
-// Static method to get variants by color
-variantSchema.statics.getByColor = function(color, status = 'Active') {
-  return this.find({ color: color, status });
-};
 
 // Static method to get available variants (in stock)
 variantSchema.statics.getAvailable = function() {
@@ -173,11 +136,10 @@ variantSchema.statics.getOutOfStock = function() {
 // Pre-save middleware to generate SKU if not provided
 variantSchema.pre('save', function(next) {
   if (!this.sku && this.productId) {
-    // Generate SKU based on product ID, size, and primary color
+    // Generate SKU based on product ID and size
     const productIdShort = this.productId.toString().slice(-6);
     const sizeCode = this.size.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    const colorCode = this.primaryColor ? this.primaryColor.replace(/[^a-zA-Z0-9]/g, '').toUpperCase() : 'DEF';
-    this.sku = `${productIdShort}-${sizeCode}-${colorCode}`;
+    this.sku = `${productIdShort}-${sizeCode}`;
   }
   next();
 });

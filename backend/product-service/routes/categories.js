@@ -17,9 +17,9 @@ const router = express.Router();
 
 // Validation rules
 const createCategoryValidation = [
-  body('masterCategory').isIn(['Apparel', 'Accessories', 'Footwear']).withMessage('Invalid master category'),
-  body('subCategory').isIn(['Topwear', 'Bottomwear', 'Shoes']).withMessage('Invalid sub category'),
-  body('articleType').isIn(['Shirts', 'Jeans', 'Sneakers']).withMessage('Invalid article type'),
+  body('masterCategory').notEmpty().isLength({ max: 100 }).withMessage('Master category is required and cannot exceed 100 characters'),
+  body('subCategory').notEmpty().isLength({ max: 100 }).withMessage('Sub category is required and cannot exceed 100 characters'),
+  body('articleType').notEmpty().isLength({ max: 100 }).withMessage('Article type is required and cannot exceed 100 characters'),
   body('description').optional().isLength({ max: 500 }).withMessage('Description cannot exceed 500 characters')
 ];
 
@@ -29,9 +29,9 @@ const getCategoryByIdValidation = [
 
 const updateCategoryValidation = [
   param('id').isMongoId().withMessage('Invalid category ID'),
-  body('masterCategory').optional().isIn(['Apparel', 'Accessories', 'Footwear']).withMessage('Invalid master category'),
-  body('subCategory').optional().isIn(['Topwear', 'Bottomwear', 'Shoes']).withMessage('Invalid sub category'),
-  body('articleType').optional().isIn(['Shirts', 'Jeans', 'Sneakers']).withMessage('Invalid article type'),
+  body('masterCategory').optional().isLength({ max: 100 }).withMessage('Master category cannot exceed 100 characters'),
+  body('subCategory').optional().isLength({ max: 100 }).withMessage('Sub category cannot exceed 100 characters'),
+  body('articleType').optional().isLength({ max: 100 }).withMessage('Article type cannot exceed 100 characters'),
   body('description').optional().isLength({ max: 500 }).withMessage('Description cannot exceed 500 characters'),
   body('isActive').optional().isBoolean().withMessage('isActive must be a boolean')
 ];
@@ -45,12 +45,12 @@ const getProductsByCategoryValidation = [
 ];
 
 const getSubCategoriesValidation = [
-  query('masterCategory').optional().isIn(['Apparel', 'Accessories', 'Footwear']).withMessage('Invalid master category')
+  query('masterCategory').optional().isLength({ max: 100 }).withMessage('Master category cannot exceed 100 characters')
 ];
 
 const getArticleTypesValidation = [
-  query('masterCategory').optional().isIn(['Apparel', 'Accessories', 'Footwear']).withMessage('Invalid master category'),
-  query('subCategory').optional().isIn(['Topwear', 'Bottomwear', 'Shoes']).withMessage('Invalid sub category')
+  query('masterCategory').optional().isLength({ max: 100 }).withMessage('Master category cannot exceed 100 characters'),
+  query('subCategory').optional().isLength({ max: 100 }).withMessage('Sub category cannot exceed 100 characters')
 ];
 
 // Routes

@@ -1,6 +1,45 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const { validationResult } = require('express-validator');
+const cloudinary = require('../config/cloudinary');
+const multer = require('multer');
+
+// Configure multer for memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'), false);
+    }
+  }
+});
+
+// Helper function to upload image to Cloudinary
+const uploadImageToCloudinary = async (buffer, folder = 'fashion-ecommerce/products') => {
+  return new Promise((resolve, reject) => {
+    const cloudinaryConfig = cloudinary();
+    cloudinaryConfig.uploader.upload_stream(
+      {
+        folder: folder,
+        resource_type: 'auto',
+        transformation: [
+          { width: 800, height: 800, crop: 'limit', quality: 'auto' },
+          { format: 'auto' }
+        ]
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    ).end(buffer);
+  });
+};
 
 // Get all products with filtering and pagination
 const getProducts = async (req, res) => {
@@ -11,7 +50,7 @@ const getProducts = async (req, res) => {
       categoryId,
       brand,
       gender,
-      season,
+      color,
       sortBy = 'createdAt',
       sortOrder = 'desc',
       search,
@@ -28,7 +67,7 @@ const getProducts = async (req, res) => {
     if (categoryId) filter.categoryId = categoryId;
     if (brand) filter.brand = new RegExp(brand, 'i');
     if (gender) filter.gender = gender;
-    if (season) filter.season = season;
+    if (color) filter.color = new RegExp(color, 'i');
 
     // Build sort object
     const sort = {};
@@ -55,10 +94,16 @@ const getProducts = async (req, res) => {
     // Get total count for pagination
     const total = await Product.countDocuments(filter);
 
+    // Add primaryImage to each product (now from product.images directly)
+    const productsWithImages = products.map(product => ({
+      ...product,
+      primaryImage: product.images && product.images.length > 0 ? product.images[0] : null
+    }));
+
     res.json({
       success: true,
       data: {
-        products,
+        products: productsWithImages,
         pagination: {
           currentPage: pageNum,
           totalPages: Math.ceil(total / limitNum),
@@ -90,7 +135,7 @@ const createProduct = async (req, res) => {
       });
     }
 
-    const { name, description, brand, gender, season, usage, categoryId } = req.body;
+    const { name, description, brand, gender, usage, categoryId, color } = req.body;
 
     // Verify category exists
     const category = await Category.findById(categoryId);
@@ -101,15 +146,24 @@ const createProduct = async (req, res) => {
       });
     }
 
+    // Handle image upload if files are provided (optional)
+    let imageUrls = [];
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map(file => uploadImageToCloudinary(file.buffer));
+      const uploadResults = await Promise.all(uploadPromises);
+      imageUrls = uploadResults.map(result => result.secure_url);
+    }
+
     const product = new Product({
       name,
       description,
       brand,
       gender,
-      season,
       usage,
       categoryId,
-      hasImage: false
+      color,
+      images: imageUrls,
+      hasImage: imageUrls.length > 0
     });
 
     await product.save();
@@ -135,8 +189,7 @@ const getProductById = async (req, res) => {
     const { id } = req.params;
 
     const product = await Product.findById(id)
-      .populate('categoryId', 'masterCategory subCategory articleType description')
-      .lean();
+      .populate('categoryId', 'masterCategory subCategory articleType description');
 
     if (!product) {
       return res.status(404).json({
@@ -145,9 +198,15 @@ const getProductById = async (req, res) => {
       });
     }
 
+    // Get primary image (now from product.images directly)
+    const productWithImage = {
+      ...product.toObject(),
+      primaryImage: product.images && product.images.length > 0 ? product.images[0] : null
+    };
+
     res.json({
       success: true,
-      data: { product }
+      data: { product: productWithImage }
     });
   } catch (error) {
     console.error('Get product by ID error:', error);
@@ -172,7 +231,7 @@ const updateProduct = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { name, description, brand, gender, season, usage, categoryId, hasImage, isActive } = req.body;
+    const { name, description, brand, gender, usage, categoryId, color, hasImage, isActive } = req.body;
 
     const product = await Product.findById(id);
     if (!product) {
@@ -193,16 +252,30 @@ const updateProduct = async (req, res) => {
       }
     }
 
+    // Handle image upload if files are provided (optional)
+    let newImageUrls = [];
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map(file => uploadImageToCloudinary(file.buffer));
+      const uploadResults = await Promise.all(uploadPromises);
+      newImageUrls = uploadResults.map(result => result.secure_url);
+    }
+
     // Update fields
     if (name) product.name = name;
     if (description) product.description = description;
     if (brand) product.brand = brand;
     if (gender) product.gender = gender;
-    if (season) product.season = season;
     if (usage) product.usage = usage;
     if (categoryId) product.categoryId = categoryId;
+    if (color) product.color = color;
     if (hasImage !== undefined) product.hasImage = hasImage;
     if (isActive !== undefined) product.isActive = isActive;
+    
+    // Update images if new ones are provided
+    if (newImageUrls.length > 0) {
+      product.images = [...product.images, ...newImageUrls];
+      product.hasImage = true;
+    }
 
     await product.save();
 
@@ -316,27 +389,6 @@ const getProductsByGender = async (req, res) => {
   }
 };
 
-// Get products by season
-const getProductsBySeason = async (req, res) => {
-  try {
-    const { season } = req.params;
-    const { limit = 20 } = req.query;
-    
-    const products = await Product.getBySeason(season, parseInt(limit));
-
-    res.json({
-      success: true,
-      data: { products }
-    });
-  } catch (error) {
-    console.error('Get products by season error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
 
 // Get products with variants
 const getProductsWithVariants = async (req, res) => {
@@ -387,6 +439,100 @@ const searchProducts = async (req, res) => {
   }
 };
 
+
+// Upload images for product
+const uploadProductImages = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No images provided'
+      });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    const uploadPromises = req.files.map(file => uploadImageToCloudinary(file.buffer));
+    const uploadResults = await Promise.all(uploadPromises);
+
+    const imageUrls = uploadResults.map(result => result.secure_url);
+    
+    // Update product with new images
+    product.images = [...product.images, ...imageUrls];
+    product.hasImage = true;
+    await product.save();
+
+    res.json({
+      success: true,
+      message: 'Images uploaded successfully',
+      data: {
+        productId: product._id,
+        images: product.images,
+        newImages: imageUrls
+      }
+    });
+  } catch (error) {
+    console.error('Upload product images error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Delete product image
+const deleteProductImage = async (req, res) => {
+  try {
+    const { productId, imageUrl } = req.params;
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Remove image from product's images array
+    const imageIndex = product.images.indexOf(imageUrl);
+    if (imageIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Image not found in product'
+      });
+    }
+
+    product.images.splice(imageIndex, 1);
+    product.hasImage = product.images.length > 0;
+    await product.save();
+
+    res.json({
+      success: true,
+      message: 'Image deleted successfully',
+      data: {
+        productId: product._id,
+        remainingImages: product.images,
+        hasImage: product.hasImage
+      }
+    });
+  } catch (error) {
+    console.error('Delete product image error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
 
 // Get product statistics
 const getProductStats = async (req, res) => {
@@ -461,17 +607,6 @@ const getProductStats = async (req, res) => {
       { $sort: { count: -1 } }
     ]);
 
-    const seasonStats = await Product.aggregate([
-      { $match: { isActive: true } },
-      {
-        $group: {
-          _id: '$season',
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { count: -1 } }
-    ]);
-
     res.json({
       success: true,
       data: {
@@ -481,7 +616,6 @@ const getProductStats = async (req, res) => {
         categories: categoryStats,
         brands: brandStats,
         genders: genderStats,
-        seasons: seasonStats
       }
     });
   } catch (error) {
@@ -503,8 +637,10 @@ module.exports = {
   getProductsByCategory,
   getProductsByBrand,
   getProductsByGender,
-  getProductsBySeason,
   getProductsWithVariants,
   searchProducts,
-  getProductStats
+  getProductStats,
+  uploadProductImages,
+  deleteProductImage,
+  upload
 };

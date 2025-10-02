@@ -3,32 +3,26 @@ const mongoose = require('mongoose');
 const categorySchema = new mongoose.Schema({
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    default: mongoose.Types.ObjectId,
+    default: () => new mongoose.Types.ObjectId(),
     unique: true
   },
   masterCategory: {
     type: String,
     required: [true, 'Master category is required'],
-    enum: {
-      values: ['Apparel', 'Accessories', 'Footwear'],
-      message: 'Master category must be one of: Apparel, Accessories, Footwear'
-    }
+    trim: true,
+    maxlength: [100, 'Master category cannot exceed 100 characters']
   },
   subCategory: {
     type: String,
     required: [true, 'Sub category is required'],
-    enum: {
-      values: ['Topwear', 'Bottomwear', 'Shoes'],
-      message: 'Sub category must be one of: Topwear, Bottomwear, Shoes'
-    }
+    trim: true,
+    maxlength: [100, 'Sub category cannot exceed 100 characters']
   },
   articleType: {
     type: String,
     required: [true, 'Article type is required'],
-    enum: {
-      values: ['Shirts', 'Jeans', 'Sneakers'],
-      message: 'Article type must be one of: Shirts, Jeans, Sneakers'
-    }
+    trim: true,
+    maxlength: [100, 'Article type cannot exceed 100 characters']
   },
   description: {
     type: String,
