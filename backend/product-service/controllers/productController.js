@@ -142,7 +142,7 @@ const createProduct = async (req, res) => {
       });
     }
 
-    const { name, description, brand, gender, usage, categoryId, color } = req.body;
+    const { name, description, brand, gender, usage, categoryId, color, defaultPrice } = req.body;
 
     // Verify category exists
     const category = await Category.findById(categoryId);
@@ -169,6 +169,7 @@ const createProduct = async (req, res) => {
       usage,
       categoryId,
       color,
+      defaultPrice,
       images: imageUrls,
       hasImage: imageUrls.length > 0
     });
@@ -241,7 +242,7 @@ const updateProduct = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { name, description, brand, gender, usage, categoryId, color, hasImage, isActive } = req.body;
+    const { name, description, brand, gender, usage, categoryId, color, hasImage, isActive, defaultPrice } = req.body;
 
     const product = await Product.findById(id);
     if (!product) {
@@ -280,6 +281,7 @@ const updateProduct = async (req, res) => {
     if (categoryId) product.categoryId = categoryId;
     if (color) product.color = color;
     if (hasImage !== undefined) product.hasImage = hasImage;
+    if (defaultPrice !== undefined) product.defaultPrice = defaultPrice;
     if (isActive !== undefined) product.isActive = isActive;
     
     // Update images if new ones are provided

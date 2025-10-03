@@ -39,6 +39,10 @@ const productSchema = new mongoose.Schema({
     trim: true,
     maxlength: [50, 'Color cannot exceed 50 characters']
   },
+  defaultPrice: {
+    type: Number,
+    min: [0, 'Default price cannot be negative']
+  },
   images: {
     type: [String],
     default: [],
