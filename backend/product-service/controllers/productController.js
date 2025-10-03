@@ -4,6 +4,13 @@ const { validationResult } = require('express-validator');
 const cloudinary = require('../config/cloudinary');
 const multer = require('multer');
 
+// Helper: recalculate and persist productCount for a category
+const recalculateCategoryProductCount = async (categoryId) => {
+  if (!categoryId) return;
+  const count = await Product.countDocuments({ categoryId, isActive: true });
+  await Category.updateOne({ _id: categoryId }, { productCount: count });
+};
+
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
 const upload = multer({ 
@@ -168,6 +175,9 @@ const createProduct = async (req, res) => {
 
     await product.save();
 
+    // Update category product count
+    await recalculateCategoryProductCount(categoryId);
+
     res.status(201).json({
       success: true,
       message: 'Product created successfully',
@@ -266,6 +276,7 @@ const updateProduct = async (req, res) => {
     if (brand) product.brand = brand;
     if (gender) product.gender = gender;
     if (usage) product.usage = usage;
+    const oldCategoryId = product.categoryId?.toString();
     if (categoryId) product.categoryId = categoryId;
     if (color) product.color = color;
     if (hasImage !== undefined) product.hasImage = hasImage;
@@ -277,7 +288,18 @@ const updateProduct = async (req, res) => {
       product.hasImage = true;
     }
 
+    const wasActive = product.isModified('isActive') ? !product.isActive : product.isActive;
+    const categoryChanged = product.isModified('categoryId') && oldCategoryId !== String(product.categoryId);
+
     await product.save();
+
+    // Recalculate counts if needed
+    if (categoryChanged) {
+      if (oldCategoryId) await recalculateCategoryProductCount(oldCategoryId);
+      await recalculateCategoryProductCount(product.categoryId);
+    } else if (product.isModified('isActive')) {
+      await recalculateCategoryProductCount(product.categoryId);
+    }
 
     res.json({
       success: true,
@@ -299,7 +321,7 @@ const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const product = await Product.findById(id);
+      const product = await Product.findById(id);
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -307,7 +329,11 @@ const deleteProduct = async (req, res) => {
       });
     }
 
-    await Product.findByIdAndDelete(id);
+      const categoryId = product.categoryId;
+      await Product.findByIdAndDelete(id);
+
+      // Update category product count
+      await recalculateCategoryProductCount(categoryId);
 
     res.json({
       success: true,

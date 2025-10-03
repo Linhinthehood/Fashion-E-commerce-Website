@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const categorySchema = new mongoose.Schema({
-  categoryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    default: () => new mongoose.Types.ObjectId(),
-    unique: true
-  },
   masterCategory: {
     type: String,
     required: [true, 'Master category is required'],

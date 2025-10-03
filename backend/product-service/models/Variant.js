@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const variantSchema = new mongoose.Schema({
-  variantId: {
-    type: mongoose.Schema.Types.ObjectId,
-    default: () => new mongoose.Types.ObjectId(),
-    unique: true
-  },
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
