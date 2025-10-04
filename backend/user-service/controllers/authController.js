@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Customer = require('../models/Customer');
+const Address = require('../models/Address');
 const { validationResult } = require('express-validator');
 
 // Generate JWT Token
@@ -21,31 +23,39 @@ const register = async (req, res) => {
       });
     }
 
-    const { username, email, password, firstName, lastName, phone } = req.body;
+    const { name, email, password, dob, phoneNumber, gender, role } = req.body;
 
     // Check if user already exists
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }]
-    });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'User already exists with this email or username'
+        message: 'User already exists with this email'
       });
     }
 
     // Create new user
     const user = new User({
-      username,
+      name,
       email,
       password,
-      firstName,
-      lastName,
-      phone
+      dob,
+      phoneNumber,
+      gender,
+      role: role || 'Customer'
     });
 
     await user.save();
+
+    // If user role is Customer, create customer profile
+    if (user.role === 'Customer') {
+      const customer = new Customer({
+        userId: user._id,
+        addresses: []  // Mảng rỗng ban đầu
+      });
+      await customer.save();
+    }
 
     // Generate token
     const token = generateToken(user._id);
@@ -92,7 +102,7 @@ const login = async (req, res) => {
     }
 
     // Check if user is active
-    if (!user.isActive) {
+    if (user.status !== 'Active') {
       return res.status(401).json({
         success: false,
         message: 'Account is deactivated'
@@ -104,7 +114,7 @@ const login = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Wrong email or password'
       });
     }
 
@@ -144,10 +154,17 @@ const getProfile = async (req, res) => {
       });
     }
 
+    let customer = null;
+    // If user is a customer, also fetch customer details
+    if (user.role === 'Customer') {
+      customer = await Customer.findByUserId(user._id);
+    }
+
     res.json({
       success: true,
       data: {
-        user: user.toJSON()
+        user: user.toJSON(),
+        customer: customer
       }
     });
   } catch (error) {
@@ -172,15 +189,13 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    const { firstName, lastName, phone, address, preferences } = req.body;
+    const { name, phoneNumber, avatar } = req.body;
     const userId = req.user.userId;
 
     const updateData = {};
-    if (firstName) updateData.firstName = firstName;
-    if (lastName) updateData.lastName = lastName;
-    if (phone) updateData.phone = phone;
-    if (address) updateData.address = address;
-    if (preferences) updateData.preferences = preferences;
+    if (name) updateData.name = name;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber;
+    if (avatar !== undefined) updateData.avatar = avatar;
 
     const user = await User.findByIdAndUpdate(
       userId,

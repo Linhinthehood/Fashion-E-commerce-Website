@@ -13,32 +13,36 @@ const router = express.Router();
 
 // Validation rules
 const registerValidation = [
-  body('username')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Username must be between 3 and 30 characters')
-    .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('Username can only contain letters, numbers, and underscores'),
+  body('name')
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Name is required and must be less than 100 characters'),
   body('email')
     .isEmail()
     .withMessage('Please provide a valid email')
     .normalizeEmail(),
   body('password')
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Password must contain at least one lowercase letter, one uppercase letter, and one number'),
-  body('firstName')
-    .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('First name is required and must be less than 50 characters'),
-  body('lastName')
-    .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('Last name is required and must be less than 50 characters'),
-  body('phone')
+    .withMessage('Password must be at least 6 characters long'),
+  body('dob')
+    .isISO8601()
+    .withMessage('Please provide a valid date of birth')
+    .custom((value) => {
+      if (new Date(value) >= new Date()) {
+        throw new Error('Date of birth must be in the past');
+      }
+      return true;
+    }),
+  body('phoneNumber')
+    .matches(/^[\+]?[0-9]{9,12}$/)
+    .withMessage('Phone number must be 9 to 12 digits'),
+  body('gender')
+    .isIn(['Male', 'Female', 'Others'])
+    .withMessage('Gender must be one of: Male, Female, Others'),
+  body('role')
     .optional()
-    .matches(/^[\+]?[1-9][\d]{0,15}$/)
-    .withMessage('Please provide a valid phone number')
+    .isIn(['Manager', 'Stock Clerk', 'Customer'])
+    .withMessage('Role must be one of: Manager, Stock Clerk, Customer')
 ];
 
 const loginValidation = [
@@ -52,44 +56,19 @@ const loginValidation = [
 ];
 
 const updateProfileValidation = [
-  body('firstName')
+  body('name')
     .optional()
     .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('First name must be less than 50 characters'),
-  body('lastName')
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Name must be less than 100 characters'),
+  body('phoneNumber')
     .optional()
-    .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('Last name must be less than 50 characters'),
-  body('phone')
+    .matches(/^[\+]?[0-9]{9,12}$/)
+    .withMessage('Phone number must be 9 to 12 digits'),
+  body('avatar')
     .optional()
-    .matches(/^[\+]?[1-9][\d]{0,15}$/)
-    .withMessage('Please provide a valid phone number'),
-  body('address.street')
-    .optional()
-    .trim()
-    .isLength({ max: 100 })
-    .withMessage('Street address must be less than 100 characters'),
-  body('address.city')
-    .optional()
-    .trim()
-    .isLength({ max: 50 })
-    .withMessage('City must be less than 50 characters'),
-  body('address.state')
-    .optional()
-    .trim()
-    .isLength({ max: 50 })
-    .withMessage('State must be less than 50 characters'),
-  body('address.zipCode')
-    .optional()
-    .matches(/^[0-9]{5}(-[0-9]{4})?$/)
-    .withMessage('Please provide a valid ZIP code'),
-  body('address.country')
-    .optional()
-    .trim()
-    .isLength({ max: 50 })
-    .withMessage('Country must be less than 50 characters')
+    .isURL()
+    .withMessage('Avatar must be a valid URL')
 ];
 
 const changePasswordValidation = [
@@ -99,8 +78,6 @@ const changePasswordValidation = [
   body('newPassword')
     .isLength({ min: 6 })
     .withMessage('New password must be at least 6 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('New password must contain at least one lowercase letter, one uppercase letter, and one number')
 ];
 
 // Public routes

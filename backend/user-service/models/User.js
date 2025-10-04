@@ -1,14 +1,33 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+// Gender enum
+const genderEnum = {
+  MALE: 'Male',
+  FEMALE: 'Female',
+  OTHERS: 'Others'
+};
+
+// Role enum
+const roleEnum = {
+  MANAGER: 'Manager',
+  STOCK_CLERK: 'Stock Clerk',
+  CUSTOMER: 'Customer'
+};
+
+// User status enum
+const statusEnum = {
+  ACTIVE: 'Active',
+  INACTIVE: 'Inactive',
+  SUSPENDED: 'Suspended'
+};
+
 const userSchema = new mongoose.Schema({
-  username: {
+  name: {
     type: String,
-    required: [true, 'Username is required'],
-    unique: true,
+    required: [true, 'Name is required'],
     trim: true,
-    minlength: [3, 'Username must be at least 3 characters long'],
-    maxlength: [30, 'Username cannot exceed 30 characters']
+    maxlength: [100, 'Name cannot exceed 100 characters']
   },
   email: {
     type: String,
@@ -23,52 +42,51 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
   },
-  firstName: {
-    type: String,
-    required: [true, 'First name is required'],
-    trim: true,
-    maxlength: [50, 'First name cannot exceed 50 characters']
+  dob: {
+    type: Date,
+    required: [true, 'Date of birth is required'],
+    validate: {
+      validator: function(date) {
+        return date < new Date();
+      },
+      message: 'Date of birth must be in the past'
+    }
   },
-  lastName: {
+  phoneNumber: {
     type: String,
-    required: [true, 'Last name is required'],
+    required: [true, 'Phone number is required'],
     trim: true,
-    maxlength: [50, 'Last name cannot exceed 50 characters']
+    match: [/^[\+]?[0-9]{9,12}$/, 'Phone number must be 9 to 12 digits']
   },
-  phone: {
+  gender: {
     type: String,
-    trim: true,
-    match: [/^[\+]?[1-9][\d]{0,15}$/, 'Please enter a valid phone number']
-  },
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String,
-    country: String
+    required: [true, 'Gender is required'],
+    enum: {
+      values: Object.values(genderEnum),
+      message: 'Gender must be one of: Male, Female, Others'
+    }
   },
   role: {
     type: String,
-    enum: ['customer', 'admin', 'moderator'],
-    default: 'customer'
+    required: [true, 'Role is required'],
+    enum: {
+      values: Object.values(roleEnum),
+      message: 'Role must be one of: Manager, Stock Clerk, Customer'
+    },
+    default: roleEnum.CUSTOMER
   },
-  isActive: {
-    type: Boolean,
-    default: true
+  status: {
+    type: String,
+    required: [true, 'Status is required'],
+    enum: {
+      values: Object.values(statusEnum),
+      message: 'Status must be one of: Active, Inactive, Suspended'
+    },
+    default: statusEnum.ACTIVE
   },
   avatar: {
     type: String,
     default: null
-  },
-  preferences: {
-    newsletter: {
-      type: Boolean,
-      default: false
-    },
-    notifications: {
-      type: Boolean,
-      default: true
-    }
   },
   lastLogin: {
     type: Date,
@@ -102,5 +120,10 @@ userSchema.methods.toJSON = function() {
   delete userObject.password;
   return userObject;
 };
+
+// Export enums for use in other files
+userSchema.statics.genderEnum = genderEnum;
+userSchema.statics.roleEnum = roleEnum;
+userSchema.statics.statusEnum = statusEnum;
 
 module.exports = mongoose.model('User', userSchema);
