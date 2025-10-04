@@ -6,7 +6,7 @@ A modern full-stack e-commerce website specializing in clothing products, built 
 
 This project follows a microservices architecture with the following components:
 
-- **Frontend**: React with TypeScript, Tailwind CSS
+- **Frontend**: React with TypeScript, Tailwind CSS (Dev server: http://localhost:5173)
 - **API Gateway**: Node.js/Express (Port 3000)
 - **User Service**: Node.js/Express + MongoDB (Port 3001)
 - **Product Service**: Node.js/Express + MongoDB (Port 3002)
@@ -85,9 +85,9 @@ Before running this project, make sure you have the following installed:
    ```
 
 3. **Access the application**
-   - Frontend: http://localhost:3000
+   - Frontend: http://localhost:5173
    - API Gateway: http://localhost:3000/api
-   - Database Admin: http://localhost:8081 (admin/admin123)
+
 
 ### Option 2: Manual Setup
 
@@ -183,41 +183,11 @@ ORDER_SERVICE_URL=http://localhost:3003
 
 ### Frontend (.env)
 ```env
-REACT_APP_API_URL=http://localhost:3000/api
+VITE_API_URL=http://localhost:3000/api
 ```
 
 ## 📚 API Documentation
 
-### Authentication Endpoints
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/profile` - Get user profile
-- `PUT /api/auth/profile` - Update user profile
-- `PUT /api/auth/change-password` - Change password
-
-### Product Endpoints
-- `GET /api/products` - Get all products (with filters)
-- `GET /api/products/:id` - Get single product
-- `GET /api/products/featured` - Get featured products
-- `GET /api/products/new` - Get new products
-- `GET /api/products/bestsellers` - Get best sellers
-- `GET /api/products/search` - Search products
-- `GET /api/categories` - Get all categories
-- `GET /api/categories/:id` - Get single category
-
-### Order Endpoints (Protected)
-- `POST /api/orders` - Create new order
-- `GET /api/orders` - Get user orders
-- `GET /api/orders/:id` - Get single order
-- `PUT /api/orders/:id/status` - Update order status
-- `PUT /api/orders/:id/cancel` - Cancel order
-
-### Cart Endpoints (Protected)
-- `GET /api/cart` - Get user cart
-- `POST /api/cart/add` - Add item to cart
-- `PUT /api/cart/update` - Update cart item
-- `DELETE /api/cart/remove` - Remove item from cart
-- `DELETE /api/cart/clear` - Clear cart
 
 ## 🧪 Testing
 
@@ -280,30 +250,6 @@ docker-compose down -v
 - **API Gateway Health**: http://localhost:3000/health
 - **Service Health**: http://localhost:3000/health/detailed
 - **Database Admin**: http://localhost:8081
-
-## 🚀 Deployment
-
-### Production Deployment
-
-1. **Update environment variables** for production
-2. **Build and push Docker images** to your registry
-3. **Deploy using Docker Compose** or orchestration platform
-4. **Set up reverse proxy** (Nginx) for SSL termination
-5. **Configure monitoring** and logging
-
-### Environment-specific configurations
-
-- **Development**: Use `docker-compose.dev.yml`
-- **Production**: Use `docker-compose.yml`
-- **Staging**: Create `docker-compose.staging.yml`
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## 📝 License
 

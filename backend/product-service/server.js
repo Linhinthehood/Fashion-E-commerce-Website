@@ -12,6 +12,9 @@ const variantRoutes = require('./routes/variants');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
+// Trust proxy for rate limiting when behind api-gateway
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 
@@ -26,10 +29,18 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS configuration
+// CORS configuration  
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:3001',
+    process.env.FRONTEND_URL || 'http://localhost:3000'
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 
 // Body parsing middleware
