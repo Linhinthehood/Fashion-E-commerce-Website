@@ -418,27 +418,6 @@ const getProductsByGender = async (req, res) => {
 };
 
 
-// Get products with variants
-const getProductsWithVariants = async (req, res) => {
-  try {
-    const { limit = 20 } = req.query;
-    
-    const products = await Product.getWithVariants(parseInt(limit));
-
-    res.json({
-      success: true,
-      data: { products }
-    });
-  } catch (error) {
-    console.error('Get products with variants error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
-
 // Search products
 const searchProducts = async (req, res) => {
   try {
@@ -665,7 +644,6 @@ module.exports = {
   getProductsByCategory,
   getProductsByBrand,
   getProductsByGender,
-  getProductsWithVariants,
   searchProducts,
   getProductStats,
   uploadProductImages,

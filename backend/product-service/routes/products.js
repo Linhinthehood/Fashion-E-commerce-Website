@@ -9,7 +9,6 @@ const {
   getProductsByCategory,
   getProductsByBrand,
   getProductsByGender,
-  getProductsWithVariants,
   searchProducts,
   getProductStats,
   uploadProductImages,
@@ -79,7 +78,6 @@ router.get('/', getProductsValidation, getProducts);
 router.post('/', upload.array('images', 10), createProductValidation, createProduct);
 router.get('/search', searchValidation, searchProducts);
 router.get('/stats', getProductStats);
-router.get('/with-variants', getProductsWithVariants);
 router.get('/brand/:brand', getProductsByBrandValidation, getProductsByBrand);
 router.get('/gender/:gender', getProductsByGenderValidation, getProductsByGender);  
 router.get('/category/:categoryId', getProductsByCategory);
