@@ -1,0 +1,13 @@
+[
+  {
+    "name": "Your Product Name Here",
+    "description": "Describe your product here",
+    "brand": "Your Brand",
+    "gender": "Male",
+    "color": "Color Name",
+    "usage": "Casual",
+    "articleType": "Shirt",
+    "hasImage": false,
+    "isActive": true
+  }
+]

@@ -1,7 +1,8 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const { validationResult } = require('express-validator');
-const cloudinary = require('../config/cloudinary');
+const configureCloudinary = require('../config/cloudinary');
+const cloudinary = configureCloudinary();
 const multer = require('multer');
 
 // Helper: recalculate and persist productCount for a category
@@ -30,8 +31,7 @@ const upload = multer({
 // Helper function to upload image to Cloudinary
 const uploadImageToCloudinary = async (buffer, folder = 'fashion-ecommerce/products') => {
   return new Promise((resolve, reject) => {
-    const cloudinaryConfig = cloudinary();
-    cloudinaryConfig.uploader.upload_stream(
+    cloudinary.uploader.upload_stream(
       {
         folder: folder,
         resource_type: 'auto',

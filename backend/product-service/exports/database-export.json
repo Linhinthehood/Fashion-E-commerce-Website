@@ -1,0 +1,559 @@
+{
+  "exportDate": "2025-10-04T08:59:08.209Z",
+  "statistics": {
+    "totalCategories": 7,
+    "totalProducts": 18,
+    "activeProducts": 18,
+    "inactiveProducts": 0
+  },
+  "categories": [
+    {
+      "_id": "68dfcc1d84cd07dea32e23ad",
+      "masterCategory": "Accessories",
+      "subCategory": "Hat",
+      "articleType": "Baseball cap",
+      "isActive": true,
+      "productCount": 3,
+      "createdAt": "2025-10-03T13:14:05.571Z",
+      "updatedAt": "2025-10-04T08:12:08.799Z",
+      "__v": 0
+    },
+    {
+      "_id": "68dfcc3f84cd07dea32e23b0",
+      "masterCategory": "Apparel",
+      "subCategory": "Topwear",
+      "articleType": "Shirt",
+      "isActive": true,
+      "productCount": 7,
+      "createdAt": "2025-10-03T13:14:39.529Z",
+      "updatedAt": "2025-10-04T08:12:08.897Z",
+      "__v": 0
+    },
+    {
+      "_id": "68dfcc5184cd07dea32e23b3",
+      "masterCategory": "Accessories",
+      "subCategory": "Watch",
+      "articleType": "Watch",
+      "isActive": true,
+      "productCount": 2,
+      "createdAt": "2025-10-03T13:14:57.113Z",
+      "updatedAt": "2025-10-04T08:12:08.992Z",
+      "__v": 0
+    },
+    {
+      "_id": "68e0052a7d3c1abe691f508b",
+      "masterCategory": "Apparel",
+      "subCategory": "Bottomwear",
+      "articleType": "Pants",
+      "isActive": true,
+      "productCount": 4,
+      "createdAt": "2025-10-03T17:17:30.723Z",
+      "updatedAt": "2025-10-04T08:12:09.087Z",
+      "__v": 0
+    },
+    {
+      "_id": "68e069a6ddce55ce977444e9",
+      "masterCategory": "Footwear",
+      "subCategory": "Shoes",
+      "articleType": "Casual shoes",
+      "isActive": true,
+      "productCount": 2,
+      "createdAt": "2025-10-04T00:26:14.102Z",
+      "updatedAt": "2025-10-04T08:12:09.181Z",
+      "__v": 0
+    },
+    {
+      "_id": "68e069ff96ef561c4fe857cb",
+      "masterCategory": "Footwear",
+      "subCategory": "Sandal",
+      "articleType": "Sandals",
+      "isActive": true,
+      "productCount": 0,
+      "createdAt": "2025-10-04T00:27:43.146Z",
+      "updatedAt": "2025-10-04T08:12:09.275Z",
+      "__v": 0
+    },
+    {
+      "_id": "68e0d5be535ec32cbe22462f",
+      "masterCategory": "Accessories",
+      "subCategory": "Wallet",
+      "articleType": "Wallet",
+      "isActive": true,
+      "productCount": 2,
+      "createdAt": "2025-10-04T08:07:26.848Z",
+      "updatedAt": "2025-10-04T08:12:09.419Z",
+      "__v": 0
+    }
+  ],
+  "products": [
+    {
+      "_id": "68dfcc7484cd07dea32e23b6",
+      "name": "SWE RING BOXY TEE - BLACK",
+      "description": "RING BOXY TEE - Chiếc áo thun mới được thiết kế ấn tượng với điểm nhấn của áo nằm ở họa tiết mặt trước được sử dụng kỹ thuật in trame sắc nét kết hợp gắn tag da phía sau lưng tạo điểm nhấn tinh tế và mang đậm dấu ấn của SWE.",
+      "brand": "SWE",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "Black",
+      "images": [
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497331/fashion-ecommerce/products/s3bm1wikvt6ukvxjchbp.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497331/fashion-ecommerce/products/pv9l6dj5jyjf5uhovnu9.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497331/fashion-ecommerce/products/ar8ojv4eygm4byzde7bl.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc3f84cd07dea32e23b0",
+        "masterCategory": "Apparel",
+        "subCategory": "Topwear",
+        "articleType": "Shirt"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-03T13:15:32.731Z",
+      "updatedAt": "2025-10-03T14:56:59.003Z",
+      "__v": 0,
+      "defaultPrice": 650000
+    },
+    {
+      "_id": "68dfcd3984cd07dea32e23bb",
+      "name": "SWE SKEYE BOXY TEE - WHITE",
+      "description": "SKEYE BOXY TEE - Chiếc áo thun mới nằm trong bộ sưu tập \"THE FUTURE IS BRIGHT\" được thiết kế ấn tượng. Điểm nhấn của áo nằm ở họa tiết con mắt mặt trước được in Trame sắc nét kết hợp thêu chữ tỉ mỉ. Mặt sau đơn giản với tag da mới của SWE.",
+      "brand": "SWE",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "White",
+      "images": [
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497528/fashion-ecommerce/products/dc8c50y5zgct53hvh2mo.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497528/fashion-ecommerce/products/nefrcaubbpufacfnsbvg.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497528/fashion-ecommerce/products/vthdkcokflhp2uhughg9.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc3f84cd07dea32e23b0",
+        "masterCategory": "Apparel",
+        "subCategory": "Topwear",
+        "articleType": "Shirt"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-03T13:18:49.499Z",
+      "updatedAt": "2025-10-03T14:57:17.672Z",
+      "__v": 0,
+      "defaultPrice": 550000
+    },
+    {
+      "_id": "68dfcdb384cd07dea32e23c0",
+      "name": "SWE SIGNATURE TEE - BLACK",
+      "description": "SIGNATURE TEE - Một chiếc áo được thiết kế cực kì đơn giản và dễ dàng phối đồ với các họa tiết mặt trước và sau đều được thêu xù.",
+      "brand": "SWE",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "Black",
+      "images": [
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497651/fashion-ecommerce/products/elkb4qyan8v5rcovxwds.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497650/fashion-ecommerce/products/inbzmfkraed8rq6wepoi.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497650/fashion-ecommerce/products/eb0n5uplqhukrgbskugw.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc3f84cd07dea32e23b0",
+        "masterCategory": "Apparel",
+        "subCategory": "Topwear",
+        "articleType": "Shirt"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-03T13:20:51.848Z",
+      "updatedAt": "2025-10-03T14:55:42.123Z",
+      "__v": 0,
+      "defaultPrice": 400000
+    },
+    {
+      "_id": "68dfce0884cd07dea32e23c5",
+      "name": "SWE STARCHECK SNAPBACK - BLACK",
+      "description": "STARCHECK SNAPBACK - Chiếc nón mới được thiết kế form dáng snapback mềm. Điểm nhấn của nón nằm ở họa tiết logo SWE được thêu 3D kỹ thuật xương cá ở mặt trước và 1 câu slogan được thêu 2D ở bên hông. Phía sau nón được sử dụng khóa nhựa 7 lỗ để bạn có thể dễ dàng tăng chỉnh kích thước phù hợp với đầu.",
+      "brand": "SWE",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "Black",
+      "images": [
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497735/fashion-ecommerce/products/rs5rhpplbtvj7melb0yv.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497736/fashion-ecommerce/products/goahqahebuclv4wqekun.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497735/fashion-ecommerce/products/au0ufmw3q15gyogslwap.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759497736/fashion-ecommerce/products/byzenfq7zsnqadv8vpq4.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc1d84cd07dea32e23ad",
+        "masterCategory": "Accessories",
+        "subCategory": "Hat",
+        "articleType": "Baseball cap"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-03T13:22:16.908Z",
+      "updatedAt": "2025-10-03T14:56:23.359Z",
+      "__v": 0,
+      "defaultPrice": 350000
+    },
+    {
+      "_id": "68e005f17d3c1abe691f508f",
+      "name": "SWE AIRWAVE SWEATPANTS - GRAY",
+      "description": "AIRWAVE SWEATPANTS - Chiếc quần dài mới được thiết kế theo phong cách đơn giản, với họa tiết tên thương hiệu mặt trước được thêu đắp tinh tế và mang đậm dấu ấn của SWE. Phần túi sau được thiết kế double layer kèm logo SWE thêu 3D sắc nét. Cạp chun co giãn kèm dây rút ở eo, ống quần giúp điều chỉnh linh hoạt và duy trì form dáng đẹp.",
+      "brand": "SWE",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "Gray",
+      "images": [
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759512048/fashion-ecommerce/products/jsxx78lfezz8nwzd6g1c.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759512048/fashion-ecommerce/products/wdyixkkbn5x69gphrh5h.jpg",
+        "https://res.cloudinary.com/du391fsvp/image/upload/v1759512048/fashion-ecommerce/products/ip6yrhvrypdseaer958k.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e0052a7d3c1abe691f508b",
+        "masterCategory": "Apparel",
+        "subCategory": "Bottomwear",
+        "articleType": "Pants"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-03T17:20:49.291Z",
+      "updatedAt": "2025-10-04T00:54:46.792Z",
+      "__v": 0,
+      "defaultPrice": 800000
+    },
+    {
+      "_id": "68e0081a3cd27cf69de61cce",
+      "name": "Áo Thun Pique",
+      "description": "Áo thun raglan dáng rộng vải Pique, mềm mại, co giãn thoáng mát,",
+      "brand": "Yame",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "White",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759512603/fashion-ecommerce/products/pccrzvwapsqd54njhxl3.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759512603/fashion-ecommerce/products/qqftr3odgn9jmigl0hvf.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759512602/fashion-ecommerce/products/v57lkcyz3igqiwaixd6h.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc3f84cd07dea32e23b0",
+        "masterCategory": "Apparel",
+        "subCategory": "Topwear",
+        "articleType": "Shirt"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-03T17:30:02.443Z",
+      "updatedAt": "2025-10-04T00:55:09.837Z",
+      "__v": 0,
+      "defaultPrice": 250000
+    },
+    {
+      "_id": "68e0cee62ca76bf7ae455b82",
+      "name": "Áo Sơ Mi Trắng Nam Công Sở",
+      "description": "Áo sơ mi trắng basic cho nam, phù hợp đi làm văn phòng.",
+      "brand": "Yame",
+      "gender": "Male",
+      "usage": "Formal",
+      "color": "White",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564071/fashion-ecommerce/products/-o-s--mi-tr-ng-nam-c-ng-s--1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564072/fashion-ecommerce/products/-o-s--mi-tr-ng-nam-c-ng-s--2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564073/fashion-ecommerce/products/-o-s--mi-tr-ng-nam-c-ng-s--3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc3f84cd07dea32e23b0",
+        "masterCategory": "Apparel",
+        "subCategory": "Topwear",
+        "articleType": "Shirt"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:38:14.552Z",
+      "updatedAt": "2025-10-04T08:19:13.293Z",
+      "__v": 0,
+      "defaultPrice": 350000
+    },
+    {
+      "_id": "68e0cee62ca76bf7ae455b86",
+      "name": "Áo Thun Nam Cổ Tròn Basic",
+      "description": "Áo thun nam cổ tròn, vải cotton mềm mại thoáng mát.",
+      "brand": "Yame",
+      "gender": "Male",
+      "usage": "Casual",
+      "color": "Navy",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563778/fashion-ecommerce/products/-o-thun-nam-c--tr-n-basic-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563779/fashion-ecommerce/products/-o-thun-nam-c--tr-n-basic-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563780/fashion-ecommerce/products/-o-thun-nam-c--tr-n-basic-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc3f84cd07dea32e23b0",
+        "masterCategory": "Apparel",
+        "subCategory": "Topwear",
+        "articleType": "Shirt"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:38:14.610Z",
+      "updatedAt": "2025-10-04T08:19:13.401Z",
+      "__v": 0,
+      "defaultPrice": 250000
+    },
+    {
+      "_id": "68e0cee62ca76bf7ae455b8a",
+      "name": "Quần Jeans Nam Slim Fit",
+      "description": "Quần jeans nam dáng slim fit, chất liệu denim cao cấp.",
+      "brand": "Yame",
+      "gender": "Male",
+      "usage": "Casual",
+      "color": "Blue",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563781/fashion-ecommerce/products/qu-n-jeans-nam-slim-fit-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563782/fashion-ecommerce/products/qu-n-jeans-nam-slim-fit-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563783/fashion-ecommerce/products/qu-n-jeans-nam-slim-fit-3.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e0052a7d3c1abe691f508b",
+        "masterCategory": "Apparel",
+        "subCategory": "Bottomwear",
+        "articleType": "Pants"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:38:14.662Z",
+      "updatedAt": "2025-10-04T08:19:13.505Z",
+      "__v": 0,
+      "defaultPrice": 550000
+    },
+    {
+      "_id": "68e0cee62ca76bf7ae455b8d",
+      "name": "Quần Tây Nam Công Sở",
+      "description": "Quần tây nam công sở, form chuẩn, dáng thanh lịch.",
+      "brand": "Yame",
+      "gender": "Male",
+      "usage": "Formal",
+      "color": "Black",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564074/fashion-ecommerce/products/qu-n-t-y-nam-c-ng-s--1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564075/fashion-ecommerce/products/qu-n-t-y-nam-c-ng-s--2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564076/fashion-ecommerce/products/qu-n-t-y-nam-c-ng-s--3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e0052a7d3c1abe691f508b",
+        "masterCategory": "Apparel",
+        "subCategory": "Bottomwear",
+        "articleType": "Pants"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:38:14.713Z",
+      "updatedAt": "2025-10-04T08:19:13.611Z",
+      "__v": 0,
+      "defaultPrice": 450000
+    },
+    {
+      "_id": "68e0cee62ca76bf7ae455b8f",
+      "name": "Mũ Lưỡi Trai Thể Thao Đen",
+      "description": "Mũ lưỡi trai thể thao, chất liệu vải thoáng khí.",
+      "brand": "Yame",
+      "gender": "Unisex",
+      "usage": "Sports",
+      "color": "Black",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563784/fashion-ecommerce/products/m--l--i-trai-th--thao--en-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563785/fashion-ecommerce/products/m--l--i-trai-th--thao--en-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563786/fashion-ecommerce/products/m--l--i-trai-th--thao--en-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc1d84cd07dea32e23ad",
+        "masterCategory": "Accessories",
+        "subCategory": "Hat",
+        "articleType": "Baseball cap"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:38:14.770Z",
+      "updatedAt": "2025-10-04T08:19:13.716Z",
+      "__v": 0,
+      "defaultPrice": 180000
+    },
+    {
+      "_id": "68e0cee62ca76bf7ae455b91",
+      "name": "Mũ Lưỡi Trai Basic Trắng",
+      "description": "Mũ lưỡi trai màu trắng basic, phù hợp mọi phong cách.",
+      "brand": "Yame",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "White",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563787/fashion-ecommerce/products/m--l--i-trai-basic-tr-ng-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563788/fashion-ecommerce/products/m--l--i-trai-basic-tr-ng-2.jpg",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563790/fashion-ecommerce/products/m--l--i-trai-basic-tr-ng-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc1d84cd07dea32e23ad",
+        "masterCategory": "Accessories",
+        "subCategory": "Hat",
+        "articleType": "Baseball cap"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:38:14.823Z",
+      "updatedAt": "2025-10-04T08:19:13.821Z",
+      "__v": 0,
+      "defaultPrice": 150000
+    },
+    {
+      "_id": "68e0cee62ca76bf7ae455b93",
+      "name": "Đồng Hồ Nam Dây Da Nâu",
+      "description": "Đồng hồ nam dây da nâu, mặt tròn classic.",
+      "brand": "Titoni",
+      "gender": "Male",
+      "usage": "Formal",
+      "color": "Brown",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564077/fashion-ecommerce/products/--ng-h--nam-d-y-da-n-u-1.avif",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564078/fashion-ecommerce/products/--ng-h--nam-d-y-da-n-u-2.avif",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564080/fashion-ecommerce/products/--ng-h--nam-d-y-da-n-u-3.avif"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc5184cd07dea32e23b3",
+        "masterCategory": "Accessories",
+        "subCategory": "Watch",
+        "articleType": "Watch"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:38:14.875Z",
+      "updatedAt": "2025-10-04T08:19:13.963Z",
+      "__v": 0,
+      "defaultPrice": 5500000
+    },
+    {
+      "_id": "68e0cee62ca76bf7ae455b95",
+      "name": "Đồng Hồ Thể Thao Nam",
+      "description": "Đồng hồ thể thao điện tử, chống nước 50m.",
+      "brand": "G-shock",
+      "gender": "Male",
+      "usage": "Sports",
+      "color": "Black",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564082/fashion-ecommerce/products/--ng-h--th--thao-nam-1.avif",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564083/fashion-ecommerce/products/--ng-h--th--thao-nam-2.avif",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564084/fashion-ecommerce/products/--ng-h--th--thao-nam-3.avif"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc5184cd07dea32e23b3",
+        "masterCategory": "Accessories",
+        "subCategory": "Watch",
+        "articleType": "Watch"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:38:14.927Z",
+      "updatedAt": "2025-10-04T08:19:14.067Z",
+      "__v": 0,
+      "defaultPrice": 3200000
+    },
+    {
+      "_id": "68e0cf4084381d74137c5519",
+      "name": "Giày Sneaker Nam Trắng Basic",
+      "description": "Giày sneaker nam màu trắng basic, dễ phối đồ.",
+      "brand": "Nike",
+      "gender": "Male",
+      "usage": "Casual",
+      "color": "White",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563791/fashion-ecommerce/products/gi-y-sneaker-nam-tr-ng-basic-1.jpg",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563792/fashion-ecommerce/products/gi-y-sneaker-nam-tr-ng-basic-2.jpg",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563793/fashion-ecommerce/products/gi-y-sneaker-nam-tr-ng-basic-3.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e069a6ddce55ce977444e9",
+        "masterCategory": "Footwear",
+        "subCategory": "Shoes",
+        "articleType": "Casual shoes"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:39:44.378Z",
+      "updatedAt": "2025-10-04T08:19:14.173Z",
+      "__v": 0,
+      "defaultPrice": 2500000
+    },
+    {
+      "_id": "68e0cf4084381d74137c551b",
+      "name": "Giày Da Nam Công Sở",
+      "description": "Giày da nam công sở màu đen, kiểu dáng lịch sự.",
+      "brand": "Yame",
+      "gender": "Male",
+      "usage": "Formal",
+      "color": "Black",
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564085/fashion-ecommerce/products/gi-y-da-nam-c-ng-s--1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564086/fashion-ecommerce/products/gi-y-da-nam-c-ng-s--2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564087/fashion-ecommerce/products/gi-y-da-nam-c-ng-s--3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e069a6ddce55ce977444e9",
+        "masterCategory": "Footwear",
+        "subCategory": "Shoes",
+        "articleType": "Casual shoes"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T07:39:44.459Z",
+      "updatedAt": "2025-10-04T08:19:14.279Z",
+      "__v": 0,
+      "defaultPrice": 850000
+    },
+    {
+      "_id": "68e0d6d833514af994350abf",
+      "name": "Ví Da Nam Ngang Đen",
+      "description": "Ví da nam ngang, nhiều ngăn đựng thẻ và tiền.",
+      "brand": "Yame",
+      "gender": "Male",
+      "usage": "Daily",
+      "color": "Black",
+      "defaultPrice": 450000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564088/fashion-ecommerce/products/v--da-nam-ngang--en-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564089/fashion-ecommerce/products/v--da-nam-ngang--en-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564090/fashion-ecommerce/products/v--da-nam-ngang--en-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e0d5be535ec32cbe22462f",
+        "masterCategory": "Accessories",
+        "subCategory": "Wallet",
+        "articleType": "Wallet"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T08:12:08.605Z",
+      "updatedAt": "2025-10-04T08:13:29.218Z",
+      "__v": 0
+    },
+    {
+      "_id": "68e0d6d833514af994350ac2",
+      "name": "Ví Da Nam Đứng Nâu",
+      "description": "Ví da nam đứng màu nâu, thiết kế gọn gàng.",
+      "brand": "Yame",
+      "gender": "Male",
+      "usage": "Daily",
+      "color": "Brown",
+      "defaultPrice": 380000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564091/fashion-ecommerce/products/v--da-nam---ng-n-u-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564092/fashion-ecommerce/products/v--da-nam---ng-n-u-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564093/fashion-ecommerce/products/v--da-nam---ng-n-u-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e0d5be535ec32cbe22462f",
+        "masterCategory": "Accessories",
+        "subCategory": "Wallet",
+        "articleType": "Wallet"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-04T08:12:08.705Z",
+      "updatedAt": "2025-10-04T08:13:32.472Z",
+      "__v": 0
+    }
+  ]
+}

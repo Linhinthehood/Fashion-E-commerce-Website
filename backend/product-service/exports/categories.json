@@ -1,0 +1,79 @@
+[
+  {
+    "_id": "68dfcc1d84cd07dea32e23ad",
+    "masterCategory": "Accessories",
+    "subCategory": "Hat",
+    "articleType": "Baseball cap",
+    "isActive": true,
+    "productCount": 3,
+    "createdAt": "2025-10-03T13:14:05.571Z",
+    "updatedAt": "2025-10-04T08:12:08.799Z",
+    "__v": 0
+  },
+  {
+    "_id": "68dfcc3f84cd07dea32e23b0",
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt",
+    "isActive": true,
+    "productCount": 7,
+    "createdAt": "2025-10-03T13:14:39.529Z",
+    "updatedAt": "2025-10-04T08:12:08.897Z",
+    "__v": 0
+  },
+  {
+    "_id": "68dfcc5184cd07dea32e23b3",
+    "masterCategory": "Accessories",
+    "subCategory": "Watch",
+    "articleType": "Watch",
+    "isActive": true,
+    "productCount": 2,
+    "createdAt": "2025-10-03T13:14:57.113Z",
+    "updatedAt": "2025-10-04T08:12:08.992Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e0052a7d3c1abe691f508b",
+    "masterCategory": "Apparel",
+    "subCategory": "Bottomwear",
+    "articleType": "Pants",
+    "isActive": true,
+    "productCount": 4,
+    "createdAt": "2025-10-03T17:17:30.723Z",
+    "updatedAt": "2025-10-04T08:12:09.087Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e069a6ddce55ce977444e9",
+    "masterCategory": "Footwear",
+    "subCategory": "Shoes",
+    "articleType": "Casual shoes",
+    "isActive": true,
+    "productCount": 2,
+    "createdAt": "2025-10-04T00:26:14.102Z",
+    "updatedAt": "2025-10-04T08:12:09.181Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e069ff96ef561c4fe857cb",
+    "masterCategory": "Footwear",
+    "subCategory": "Sandal",
+    "articleType": "Sandals",
+    "isActive": true,
+    "productCount": 0,
+    "createdAt": "2025-10-04T00:27:43.146Z",
+    "updatedAt": "2025-10-04T08:12:09.275Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e0d5be535ec32cbe22462f",
+    "masterCategory": "Accessories",
+    "subCategory": "Wallet",
+    "articleType": "Wallet",
+    "isActive": true,
+    "productCount": 2,
+    "createdAt": "2025-10-04T08:07:26.848Z",
+    "updatedAt": "2025-10-04T08:12:09.419Z",
+    "__v": 0
+  }
+]

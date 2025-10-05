@@ -1,0 +1,159 @@
+[
+  {
+    "productId": "68e0cee62ca76bf7ae455b82",
+    "productName": "Áo Sơ Mi Trắng Nam Công Sở",
+    "variants": [
+      { "size": "S", "stock": 50, "status": "Active", "price": 350000 },
+      { "size": "M", "stock": 50, "status": "Active", "price": 350000 },
+      { "size": "L", "stock": 50, "status": "Active", "price": 350000 },
+      { "size": "XL", "stock": 50, "status": "Active", "price": 350000 },
+      { "size": "XXL", "stock": 30, "status": "Active", "price": 350000 }
+    ]
+  },
+  {
+    "productId": "68e0cee62ca76bf7ae455b86",
+    "productName": "Áo Thun Nam Cổ Tròn Basic",
+    "variants": [
+      { "size": "S", "stock": 50, "status": "Active", "price": 250000 },
+      { "size": "M", "stock": 50, "status": "Active", "price": 250000 },
+      { "size": "L", "stock": 50, "status": "Active", "price": 250000 },
+      { "size": "XL", "stock": 50, "status": "Active", "price": 250000 },
+      { "size": "XXL", "stock": 30, "status": "Active", "price": 250000 }
+    ]
+  },
+  {
+    "productId": "68e0081a3cd27cf69de61cce",
+    "productName": "Áo Thun Pique",
+    "variants": [
+      { "size": "S", "stock": 50, "status": "Active", "price": 250000 },
+      { "size": "M", "stock": 50, "status": "Active", "price": 250000 },
+      { "size": "L", "stock": 50, "status": "Active", "price": 250000 },
+      { "size": "XL", "stock": 50, "status": "Active", "price": 250000 },
+      { "size": "XXL", "stock": 30, "status": "Active", "price": 250000 }
+    ]
+  },
+  {
+    "productId": "68dfcd3984cd07dea32e23bb",
+    "productName": "SWE SKEYE BOXY TEE - WHITE",
+    "variants": [
+      { "size": "S", "stock": 50, "status": "Active", "price": 550000 },
+      { "size": "M", "stock": 50, "status": "Active", "price": 550000 },
+      { "size": "L", "stock": 50, "status": "Active", "price": 550000 },
+      { "size": "XL", "stock": 50, "status": "Active", "price": 550000 }
+    ]
+  },
+  {
+    "productId": "68dfcdb384cd07dea32e23c0",
+    "productName": "SWE SIGNATURE TEE - BLACK",
+    "variants": [
+      { "size": "S", "stock": 50, "status": "Active", "price": 400000 },
+      { "size": "M", "stock": 50, "status": "Active", "price": 400000 },
+      { "size": "L", "stock": 50, "status": "Active", "price": 400000 },
+      { "size": "XL", "stock": 50, "status": "Active", "price": 400000 }
+    ]
+  },
+  {
+    "productId": "68e0cee62ca76bf7ae455b8d",
+    "productName": "Quần Tây Nam Công Sở",
+    "variants": [
+      { "size": "28", "stock": 30, "status": "Active", "price": 450000 },
+      { "size": "29", "stock": 40, "status": "Active", "price": 450000 },
+      { "size": "30", "stock": 50, "status": "Active", "price": 450000 },
+      { "size": "31", "stock": 50, "status": "Active", "price": 450000 },
+      { "size": "32", "stock": 50, "status": "Active", "price": 450000 },
+      { "size": "33", "stock": 40, "status": "Active", "price": 450000 },
+      { "size": "34", "stock": 30, "status": "Active", "price": 450000 }
+    ]
+  },
+  {
+    "productId": "68e0cee62ca76bf7ae455b8a",
+    "productName": "Quần Jeans Nam Slim Fit",
+    "variants": [
+      { "size": "28", "stock": 30, "status": "Active", "price": 550000 },
+      { "size": "29", "stock": 40, "status": "Active", "price": 550000 },
+      { "size": "30", "stock": 50, "status": "Active", "price": 550000 },
+      { "size": "31", "stock": 50, "status": "Active", "price": 550000 },
+      { "size": "32", "stock": 50, "status": "Active", "price": 550000 },
+      { "size": "33", "stock": 40, "status": "Active", "price": 550000 },
+      { "size": "34", "stock": 30, "status": "Active", "price": 550000 }
+    ]
+  },
+  {
+    "productId": "68e005f17d3c1abe691f508f",
+    "productName": "SWE AIRWAVE SWEATPANTS - GRAY",
+    "variants": [
+      { "size": "S", "stock": 50, "status": "Active", "price": 800000 },
+      { "size": "M", "stock": 50, "status": "Active", "price": 800000 },
+      { "size": "L", "stock": 50, "status": "Active", "price": 800000 },
+      { "size": "XL", "stock": 50, "status": "Active", "price": 800000 }
+    ]
+  },
+  {
+    "productId": "68e0cee62ca76bf7ae455b8f",
+    "productName": "Mũ Lưỡi Trai Thể Thao Đen",
+    "variants": [
+      { "size": "ONESIZE", "stock": 100, "status": "Active", "price": 180000 }
+    ]
+  },
+  {
+    "productId": "68e0cee62ca76bf7ae455b91",
+    "productName": "Mũ Lưỡi Trai Basic Trắng",
+    "variants": [
+      { "size": "ONESIZE", "stock": 100, "status": "Active", "price": 150000 }
+    ]
+  },
+  {
+    "productId": "68e0cee62ca76bf7ae455b93",
+    "productName": "Đồng Hồ Nam Dây Da Nâu",
+    "variants": [
+      { "size": "ONESIZE", "stock": 20, "status": "Active", "price": 5500000 }
+    ]
+  },
+  {
+    "productId": "68e0cee62ca76bf7ae455b95",
+    "productName": "Đồng Hồ Thể Thao Nam",
+    "variants": [
+      { "size": "ONESIZE", "stock": 25, "status": "Active", "price": 3200000 }
+    ]
+  },
+  {
+    "productId": "68e0cf4084381d74137c5519",
+    "productName": "Giày Sneaker Nam Trắng Basic",
+    "variants": [
+      { "size": "38", "stock": 20, "status": "Active", "price": 2500000 },
+      { "size": "39", "stock": 30, "status": "Active", "price": 2500000 },
+      { "size": "40", "stock": 40, "status": "Active", "price": 2500000 },
+      { "size": "41", "stock": 40, "status": "Active", "price": 2500000 },
+      { "size": "42", "stock": 40, "status": "Active", "price": 2500000 },
+      { "size": "43", "stock": 30, "status": "Active", "price": 2500000 },
+      { "size": "44", "stock": 20, "status": "Active", "price": 2500000 }
+    ]
+  },
+  {
+    "productId": "68e0cf4084381d74137c551b",
+    "productName": "Giày Da Nam Công Sở",
+    "variants": [
+      { "size": "38", "stock": 20, "status": "Active", "price": 850000 },
+      { "size": "39", "stock": 30, "status": "Active", "price": 850000 },
+      { "size": "40", "stock": 40, "status": "Active", "price": 850000 },
+      { "size": "41", "stock": 40, "status": "Active", "price": 850000 },
+      { "size": "42", "stock": 40, "status": "Active", "price": 850000 },
+      { "size": "43", "stock": 30, "status": "Active", "price": 850000 },
+      { "size": "44", "stock": 20, "status": "Active", "price": 850000 }
+    ]
+  },
+  {
+    "productId": "68e0d6d833514af994350abf",
+    "productName": "Ví Da Nam Ngang Đen",
+    "variants": [
+      { "size": "ONESIZE", "stock": 50, "status": "Active", "price": 450000 }
+    ]
+  },
+  {
+    "productId": "68e0d6d833514af994350ac2",
+    "productName": "Ví Da Nam Đứng Nâu",
+    "variants": [
+      { "size": "ONESIZE", "stock": 50, "status": "Active", "price": 380000 }
+    ]
+  }
+]

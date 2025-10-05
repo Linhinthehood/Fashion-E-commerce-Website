@@ -1,0 +1,44 @@
+{
+  "exportDate": "2025-10-04T08:59:08.212Z",
+  "totalCategories": 7,
+  "totalProducts": 18,
+  "activeProducts": 18,
+  "inactiveProducts": 0,
+  "productsWithImages": 18,
+  "productsWithoutImages": 0,
+  "productsByCategory": {
+    "Shirt": 6,
+    "Baseball cap": 3,
+    "Pants": 3,
+    "Watch": 2,
+    "Casual shoes": 2,
+    "Wallet": 2
+  },
+  "topBrands": [
+    {
+      "name": "Yame",
+      "count": 10
+    },
+    {
+      "name": "SWE",
+      "count": 5
+    },
+    {
+      "name": "Titoni",
+      "count": 1
+    },
+    {
+      "name": "G-shock",
+      "count": 1
+    },
+    {
+      "name": "Nike",
+      "count": 1
+    }
+  ],
+  "genderDistribution": {
+    "Male": 10,
+    "Female": 0,
+    "Unisex": 8
+  }
+}
