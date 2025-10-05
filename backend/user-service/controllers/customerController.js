@@ -333,6 +333,35 @@ const deleteAddress = async (req, res) => {
   }
 };
 
+// Get customer by user ID (for internal service calls)
+const getCustomerByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    const customer = await Customer.findByUserId(userId);
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Customer not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        customer: customer.toJSON()
+      }
+    });
+  } catch (error) {
+    console.error('Get customer by user ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   getCustomerProfile,
   updateCustomerProfile,
@@ -341,5 +370,6 @@ module.exports = {
   getCustomerById,
   addAddress,
   updateAddress,
-  deleteAddress
+  deleteAddress,
+  getCustomerByUserId
 };

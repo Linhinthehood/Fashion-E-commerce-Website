@@ -244,10 +244,47 @@ const changePassword = async (req, res) => {
   }
 };
 
+// Get user by ID (for internal service calls)
+const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    let customer = null;
+    // If user is a customer, also fetch customer details
+    if (user.role === 'Customer') {
+      customer = await Customer.findByUserId(user._id);
+    }
+
+    res.json({
+      success: true,
+      data: {
+        user: user.toJSON(),
+        customer: customer
+      }
+    });
+  } catch (error) {
+    console.error('Get user by ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   getProfile,
   updateProfile,
-  changePassword
+  changePassword,
+  getUserById
 };

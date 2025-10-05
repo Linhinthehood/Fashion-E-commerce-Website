@@ -5,9 +5,10 @@ const {
   login,
   getProfile,
   updateProfile,
-  changePassword
+  changePassword,
+  getUserById
 } = require('../controllers/authController');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, internalAuth } = require('../middleware/auth');
 const { authValidation } = require('../middleware/validation');
 
 const router = express.Router();
@@ -33,5 +34,8 @@ router.post('/login', authValidation.login, handleValidationErrors, login);
 router.get('/profile', authenticate, getProfile);
 router.put('/profile', authenticate, authValidation.updateProfile, handleValidationErrors, updateProfile);
 router.put('/change-password', authenticate, authValidation.changePassword, handleValidationErrors, changePassword);
+
+// Internal service routes (for service-to-service communication)
+router.get('/internal/user/:id', internalAuth, getUserById);
 
 module.exports = router;

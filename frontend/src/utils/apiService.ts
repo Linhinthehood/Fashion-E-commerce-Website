@@ -380,6 +380,96 @@ export const variantApi = {
     apiClient.patch(API_ENDPOINTS.variants.releaseStock(id), { quantity }, true), // Auth required
 };
 
+// Order API functions (Mixed: some POST with userId in body per backend contract)
+export const orderApi = {
+  // Create order step 1
+  createOrder: (payload: {
+    userId: string;
+    addressId: string;
+    paymentMethod: 'COD' | 'Momo' | 'Bank';
+  }) => apiClient.post(API_ENDPOINTS.orders.create(), payload, true),
+
+  // Create order step 2: add items
+  addItems: (payload: {
+    orderId: string;
+    items: Array<{ productId: string; variantId: string; quantity: number }>;
+  }) => apiClient.post(API_ENDPOINTS.orders.addItems(), payload, true),
+
+  // Customer: get my orders (backend expects userId in body, filters in query)
+  getMyOrders: (body: { userId: string }, params?: {
+    page?: number;
+    limit?: number;
+    paymentStatus?: 'Pending' | 'Paid' | 'Failed' | 'Refunded';
+    shipmentStatus?: 'Pending' | 'Packed' | 'Delivered' | 'Returned';
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.orders.myOrders()}?${searchParams.toString()}`
+      : API_ENDPOINTS.orders.myOrders();
+    return apiClient.post(url, body, true);
+  },
+
+  // Customer: get order stats
+  getMyStats: (body: { userId: string }, params?: { startDate?: string; endDate?: string }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.orders.stats()}?${searchParams.toString()}`
+      : API_ENDPOINTS.orders.stats();
+    return apiClient.post(url, body, true);
+  },
+
+  // Get order by id
+  getById: (id: string) => apiClient.get(API_ENDPOINTS.orders.byId(id), true),
+
+  // Admin: get all orders with filters
+  adminGetAll: (params?: {
+    page?: number;
+    limit?: number;
+    paymentStatus?: 'Pending' | 'Paid' | 'Failed' | 'Refunded';
+    shipmentStatus?: 'Pending' | 'Packed' | 'Delivered' | 'Returned';
+    startDate?: string;
+    endDate?: string;
+    sortBy?: 'createdAt' | 'finalPrice' | 'paymentStatus' | 'shipmentStatus';
+    sortOrder?: 'asc' | 'desc';
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.orders.adminAll()}?${searchParams.toString()}`
+      : API_ENDPOINTS.orders.adminAll();
+    return apiClient.get(url, true);
+  },
+
+  // Admin: update payment status
+  updatePaymentStatus: (
+    id: string,
+    body: { status: 'Pending' | 'Paid' | 'Failed' | 'Refunded' }
+  ) => apiClient.put(API_ENDPOINTS.orders.updatePaymentStatus(id), body, true),
+
+  // Admin: update shipment status
+  updateShipmentStatus: (
+    id: string,
+    body: { status: 'Pending' | 'Packed' | 'Delivered' | 'Returned' }
+  ) => apiClient.put(API_ENDPOINTS.orders.updateShipmentStatus(id), body, true),
+
+  // Admin: apply discount
+  applyDiscount: (id: string, body: { discount: number }) =>
+    apiClient.put(API_ENDPOINTS.orders.applyDiscount(id), body, true),
+};
 // Health check function
 export const healthCheck = () => apiClient.get('/health', false);
 
@@ -389,5 +479,6 @@ export default {
   productApi,
   categoryApi,
   variantApi,
+  orderApi,
   healthCheck,
 };

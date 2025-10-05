@@ -31,7 +31,13 @@ const upload = multer({
 const uploadImageToCloudinary = async (buffer, folder = 'fashion-ecommerce/products') => {
   return new Promise((resolve, reject) => {
     const cloudinaryConfig = cloudinary();
-    cloudinaryConfig.uploader.upload_stream(
+    
+    // Validate buffer
+    if (!buffer || buffer.length === 0) {
+      return reject(new Error('Empty buffer provided'));
+    }
+    
+    const uploadStream = cloudinaryConfig.uploader.upload_stream(
       {
         folder: folder,
         resource_type: 'auto',
@@ -41,10 +47,18 @@ const uploadImageToCloudinary = async (buffer, folder = 'fashion-ecommerce/produ
         ]
       },
       (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
+        if (error) {
+          console.error('Cloudinary upload error:', error);
+          reject(error);
+        } else {
+          console.log('Successfully uploaded image:', result?.public_id);
+          resolve(result);
+        }
       }
-    ).end(buffer);
+    );
+    
+    // Write buffer to stream
+    uploadStream.end(buffer);
   });
 };
 
@@ -156,9 +170,33 @@ const createProduct = async (req, res) => {
     // Handle image upload if files are provided (optional)
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
-      const uploadPromises = req.files.map(file => uploadImageToCloudinary(file.buffer));
-      const uploadResults = await Promise.all(uploadPromises);
-      imageUrls = uploadResults.map(result => result.secure_url);
+      console.log(`Starting upload of ${req.files.length} images`);
+      
+      try {
+        // Process uploads sequentially to avoid race conditions
+        for (let i = 0; i < req.files.length; i++) {
+          const file = req.files[i];
+          console.log(`Uploading image ${i + 1}/${req.files.length}: ${file.originalname}, size: ${file.size}`);
+          
+          try {
+            const result = await uploadImageToCloudinary(file.buffer);
+            if (result && result.secure_url) {
+              imageUrls.push(result.secure_url);
+              console.log(`Successfully uploaded image ${i + 1}: ${result.secure_url}`);
+            } else {
+              console.error(`Upload result is invalid for image ${i + 1}:`, result);
+            }
+          } catch (uploadError) {
+            console.error(`Failed to upload image ${i + 1} (${file.originalname}):`, uploadError);
+            // Continue with other images instead of failing completely
+          }
+        }
+        
+        console.log(`Upload completed. Successfully uploaded ${imageUrls.length}/${req.files.length} images`);
+      } catch (error) {
+        console.error('Error during image upload process:', error);
+        // Don't fail the entire product creation if image upload fails
+      }
     }
 
     const product = new Product({
@@ -182,7 +220,14 @@ const createProduct = async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Product created successfully',
-      data: { product }
+      data: { 
+        product,
+        uploadSummary: {
+          totalFiles: req.files ? req.files.length : 0,
+          uploadedImages: imageUrls.length,
+          failedUploads: req.files ? req.files.length - imageUrls.length : 0
+        }
+      }
     });
   } catch (error) {
     console.error('Create product error:', error);
@@ -266,9 +311,33 @@ const updateProduct = async (req, res) => {
     // Handle image upload if files are provided (optional)
     let newImageUrls = [];
     if (req.files && req.files.length > 0) {
-      const uploadPromises = req.files.map(file => uploadImageToCloudinary(file.buffer));
-      const uploadResults = await Promise.all(uploadPromises);
-      newImageUrls = uploadResults.map(result => result.secure_url);
+      console.log(`Starting upload of ${req.files.length} new images for product ${id}`);
+      
+      try {
+        // Process uploads sequentially to avoid race conditions
+        for (let i = 0; i < req.files.length; i++) {
+          const file = req.files[i];
+          console.log(`Uploading image ${i + 1}/${req.files.length}: ${file.originalname}, size: ${file.size}`);
+          
+          try {
+            const result = await uploadImageToCloudinary(file.buffer);
+            if (result && result.secure_url) {
+              newImageUrls.push(result.secure_url);
+              console.log(`Successfully uploaded image ${i + 1}: ${result.secure_url}`);
+            } else {
+              console.error(`Upload result is invalid for image ${i + 1}:`, result);
+            }
+          } catch (uploadError) {
+            console.error(`Failed to upload image ${i + 1} (${file.originalname}):`, uploadError);
+            // Continue with other images instead of failing completely
+          }
+        }
+        
+        console.log(`Upload completed. Successfully uploaded ${newImageUrls.length}/${req.files.length} new images`);
+      } catch (error) {
+        console.error('Error during image upload process:', error);
+        // Don't fail the entire product update if image upload fails
+      }
     }
 
     // Update fields

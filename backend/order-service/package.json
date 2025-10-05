@@ -9,22 +9,28 @@
     "test": "jest"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.5.0",
+    "axios": "^1.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.10.0",
     "express-validator": "^7.0.1",
     "helmet": "^7.0.0",
-    "express-rate-limit": "^6.10.0",
-    "axios": "^1.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.5.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1",
     "jest": "^29.6.2",
+    "nodemon": "^3.0.1",
     "supertest": "^6.3.3"
   },
-  "keywords": ["microservice", "order", "checkout", "ecommerce"],
+  "keywords": [
+    "microservice",
+    "order",
+    "checkout",
+    "ecommerce"
+  ],
   "author": "Fashion E-commerce Team",
   "license": "MIT"
 }

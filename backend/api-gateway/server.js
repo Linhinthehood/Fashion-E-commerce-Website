@@ -16,6 +16,10 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 app.use(helmet());
 app.use(morgan('dev'));
 
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000
@@ -50,7 +54,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Manual proxy function
+// Simple proxy function
 const createServiceProxy = (targetUrl, serviceName) => {
   return async (req, res) => {
     try {
@@ -64,8 +68,6 @@ const createServiceProxy = (targetUrl, serviceName) => {
         method: req.method,
         headers: {
           'Content-Type': 'application/json',
-          'x-forwarded-service': 'api-gateway',
-          'x-forwarded-to': serviceName,
           ...req.headers
         }
       };
@@ -94,24 +96,19 @@ const createServiceProxy = (targetUrl, serviceName) => {
           res.setHeader('Access-Control-Allow-Credentials', 'true');
           res.setHeader('X-Served-By', serviceName);
           
-          // Copy other headers
-          Object.keys(proxyRes.headers).forEach(key => {
-            if (!['access-control-allow-origin', 'access-control-allow-credentials'].includes(key.toLowerCase())) {
-              res.setHeader(key, proxyRes.headers[key]);
-            }
-          });
-          
           res.send(data);
         });
       });
 
       proxyReq.on('error', (err) => {
         console.error(`Proxy error for ${serviceName}:`, err.message);
-        res.status(503).json({
-          success: false,
-          message: `${serviceName} service is currently unavailable`,
-          error: process.env.NODE_ENV === 'development' ? err.message : undefined
-        });
+        if (!res.headersSent) {
+          res.status(503).json({
+            success: false,
+            message: `${serviceName} service is currently unavailable`,
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+          });
+        }
       });
 
       if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
@@ -122,11 +119,13 @@ const createServiceProxy = (targetUrl, serviceName) => {
       
     } catch (error) {
       console.error(`Proxy error for ${serviceName}:`, error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
-      });
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'Internal server error',
+          error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+      }
     }
   };
 };
@@ -143,7 +142,6 @@ app.use('/api/customers', createServiceProxy(USER_SERVICE_URL, 'user-service'));
 
 // Order Service routes
 app.use('/api/orders', createServiceProxy(ORDER_SERVICE_URL, 'order-service'));
-app.use('/api/cart', createServiceProxy(ORDER_SERVICE_URL, 'order-service'));
 
 // Product Service routes
 app.use('/api/products', createServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
@@ -162,5 +160,3 @@ app.listen(PORT, () => {
   console.log(`   📦 Product Service: ${PRODUCT_SERVICE_URL}`);
   console.log(`   🛒 Order Service: ${ORDER_SERVICE_URL}`);
 });
-
-

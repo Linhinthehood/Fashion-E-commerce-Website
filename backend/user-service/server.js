@@ -38,12 +38,20 @@ app.use(cors({
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'x-forwarded-service', 'x-forwarded-to']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'x-forwarded-service', 'x-forwarded-to', 'x-bypass-gateway', 'x-service-token', 'x-user-id']
 }));
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Middleware to handle bypass-gateway requests
+app.use((req, res, next) => {
+  if (req.headers['x-bypass-gateway']) {
+    req.isBypassGateway = true;
+  }
+  next();
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {

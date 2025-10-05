@@ -85,18 +85,15 @@ export const API_ENDPOINTS = {
   },
   // Order Service (via Gateway)
   orders: {
-    list: () => buildUrl('/orders'),
-    byId: (id: string) => buildUrl(`/orders/${id}`),
     create: () => buildUrl('/orders'),
-    update: (id: string) => buildUrl(`/orders/${id}`),
-    cancel: (id: string) => buildUrl(`/orders/${id}/cancel`),
-  },
-  cart: {
-    get: () => buildUrl('/cart'),
-    addItem: () => buildUrl('/cart/items'),
-    updateItem: (itemId: string) => buildUrl(`/cart/items/${itemId}`),
-    removeItem: (itemId: string) => buildUrl(`/cart/items/${itemId}`),
-    clear: () => buildUrl('/cart/clear'),
+    addItems: () => buildUrl('/orders/items'),
+    myOrders: () => buildUrl('/orders/my-orders'), // POST with userId in body + query params
+    stats: () => buildUrl('/orders/stats'), // POST with userId in body + query params
+    byId: (id: string) => buildUrl(`/orders/${id}`),
+    updatePaymentStatus: (id: string) => buildUrl(`/orders/${id}/payment-status`),
+    updateShipmentStatus: (id: string) => buildUrl(`/orders/${id}/shipment-status`),
+    applyDiscount: (id: string) => buildUrl(`/orders/${id}/discount`),
+    adminAll: () => buildUrl('/orders'), // GET with query params
   },
 } as const;
 

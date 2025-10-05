@@ -8,9 +8,10 @@ const {
   getCustomerById,
   addAddress,
   updateAddress,
-  deleteAddress
+  deleteAddress,
+  getCustomerByUserId
 } = require('../controllers/customerController');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, internalAuth } = require('../middleware/auth');
 const { customerValidation, paramValidation } = require('../middleware/validation');
 const { requireCustomer, requireAdmin, canManageAddresses } = require('../middleware/authorization');
 
@@ -42,5 +43,8 @@ router.delete('/addresses/:addressId', authenticate, canManageAddresses, paramVa
 // Admin/Manager routes (require authentication and admin role)
 router.get('/all', authenticate, requireAdmin, customerValidation.getAllCustomers, handleValidationErrors, getAllCustomers);
 router.get('/:customerId', authenticate, requireAdmin, paramValidation.customerId, handleValidationErrors, getCustomerById);
+
+// Internal service routes (for service-to-service communication)
+router.get('/internal/user/:userId', internalAuth, getCustomerByUserId);
 
 module.exports = router;

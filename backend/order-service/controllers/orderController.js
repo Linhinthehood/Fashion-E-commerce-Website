@@ -1,9 +1,10 @@
 const Order = require('../models/Order');
-const Cart = require('../models/Cart');
+const OrderItem = require('../models/OrderItem');
 const { validationResult } = require('express-validator');
-const axios = require('axios');
+const productService = require('../services/productService');
+const userService = require('../services/userService');
 
-// Create new order
+// Create new order (Step 1: Create order with basic info)
 const createOrder = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -15,60 +16,108 @@ const createOrder = async (req, res) => {
       });
     }
 
-    const { 
-      items, 
-      shippingAddress, 
-      billingAddress, 
-      paymentMethod,
-      shippingMethod = 'standard',
-      notes = {}
-    } = req.body;
+    const { userId, addressId, paymentMethod } = req.body;
+    
+    // Validate user exists
+    let userExists;
+    try {
+      userExists = await userService.validateUser(userId);
+    } catch (svcErr) {
+      return res.status(svcErr.customStatus || 503).json({
+        success: false,
+        message: svcErr.message,
+        code: svcErr.customCode || 'DEPENDENCY_UNAVAILABLE'
+      });
+    }
+    if (!userExists) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
 
-    const userId = req.user.userId;
+    // Validate customer exists
+    let customerExists;
+    try {
+      customerExists = await userService.validateCustomer(userId);
+    } catch (svcErr) {
+      return res.status(svcErr.customStatus || 503).json({
+        success: false,
+        message: svcErr.message,
+        code: svcErr.customCode || 'DEPENDENCY_UNAVAILABLE'
+      });
+    }
+    if (!customerExists) {
+      return res.status(404).json({
+        success: false,
+        message: 'Customer profile not found'
+      });
+    }
 
-    // Calculate pricing
-    const subtotal = items.reduce((total, item) => total + item.totalPrice, 0);
-    const shipping = shippingMethod === 'express' ? 15 : shippingMethod === 'overnight' ? 25 : 5;
-    const tax = subtotal * 0.08; // 8% tax
-    const total = subtotal + shipping + tax;
+    // Validate address belongs to user
+    let addressExists;
+    try {
+      addressExists = await userService.validateAddressOwnership(addressId, userId);
+    } catch (svcErr) {
+      return res.status(svcErr.customStatus || 503).json({
+        success: false,
+        message: svcErr.message,
+        code: svcErr.customCode || 'DEPENDENCY_UNAVAILABLE'
+      });
+    }
+    if (!addressExists) {
+      return res.status(400).json({
+        success: false,
+        message: 'Address not found or does not belong to user'
+      });
+    }
 
-    // Create order
+    // Get user and customer details for logging
+    let user, address;
+    try {
+      user = await userService.getUserById(userId);
+      address = await userService.getAddressById(addressId, userId);
+    } catch (svcErr) {
+      return res.status(svcErr.customStatus || 503).json({
+        success: false,
+        message: svcErr.message,
+        code: svcErr.customCode || 'DEPENDENCY_UNAVAILABLE'
+      });
+    }
+    
+    console.log(`Creating order for user ${user.name} (${user.email}) with address ${address.name}: ${address.addressInfo}`);
+
+    // Create order with initial values
     const order = new Order({
       userId,
-      items,
-      shippingAddress,
-      billingAddress: billingAddress || shippingAddress,
-      pricing: {
-        subtotal,
-        shipping,
-        tax,
-        discount: 0,
-        total
-      },
-      payment: {
-        method: paymentMethod,
-        status: 'pending'
-      },
-      shipping: {
-        method: shippingMethod,
-        estimatedDelivery: new Date(Date.now() + (shippingMethod === 'overnight' ? 1 : shippingMethod === 'express' ? 2 : 5) * 24 * 60 * 60 * 1000)
-      },
-      notes,
-      status: 'pending'
+      addressId,
+      paymentMethod,
+      totalPrice: 0, // Will be calculated when order items are added
+      discount: 0,
+      finalPrice: 0,
+      itemCount: 0
     });
 
     await order.save();
 
-    // Clear user's cart
-    await Cart.findOneAndUpdate(
-      { userId, isActive: true },
-      { items: [] }
-    );
-
     res.status(201).json({
       success: true,
       message: 'Order created successfully',
-      data: { order }
+      data: { 
+        order: {
+          _id: order._id,
+          userId: order.userId,
+          addressId: order.addressId,
+          paymentMethod: order.paymentMethod,
+          totalPrice: order.totalPrice,
+          discount: order.discount,
+          finalPrice: order.finalPrice,
+          itemCount: order.itemCount,
+          paymentStatus: order.paymentStatus,
+          shipmentStatus: order.shipmentStatus,
+          createdAt: order.createdAt
+        }
+      }
     });
   } catch (error) {
     console.error('Create order error:', error);
@@ -80,18 +129,213 @@ const createOrder = async (req, res) => {
   }
 };
 
+// Add order items to existing order (Step 2: Add products to order)
+const addOrderItems = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors',
+        errors: errors.array()
+      });
+    }
+
+    const { orderId, items } = req.body;
+
+    // Verify order exists
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    // Check if order can still be modified (only pending orders)
+    if (order.paymentStatus !== 'Pending') {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot modify order that is no longer pending'
+      });
+    }
+
+    const orderItems = [];
+    let totalPrice = 0;
+    let itemCount = 0;
+
+    // Process each item
+    for (const item of items) {
+      const { productId, variantId, quantity } = item;
+
+      // Get product details
+      let product;
+      try {
+        product = await productService.getProductById(productId);
+      } catch (svcErr) {
+        return res.status(svcErr.customStatus || 503).json({
+          success: false,
+          message: svcErr.message,
+          code: svcErr.customCode || 'DEPENDENCY_UNAVAILABLE'
+        });
+      }
+      if (!product) {
+        return res.status(400).json({
+          success: false,
+          message: `Product ${productId} not found`
+        });
+      }
+
+      // Get variant details
+      let variant;
+      try {
+        variant = await productService.getVariantById(variantId);
+      } catch (svcErr) {
+        return res.status(svcErr.customStatus || 503).json({
+          success: false,
+          message: svcErr.message,
+          code: svcErr.customCode || 'DEPENDENCY_UNAVAILABLE'
+        });
+      }
+      // In product service, variant.productId may be populated (object) or ObjectId/string
+      const variantProductId = (variant && variant.productId)
+        ? (typeof variant.productId === 'object'
+            ? (variant.productId._id ? variant.productId._id.toString() : variant.productId.toString())
+            : variant.productId.toString())
+        : null;
+      if (!variant || variantProductId !== productId) {
+        return res.status(400).json({
+          success: false,
+          message: `Variant ${variantId} not found or does not belong to product ${productId}`
+        });
+      }
+
+      // Check stock availability
+      if (variant.stock < quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Insufficient stock for ${product.name} - ${variant.size}. Available: ${variant.stock}, Requested: ${quantity}`
+        });
+      }
+
+      // Get primary image (first image)
+      const primaryImage = product.images && product.images.length > 0 ? product.images[0] : '';
+
+      // Use variant price (not product defaultPrice)
+      const variantPrice = variant.price || product.defaultPrice || 0;
+      
+      // Calculate sub price
+      const subPrice = variantPrice * quantity;
+
+      // Create order item with variant information
+      const orderItem = new OrderItem({
+        orderId,
+        productId,
+        variantId,
+        productName: product.name,
+        brand: product.brand,
+        color: product.color,
+        size: variant.size,
+        sku: variant.sku,
+        variantStatus: variant.status,
+        price: variantPrice, // Use variant price
+        quantity,
+        subPrice,
+        image: primaryImage,
+        categoryInfo: {
+          masterCategory: product.categoryId?.masterCategory || 'Unknown',
+          subCategory: product.categoryId?.subCategory || 'Unknown',
+          articleType: product.categoryId?.articleType || 'Unknown'
+        }
+      });
+
+      // Debug log for each order item prepared
+      console.log('Order item prepared:', {
+        orderId,
+        productId,
+        variantId,
+        productName: orderItem.productName,
+        brand: orderItem.brand,
+        color: orderItem.color,
+        size: orderItem.size,
+        sku: orderItem.sku,
+        variantStatus: orderItem.variantStatus,
+        price: orderItem.price,
+        quantity: orderItem.quantity,
+        subPrice: orderItem.subPrice,
+        image: orderItem.image,
+        categoryInfo: orderItem.categoryInfo
+      });
+
+      orderItems.push(orderItem);
+      totalPrice += subPrice;
+      itemCount += quantity;
+    }
+
+    // Save all order items
+    await OrderItem.insertMany(orderItems);
+
+    // Debug log summary after insertion
+    console.log('Inserted order items summary:', {
+      orderId,
+      itemsCount: orderItems.length,
+      totalQuantity: itemCount,
+      totalPrice,
+      itemIds: orderItems.map(oi => ({ productId: oi.productId, variantId: oi.variantId }))
+    });
+
+    // Update order totals
+    order.totalPrice = totalPrice;
+    order.finalPrice = totalPrice - order.discount;
+    order.itemCount = itemCount;
+    await order.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Order items added successfully',
+      data: { 
+        orderItems,
+        updatedOrder: {
+          _id: order._id,
+          totalPrice: order.totalPrice,
+          discount: order.discount,
+          finalPrice: order.finalPrice,
+          itemCount: order.itemCount
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Add order items error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 // Get user's orders
 const getUserOrders = async (req, res) => {
   try {
-    const { page = 1, limit = 10, status } = req.query;
-    const userId = req.user.userId;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors',
+        errors: errors.array()
+      });
+    }
+
+    const { userId } = req.body;
+    const { page = 1, limit = 10, paymentStatus, shipmentStatus } = req.query;
 
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
     const filter = { userId, isActive: true };
-    if (status) filter.status = status;
+    if (paymentStatus) filter.paymentStatus = paymentStatus;
+    if (shipmentStatus) filter.shipmentStatus = shipmentStatus;
 
     const orders = await Order.find(filter)
       .sort({ createdAt: -1 })
@@ -101,10 +345,16 @@ const getUserOrders = async (req, res) => {
 
     const total = await Order.countDocuments(filter);
 
+    // Add order number to each order
+    const ordersWithNumber = orders.map(order => ({
+      ...order,
+      orderNumber: `ORD-${order.createdAt.getTime()}-${order._id.toString().slice(-6)}`
+    }));
+
     res.json({
       success: true,
       data: {
-        orders,
+        orders: ordersWithNumber,
         pagination: {
           currentPage: pageNum,
           totalPages: Math.ceil(total / limitNum),
@@ -124,13 +374,18 @@ const getUserOrders = async (req, res) => {
   }
 };
 
-// Get single order
+// Get single order with items
 const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.userId;
+    
+    // Get user ID from authenticated user (if not admin)
+    const userId = req.userId;
 
-    const order = await Order.findOne({ _id: id, userId, isActive: true });
+    const filter = { _id: id, isActive: true };
+    if (userId) filter.userId = userId;
+
+    const order = await Order.findOne(filter);
 
     if (!order) {
       return res.status(404).json({
@@ -139,9 +394,21 @@ const getOrderById = async (req, res) => {
       });
     }
 
+    // Get order items
+    const orderItems = await OrderItem.find({ orderId: id, isActive: true }).sort({ createdAt: 1 });
+
+    // Add order number
+    const orderWithNumber = {
+      ...order.toObject(),
+      orderNumber: `ORD-${order.createdAt.getTime()}-${order._id.toString().slice(-6)}`
+    };
+
     res.json({
       success: true,
-      data: { order }
+      data: { 
+        order: orderWithNumber,
+        orderItems
+      }
     });
   } catch (error) {
     console.error('Get order by ID error:', error);
@@ -153,8 +420,8 @@ const getOrderById = async (req, res) => {
   }
 };
 
-// Update order status
-const updateOrderStatus = async (req, res) => {
+// Update payment status
+const updatePaymentStatus = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -166,11 +433,9 @@ const updateOrderStatus = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { status, notes } = req.body;
-    const userId = req.user.userId;
+    const { status } = req.body;
 
-    const order = await Order.findOne({ _id: id, userId, isActive: true });
-
+    const order = await Order.findById(id);
     if (!order) {
       return res.status(404).json({
         success: false,
@@ -178,45 +443,15 @@ const updateOrderStatus = async (req, res) => {
       });
     }
 
-    // Check if status change is allowed
-    const allowedStatuses = {
-      pending: ['confirmed', 'cancelled'],
-      confirmed: ['processing', 'cancelled'],
-      processing: ['shipped', 'cancelled'],
-      shipped: ['delivered'],
-      delivered: ['returned'],
-      cancelled: [],
-      returned: ['refunded'],
-      refunded: []
-    };
-
-    if (!allowedStatuses[order.status].includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: `Cannot change status from ${order.status} to ${status}`
-      });
-    }
-
-    // Update order
-    order.status = status;
-    if (notes) order.notes.internal = notes;
-
-    // Set timestamps based on status
-    if (status === 'shipped') {
-      order.shipping.shippedAt = new Date();
-    } else if (status === 'delivered') {
-      order.shipping.deliveredAt = new Date();
-    }
-
-    await order.save();
+    await order.updatePaymentStatus(status);
 
     res.json({
       success: true,
-      message: 'Order status updated successfully',
+      message: 'Payment status updated successfully',
       data: { order }
     });
   } catch (error) {
-    console.error('Update order status error:', error);
+    console.error('Update payment status error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -225,15 +460,22 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-// Cancel order
-const cancelOrder = async (req, res) => {
+// Update shipment status
+const updateShipmentStatus = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors',
+        errors: errors.array()
+      });
+    }
+
     const { id } = req.params;
-    const { reason } = req.body;
-    const userId = req.user.userId;
+    const { status } = req.body;
 
-    const order = await Order.findOne({ _id: id, userId, isActive: true });
-
+    const order = await Order.findById(id);
     if (!order) {
       return res.status(404).json({
         success: false,
@@ -241,25 +483,64 @@ const cancelOrder = async (req, res) => {
       });
     }
 
-    if (!order.canBeCancelled()) {
+    await order.updateShipmentStatus(status);
+
+    res.json({
+      success: true,
+      message: 'Shipment status updated successfully',
+      data: { order }
+    });
+  } catch (error) {
+    console.error('Update shipment status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Apply discount to order
+const applyDiscount = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        message: 'Order cannot be cancelled at this stage'
+        message: 'Validation errors',
+        errors: errors.array()
       });
     }
 
-    order.status = 'cancelled';
-    if (reason) order.notes.customer = reason;
+    const { id } = req.params;
+    const { discount } = req.body;
 
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    if (discount > order.totalPrice) {
+      return res.status(400).json({
+        success: false,
+        message: 'Discount cannot be greater than total price'
+      });
+    }
+
+    order.discount = discount;
+    order.finalPrice = order.totalPrice - discount;
     await order.save();
 
     res.json({
       success: true,
-      message: 'Order cancelled successfully',
+      message: 'Discount applied successfully',
       data: { order }
     });
   } catch (error) {
-    console.error('Cancel order error:', error);
+    console.error('Apply discount error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -271,8 +552,17 @@ const cancelOrder = async (req, res) => {
 // Get order statistics
 const getOrderStats = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors',
+        errors: errors.array()
+      });
+    }
+
+    const { userId } = req.body;
     const { startDate, endDate } = req.query;
-    const userId = req.user.userId;
 
     const stats = await Order.getOrderStats(userId, startDate, endDate);
 
@@ -296,8 +586,8 @@ const getAllOrders = async (req, res) => {
     const { 
       page = 1, 
       limit = 20, 
-      status, 
       paymentStatus,
+      shipmentStatus,
       startDate,
       endDate,
       sortBy = 'createdAt',
@@ -309,8 +599,8 @@ const getAllOrders = async (req, res) => {
     const skip = (pageNum - 1) * limitNum;
 
     const filter = { isActive: true };
-    if (status) filter.status = status;
-    if (paymentStatus) filter['payment.status'] = paymentStatus;
+    if (paymentStatus) filter.paymentStatus = paymentStatus;
+    if (shipmentStatus) filter.shipmentStatus = shipmentStatus;
     if (startDate || endDate) {
       filter.createdAt = {};
       if (startDate) filter.createdAt.$gte = new Date(startDate);
@@ -321,7 +611,6 @@ const getAllOrders = async (req, res) => {
     sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
     const orders = await Order.find(filter)
-      .populate('userId', 'firstName lastName email')
       .sort(sort)
       .skip(skip)
       .limit(limitNum)
@@ -329,10 +618,16 @@ const getAllOrders = async (req, res) => {
 
     const total = await Order.countDocuments(filter);
 
+    // Add order numbers
+    const ordersWithNumber = orders.map(order => ({
+      ...order,
+      orderNumber: `ORD-${order.createdAt.getTime()}-${order._id.toString().slice(-6)}`
+    }));
+
     res.json({
       success: true,
       data: {
-        orders,
+        orders: ordersWithNumber,
         pagination: {
           currentPage: pageNum,
           totalPages: Math.ceil(total / limitNum),
@@ -354,10 +649,12 @@ const getAllOrders = async (req, res) => {
 
 module.exports = {
   createOrder,
+  addOrderItems,
   getUserOrders,
   getOrderById,
-  updateOrderStatus,
-  cancelOrder,
+  updatePaymentStatus,
+  updateShipmentStatus,
+  applyDiscount,
   getOrderStats,
   getAllOrders
 };

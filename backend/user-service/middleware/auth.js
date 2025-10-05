@@ -92,8 +92,38 @@ const optionalAuth = async (req, res, next) => {
   }
 };
 
+// Internal service authentication (for service-to-service calls)
+const internalAuth = async (req, res, next) => {
+  try {
+    const serviceHeader = req.header('x-service-token');
+    const expectedServiceToken = process.env.INTERNAL_SERVICE_TOKEN || 'internal-service-secret';
+    
+    if (!serviceHeader || serviceHeader !== expectedServiceToken) {
+      return res.status(401).json({
+        success: false,
+        message: 'Access denied. Invalid service token.'
+      });
+    }
+
+    // Set user ID from header if provided
+    const userId = req.header('x-user-id');
+    if (userId) {
+      req.user = { userId };
+    }
+    
+    next();
+  } catch (error) {
+    console.error('Internal service authentication error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
 module.exports = {
   authenticate,
   authorize,
-  optionalAuth
+  optionalAuth,
+  internalAuth
 };
