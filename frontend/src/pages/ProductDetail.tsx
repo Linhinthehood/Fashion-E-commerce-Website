@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { buildUrl } from '../utils/api'
+import { productApi, variantApi } from '../utils/apiService'
 
 type Product = {
   _id: string
@@ -31,21 +31,7 @@ type Variant = {
   sku?: string
 }
 
-type ProductDetailResponse = {
-  success: boolean
-  data: {
-    product: Product
-  }
-  message?: string
-}
-
-type VariantsResponse = {
-  success: boolean
-  data: {
-    variants: Variant[]
-  }
-  message?: string
-}
+// Removed unused types
 
 function formatCurrencyVND(amount: number): string {
   try {
@@ -86,29 +72,32 @@ export default function ProductDetail() {
         setLoading(true)
         setError(null)
 
-        // Fetch product details
-        const productUrl = buildUrl(`/products/${id}`)
-        const productResponse = await fetch(productUrl)
-        const productData: ProductDetailResponse = await productResponse.json()
+        // Fetch product details using productApi
+        const productResponse = await productApi.getProduct(id)
         
-        if (!productData.success) {
-          throw new Error(productData.message || 'Failed to load product')
+        if (!productResponse.success) {
+          throw new Error(productResponse.message || 'Failed to load product')
         }
 
-        setProduct(productData.data.product)
+        // Type assertion for product data
+        const productData = productResponse.data as { product: Product }
+        setProduct(productData.product)
 
-        // Fetch variants for this product
-        const variantsUrl = buildUrl(`/variants/product/${id}`)
-        const variantsResponse = await fetch(variantsUrl)
-        const variantsData: VariantsResponse = await variantsResponse.json()
+        // Fetch variants for this product using variantApi
+        const variantsResponse = await variantApi.getVariantsByProduct(id)
         
-        if (variantsData.success && variantsData.data.variants.length > 0) {
-          const activeVariants = variantsData.data.variants.filter(v => v.status === 'Active')
-          setVariants(activeVariants)
-          
-          // Auto-select first variant if none selected
-          if (activeVariants.length > 0 && !selectedVariant) {
-            setSelectedVariant(activeVariants[0])
+        if (variantsResponse.success && variantsResponse.data) {
+          const variantsData = variantsResponse.data as { variants: Variant[] }
+          if (variantsData.variants.length > 0) {
+            const activeVariants = variantsData.variants.filter((v: Variant) => v.status === 'Active')
+            setVariants(activeVariants)
+            
+            // Auto-select first variant if none selected
+            if (activeVariants.length > 0 && !selectedVariant) {
+              setSelectedVariant(activeVariants[0])
+            }
+          } else {
+            setVariants([])
           }
         } else {
           setVariants([])

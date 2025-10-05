@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import ProductCard from '../components/ProductCard'
-import { buildUrl } from '../utils/api'
+import { productApi } from '../utils/apiService'
 
 type Product = {
   _id: string
@@ -19,16 +19,7 @@ type Product = {
   updatedAt: string
 }
 
-type ProductsResponse = {
-  success: boolean
-  data: {
-    products: Product[]
-    total: number
-    totalPages: number
-    currentPage: number
-  }
-  message?: string
-}
+// Removed unused type
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -53,27 +44,37 @@ export default function ProductsPage() {
         setLoading(true)
         setError(null)
         
-        const params = new URLSearchParams()
-        params.append('page', String(page))
-        params.append('limit', '12')
-        
-        // Add filters
-        if (filters.brand) params.append('brand', filters.brand)
-        if (filters.gender) params.append('gender', filters.gender)
-        if (filters.color) params.append('color', filters.color)
-        if (filters.categoryId) params.append('categoryId', filters.categoryId)
-        if (filters.search) params.append('search', filters.search)
-        
-        const response = await fetch(buildUrl(`/products?${params.toString()}`))
-        const json: ProductsResponse = await response.json()
-        
-        if (!json.success) {
-          throw new Error(json.message || 'Failed to load products')
+        // Prepare API parameters
+        const apiParams: any = {
+          page,
+          limit: 12
         }
         
-        setProducts(json.data.products)
-        setTotalPages(json.data.totalPages)
-        setTotalProducts(json.data.total)
+        // Add filters
+        if (filters.brand) apiParams.brand = filters.brand
+        if (filters.gender) apiParams.gender = filters.gender
+        if (filters.color) apiParams.color = filters.color
+        if (filters.categoryId) apiParams.categoryId = filters.categoryId
+        if (filters.search) apiParams.search = filters.search
+        
+        // Use productApi instead of direct fetch
+        const response = await productApi.getProducts(apiParams)
+        
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to load products')
+        }
+        
+        // Type assertion for response data
+        const data = response.data as {
+          products: Product[]
+          total: number
+          totalPages: number
+          currentPage: number
+        }
+        
+        setProducts(data.products)
+        setTotalPages(data.totalPages)
+        setTotalProducts(data.total)
         
       } catch (e: any) {
         console.error('Error fetching products:', e)

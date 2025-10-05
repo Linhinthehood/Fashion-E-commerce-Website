@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useState } from 'react'
+import { useAuth } from '../contexts/AuthContext'
 
 const menus = [
   {
@@ -29,6 +30,7 @@ const menus = [
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user, isAuthenticated, logout } = useAuth()
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm">
@@ -145,18 +147,64 @@ export default function Header() {
               Liên hệ
             </NavLink>
 
-            {/* Login Link */}
-            <NavLink
-              to="/login"
-              className="ml-4 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg 
-                         hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transition-all duration-200 
-                         flex items-center gap-2 group"
-            >
-              <svg className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-              </svg>
-              <span className="text-sm font-medium">Đăng nhập</span>
-            </NavLink>
+            {/* User Menu */}
+            {isAuthenticated ? (
+              <div className="ml-4 relative group">
+                <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg 
+                           hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-200">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className="text-sm font-medium">{user?.name}</span>
+                  <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {/* User Dropdown */}
+                <div className="absolute right-0 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                               group-hover:translate-y-0 translate-y-2 transition-all duration-300 ease-out transform
+                               bg-white rounded-xl shadow-xl border border-gray-100 mt-2 min-w-48 z-50">
+                  <div className="py-3">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-blue-600 font-medium">{user?.role}</p>
+                    </div>
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/orders"
+                      className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      Orders
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <NavLink
+                to="/login"
+                className="ml-4 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg 
+                           hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transition-all duration-200 
+                           flex items-center gap-2 group"
+              >
+                <svg className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                <span className="text-sm font-medium">Đăng nhập</span>
+              </NavLink>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -220,13 +268,47 @@ export default function Header() {
             >
               Liên hệ
             </NavLink>
-            <NavLink
-              to="/login"
-              className="block px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Đăng nhập
-            </NavLink>
+            {isAuthenticated ? (
+              <div className="px-4 py-3 border-t border-gray-200">
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                  <p className="text-xs text-gray-500">{user?.email}</p>
+                </div>
+                <div className="space-y-2">
+                  <Link
+                    to="/profile"
+                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    to="/orders"
+                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Orders
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout()
+                      setIsMenuOpen(false)
+                    }}
+                    className="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <NavLink
+                to="/login"
+                className="block px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Đăng nhập
+              </NavLink>
+            )}
           </div>
         </div>
       </div>
