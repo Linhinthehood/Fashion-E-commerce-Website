@@ -1,5 +1,5 @@
 const express = require('express');
-const { body, param, query } = require('express-validator');
+const { validationResult } = require('express-validator');
 const {
   getCustomerProfile,
   updateCustomerProfile,
@@ -11,112 +11,36 @@ const {
   deleteAddress
 } = require('../controllers/customerController');
 const { authenticate } = require('../middleware/auth');
+const { customerValidation, paramValidation } = require('../middleware/validation');
+const { requireCustomer, requireAdmin, canManageAddresses } = require('../middleware/authorization');
 
 const router = express.Router();
 
-// Validation rules for customer profile update
-const updateCustomerValidation = [
-  body('addresses')
-    .optional()
-    .isArray()
-    .withMessage('Addresses must be an array'),
-  body('addresses.*')
-    .optional()
-    .isMongoId()
-    .withMessage('Each address must be a valid ObjectId')
-];
+// Validation error handler middleware
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      message: 'Validation errors',
+      errors: errors.array()
+    });
+  }
+  next();
+};
 
-// Validation rules for loyalty points
-const updateLoyaltyPointsValidation = [
-  body('points')
-    .isNumeric()
-    .withMessage('Points must be a number')
-    .custom((value) => {
-      if (value < 0) {
-        throw new Error('Points cannot be negative');
-      }
-      return true;
-    }),
-  body('operation')
-    .optional()
-    .isIn(['add', 'subtract', 'set'])
-    .withMessage('Operation must be one of: add, subtract, set')
-];
+// Customer routes (require authentication and customer role)
+router.get('/profile', authenticate, requireCustomer, getCustomerProfile);
+router.put('/profile', authenticate, requireCustomer, customerValidation.updateProfile, handleValidationErrors, updateCustomerProfile);
+router.put('/loyalty-points', authenticate, requireCustomer, customerValidation.updateLoyaltyPoints, handleValidationErrors, updateLoyaltyPoints);
 
-// Validation for customer ID parameter
-const customerIdValidation = [
-  param('customerId')
-    .isMongoId()
-    .withMessage('Invalid customer ID')
-];
+// Address management routes (require authentication and customer role)
+router.post('/addresses', authenticate, requireCustomer, customerValidation.addAddress, handleValidationErrors, addAddress);
+router.put('/addresses/:addressId', authenticate, canManageAddresses, paramValidation.addressId, customerValidation.updateAddress, handleValidationErrors, updateAddress);
+router.delete('/addresses/:addressId', authenticate, canManageAddresses, paramValidation.addressId, handleValidationErrors, deleteAddress);
 
-// Validation for address operations
-const addAddressValidation = [
-  body('name')
-    .trim()
-    .isLength({ min: 1, max: 100 })
-    .withMessage('Address name is required and must be less than 100 characters'),
-  body('addressInfo')
-    .trim()
-    .isLength({ min: 1, max: 500 })
-    .withMessage('Address info is required and must be less than 500 characters'),
-  body('isDefault')
-    .optional()
-    .isBoolean()
-    .withMessage('isDefault must be a boolean')
-];
-
-const updateAddressValidation = [
-  body('name')
-    .optional()
-    .trim()
-    .isLength({ min: 1, max: 100 })
-    .withMessage('Address name must be less than 100 characters'),
-  body('addressInfo')
-    .optional()
-    .trim()
-    .isLength({ min: 1, max: 500 })
-    .withMessage('Address info must be less than 500 characters'),
-  body('isDefault')
-    .optional()
-    .isBoolean()
-    .withMessage('isDefault must be a boolean')
-];
-
-const addressIdValidation = [
-  param('addressId')
-    .isMongoId()
-    .withMessage('Invalid address ID')
-];
-
-// Validation for query parameters
-const getAllCustomersValidation = [
-  query('page')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Page must be a positive integer'),
-  query('limit')
-    .optional()
-    .isInt({ min: 1, max: 100 })
-    .withMessage('Limit must be between 1 and 100'),
-  query('status')
-    .optional()
-    .isIn(['active', 'inactive'])
-    .withMessage('Status must be either active or inactive')
-];
-
-// Customer routes (require authentication)
-router.get('/profile', authenticate, getCustomerProfile);
-router.put('/profile', authenticate, updateCustomerValidation, updateCustomerProfile);
-router.put('/loyalty-points', authenticate, updateLoyaltyPointsValidation, updateLoyaltyPoints);
-
-// Address management routes
-router.post('/addresses', authenticate, addAddressValidation, addAddress);
-router.put('/addresses/:addressId', authenticate, addressIdValidation, updateAddressValidation, updateAddress);
-router.delete('/addresses/:addressId', authenticate, addressIdValidation, deleteAddress);
-
-// Admin/Manager routes (require authentication and proper role)
-router.get('/all', authenticate, getAllCustomersValidation, getAllCustomers);
-router.get('/:customerId', authenticate, customerIdValidation, getCustomerById);
+// Admin/Manager routes (require authentication and admin role)
+router.get('/all', authenticate, requireAdmin, customerValidation.getAllCustomers, handleValidationErrors, getAllCustomers);
+router.get('/:customerId', authenticate, requireAdmin, paramValidation.customerId, handleValidationErrors, getCustomerById);
 
 module.exports = router;

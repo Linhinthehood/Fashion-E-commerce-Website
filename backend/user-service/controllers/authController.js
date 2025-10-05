@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Customer = require('../models/Customer');
 const Address = require('../models/Address');
-const { validationResult } = require('express-validator');
 
 // Generate JWT Token
 const generateToken = (userId) => {
@@ -14,14 +13,6 @@ const generateToken = (userId) => {
 // Register new user
 const register = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation errors',
-        errors: errors.array()
-      });
-    }
 
     const { name, email, password, dob, phoneNumber, gender, role } = req.body;
 
@@ -81,14 +72,6 @@ const register = async (req, res) => {
 // Login user
 const login = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation errors',
-        errors: errors.array()
-      });
-    }
 
     const { email, password } = req.body;
 
@@ -180,14 +163,6 @@ const getProfile = async (req, res) => {
 // Update user profile
 const updateProfile = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation errors',
-        errors: errors.array()
-      });
-    }
 
     const { name, phoneNumber, avatar } = req.body;
     const userId = req.user.userId;
@@ -230,14 +205,6 @@ const updateProfile = async (req, res) => {
 // Change password
 const changePassword = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation errors',
-        errors: errors.array()
-      });
-    }
 
     const { currentPassword, newPassword } = req.body;
     const userId = req.user.userId;
