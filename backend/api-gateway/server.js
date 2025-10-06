@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const http = require('http');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 require('dotenv').config();
 
 const app = express();
@@ -16,9 +17,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 app.use(helmet());
 app.use(morgan('dev'));
 
-// Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// NOTE: Do not use body parsers here; we want to stream bodies to services
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -54,80 +53,50 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Simple proxy function
-const createServiceProxy = (targetUrl, serviceName) => {
-  return async (req, res) => {
-    try {
-      console.log(`🔄 Proxying ${req.method} ${req.originalUrl} to ${serviceName} (${targetUrl})`);
-      
-      const url = new URL(targetUrl);
-      const options = {
-        hostname: url.hostname,
-        port: url.port,
-        path: req.originalUrl,
-        method: req.method,
-        headers: {
-          'Content-Type': 'application/json',
-          ...req.headers
-        }
-      };
-
-      const proxyReq = http.request(options, (proxyRes) => {
-        let data = '';
-        
-        proxyRes.on('data', (chunk) => {
-          data += chunk;
-        });
-        
-        proxyRes.on('end', () => {
-          res.status(proxyRes.statusCode);
-          
-          // Set CORS headers
-          const origin = req.headers.origin;
-          if (origin && [
-            'http://localhost:3000',
-            'http://localhost:5173', 
-            'http://localhost:3001',
-            'http://localhost:3002',
-            'http://localhost:3003'
-          ].includes(origin)) {
-            res.setHeader('Access-Control-Allow-Origin', origin);
-          }
-          res.setHeader('Access-Control-Allow-Credentials', 'true');
-          res.setHeader('X-Served-By', serviceName);
-          
-          res.send(data);
-        });
-      });
-
-      proxyReq.on('error', (err) => {
-        console.error(`Proxy error for ${serviceName}:`, err.message);
-        if (!res.headersSent) {
-          res.status(503).json({
-            success: false,
-            message: `${serviceName} service is currently unavailable`,
-            error: process.env.NODE_ENV === 'development' ? err.message : undefined
-          });
-        }
-      });
-
-      if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
-        proxyReq.write(JSON.stringify(req.body));
+// Build a robust streaming proxy
+const buildServiceProxy = (targetUrl, serviceName) => {
+  return createProxyMiddleware({
+    target: targetUrl,
+    changeOrigin: true,
+    xfwd: true,
+    ws: true,
+    proxyTimeout: 30_000,
+    timeout: 30_000,
+    secure: false,
+    logLevel: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+    pathRewrite: (path, req) => {
+      // Preserve full original URL so mounted path isn't stripped by Express
+      return req.originalUrl || path;
+    },
+    onProxyReq: (proxyReq, req, res) => {
+      // Ensure CORS passthrough headers
+      const origin = req.headers.origin;
+      if (origin && [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://localhost:3003',
+        FRONTEND_URL
+      ].includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
       }
-      
-      proxyReq.end();
-      
-    } catch (error) {
-      console.error(`Proxy error for ${serviceName}:`, error);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('X-Served-By', serviceName);
+
+      // Do not write body manually; let http-proxy-middleware stream the original request body
+    },
+    onError: (err, req, res) => {
+      console.error(`Proxy error for ${serviceName}:`, err.message);
       if (!res.headersSent) {
-        res.status(500).json({
+        res.status(503).json({
           success: false,
-          message: 'Internal server error',
-          error: process.env.NODE_ENV === 'development' ? error.message : undefined
+          message: `${serviceName} service is currently unavailable`,
+          error: process.env.NODE_ENV === 'development' ? err.message : undefined
         });
       }
     }
-  };
+  });
 };
 
 // Debug middleware
@@ -136,17 +105,22 @@ app.use('/api/*', (req, res, next) => {
   next();
 });
 
+// Handle preflight quickly
+app.options('*', (req, res) => {
+  res.sendStatus(204);
+});
+
 // User Service routes
-app.use('/api/auth', createServiceProxy(USER_SERVICE_URL, 'user-service'));
-app.use('/api/customers', createServiceProxy(USER_SERVICE_URL, 'user-service'));
+app.use('/api/auth', buildServiceProxy(USER_SERVICE_URL, 'user-service'));
+app.use('/api/customers', buildServiceProxy(USER_SERVICE_URL, 'user-service'));
 
 // Order Service routes
-app.use('/api/orders', createServiceProxy(ORDER_SERVICE_URL, 'order-service'));
+app.use('/api/orders', buildServiceProxy(ORDER_SERVICE_URL, 'order-service'));
 
 // Product Service routes
-app.use('/api/products', createServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
-app.use('/api/categories', createServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
-app.use('/api/variants', createServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
+app.use('/api/products', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
+app.use('/api/categories', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
+app.use('/api/variants', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
 
 // 404 for non-API routes
 app.use('*', (req, res) => {
