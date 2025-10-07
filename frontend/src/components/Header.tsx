@@ -16,7 +16,8 @@ const menus = [
     path: '/c/accessories',
     children: [
       { label: 'Hat', path: '/c/accessories/hat' },
-      { label: 'Watch', path: '/c/accessories/watch' }
+      { label: 'Watch', path: '/c/accessories/watch' },
+      { label: 'Wallet', path: '/c/accessories/wallet' } // Add this
     ]
   },
   {
