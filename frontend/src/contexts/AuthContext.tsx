@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
-import { authApi } from '../utils/apiService'
+import { authAPI } from '../utils/api'
 
 type User = {
   _id: string
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (token && userData) {
         try {
           // Verify token by fetching user profile
-          const response = await authApi.getProfile()
+          const response = await authAPI.getProfile()
           
           if (response.success && response.data) {
             setUser(response.data as User)
@@ -84,7 +84,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await authApi.login({ email, password }) as LoginResponse
+      // Use the same authAPI.login that works
+      const response = await authAPI.login(email, password) as LoginResponse
 
       if (response.success && response.data) {
         // Store token and user data
