@@ -97,4 +97,106 @@ export const API_ENDPOINTS = {
   },
 } as const;
 
+export const authAPI = {
+  register: async (userData: {
+    name: string
+    email: string
+    password: string
+    phoneNumber?: string
+    dob?: string
+    gender?: string
+    role?: string
+  }) => {
+    try {
+      // Remove the extra /api since USER_SERVICE_URL already includes it
+      const response = await fetch(`${USER_SERVICE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData)
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw {
+          response: {
+            status: response.status,
+            data
+          }
+        }
+      }
+
+      return data
+    } catch (error) {
+      console.error('Register API Error:', error)
+      throw error
+    }
+  },
+
+  login: async (email: string, password: string) => {
+    try {
+      // Remove the extra /api since USER_SERVICE_URL already includes it
+      const response = await fetch(`${USER_SERVICE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw {
+          response: {
+            status: response.status,
+            data
+          }
+        }
+      }
+
+      return data
+    } catch (error) {
+      console.error('Login API Error:', error)
+      throw error
+    }
+  },
+
+  getProfile: async () => {
+    try {
+      const token = localStorage.getItem('token')
+      
+      if (!token) {
+        throw new Error('No token found')
+      }
+
+      const response = await fetch(`${USER_SERVICE_URL}/auth/profile`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw {
+          response: {
+            status: response.status,
+            data
+          }
+        }
+      }
+
+      return data
+    } catch (error) {
+      console.error('Get Profile API Error:', error)
+      throw error
+    }
+  }
+}
+
 
