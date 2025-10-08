@@ -1,111 +1,102 @@
 version: '3.8'
 
 services:
-  # MongoDB Database
-  mongodb:
-    image: mongo:7.0
-    container_name: fashion_ecommerce_mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
-      MONGO_INITDB_DATABASE: fashion_ecommerce
-    volumes:
-      - mongodb_data:/data/db
-      - ./docker/mongodb/init:/docker-entrypoint-initdb.d
-    networks:
-      - fashion_network
-
   # User Service
   user-service:
     build:
-      context: ./services/user-service
+      context: ./backend/user-service
       dockerfile: Dockerfile
     container_name: fashion_ecommerce_user_service
     restart: unless-stopped
     ports:
       - "3001:3001"
+    env_file:
+      - .env
     environment:
       - PORT=3001
-      - MONGODB_URI=mongodb://admin:password123@mongodb:27017/fashion_ecommerce_users?authSource=admin
-      - JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
-      - JWT_EXPIRE=7d
-      - NODE_ENV=development
-      - FRONTEND_URL=http://localhost:3000
-    depends_on:
-      - mongodb
+      - MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/users?retryWrites=true&w=majority&appName=Cluster0
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE=${JWT_EXPIRE}
+      - NODE_ENV=${NODE_ENV}
+      - FRONTEND_URL=http://localhost:5173
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
     networks:
       - fashion_network
     volumes:
-      - ./services/user-service:/app
+      - ./backend/user-service:/app
       - /app/node_modules
 
   # Product Service
   product-service:
     build:
-      context: ./services/product-service
+      context: ./backend/product-service
       dockerfile: Dockerfile
     container_name: fashion_ecommerce_product_service
     restart: unless-stopped
     ports:
       - "3002:3002"
+    env_file:
+      - .env
     environment:
       - PORT=3002
-      - MONGODB_URI=mongodb://admin:password123@mongodb:27017/fashion_ecommerce_products?authSource=admin
-      - NODE_ENV=development
+      - MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/products?retryWrites=true&w=majority&appName=Cluster0
+      - NODE_ENV=${NODE_ENV}
       - FRONTEND_URL=http://localhost:3000
-    depends_on:
-      - mongodb
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     networks:
       - fashion_network
     volumes:
-      - ./services/product-service:/app
+      - ./backend/product-service:/app
       - /app/node_modules
 
   # Order Service
   order-service:
     build:
-      context: ./services/order-service
+      context: ./backend/order-service
       dockerfile: Dockerfile
     container_name: fashion_ecommerce_order_service
     restart: unless-stopped
     ports:
       - "3003:3003"
+    env_file:
+      - .env
     environment:
       - PORT=3003
-      - MONGODB_URI=mongodb://admin:password123@mongodb:27017/fashion_ecommerce_orders?authSource=admin
-      - NODE_ENV=development
-      - FRONTEND_URL=http://localhost:3000
+      - MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/orders?retryWrites=true&w=majority&appName=Cluster0
+      - NODE_ENV=${NODE_ENV}
+      - FRONTEND_URL=http://localhost:5173
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
     depends_on:
-      - mongodb
       - user-service
       - product-service
     networks:
       - fashion_network
     volumes:
-      - ./services/order-service:/app
+      - ./backend/order-service:/app
       - /app/node_modules
 
   # API Gateway
   api-gateway:
     build:
-      context: ./services/api-gateway
+      context: ./backend/api-gateway
       dockerfile: Dockerfile
     container_name: fashion_ecommerce_api_gateway
     restart: unless-stopped
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
       - PORT=3000
-      - NODE_ENV=development
-      - FRONTEND_URL=http://localhost:3000
+      - FRONTEND_URL=http://localhost:5173
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - user-service
       - product-service
@@ -113,10 +104,10 @@ services:
     networks:
       - fashion_network
     volumes:
-      - ./services/api-gateway:/app
+      - ./backend/api-gateway:/app
       - /app/node_modules
 
-  # Frontend (Development)
+  # Frontend
   frontend:
     build:
       context: ./frontend
@@ -124,29 +115,11 @@ services:
     container_name: fashion_ecommerce_frontend
     restart: unless-stopped
     ports:
-      - "3000:80"
+      - "5173:80"
     environment:
       - REACT_APP_API_URL=http://localhost:3000/api
     depends_on:
       - api-gateway
-    networks:
-      - fashion_network
-
-  # MongoDB Express (Database Admin UI)
-  mongo-express:
-    image: mongo-express:1.0.0
-    container_name: fashion_ecommerce_mongo_express
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
-      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: admin123
-    depends_on:
-      - mongodb
     networks:
       - fashion_network
 
