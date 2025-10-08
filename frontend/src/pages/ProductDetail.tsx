@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { productApi, variantApi } from '../utils/apiService'
+import { useCart, type CartItem } from '../contexts/CartContext'
 
 type Product = {
   _id: string
@@ -43,6 +44,7 @@ function formatCurrencyVND(amount: number): string {
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>()
+  const { addToCart } = useCart()
   const [product, setProduct] = useState<Product | null>(null)
   const [variants, setVariants] = useState<Variant[]>([])
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
@@ -125,19 +127,25 @@ export default function ProductDetail() {
   }
 
   const handleAddToCart = () => {
-    if (!selectedVariant) {
+    if (!selectedVariant || !product) {
       alert('Vui lòng chọn size')
       return
     }
     
-    console.log('Adding to cart:', {   
-      productId: product?._id,
+    const cartItem: CartItem = {
+      productId: product._id,
       variantId: selectedVariant._id,
+      productName: product.name,
+      brand: product.brand,
+      color: product.color,
       size: selectedVariant.size,
+      price: selectedVariant.price || product.defaultPrice || 0,
       quantity,
-      price: selectedVariant.price || product?.defaultPrice
-    })
+      image: product.images && product.images.length > 0 ? product.images[0] : '',
+      sku: selectedVariant.sku
+    }
     
+    addToCart(cartItem)
     alert(`Đã thêm ${quantity} ${selectedVariant.size} vào giỏ hàng!`)
   }
 

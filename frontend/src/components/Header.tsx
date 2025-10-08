@@ -1,6 +1,7 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useCart } from '../contexts/CartContext'
 
 const menus = [
   {
@@ -32,6 +33,7 @@ const menus = [
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { user, isAuthenticated, logout } = useAuth()
+  const { cartItemCount, cartItems, getTotalPrice } = useCart()
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm">
@@ -148,6 +150,72 @@ export default function Header() {
               Liên hệ
             </NavLink>
 
+            {/* Cart Icon */}
+            <div className="relative group">
+              <Link
+                to="/cart"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                           hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 text-gray-700 hover:text-gray-900"
+              >
+                <div className="relative">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+                  </svg>
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                      {cartItemCount > 99 ? '99+' : cartItemCount}
+                    </span>
+                  )}
+                </div>
+                <span>Giỏ hàng</span>
+              </Link>
+
+              {/* Cart Dropdown */}
+              {cartItems.length > 0 && (
+                <div className="absolute right-0 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                               group-hover:translate-y-0 translate-y-2 transition-all duration-300 ease-out transform
+                               bg-white rounded-xl shadow-xl border border-gray-100 mt-2 min-w-80 max-w-96 z-50">
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 mb-3">Giỏ hàng của bạn</h3>
+                    <div className="space-y-3 max-h-64 overflow-y-auto">
+                      {cartItems.slice(0, 3).map((item) => (
+                        <div key={`${item.productId}-${item.variantId}`} className="flex items-center gap-3">
+                          <img 
+                            src={item.image} 
+                            alt={item.productName}
+                            className="w-12 h-12 object-cover rounded-lg"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{item.productName}</p>
+                            <p className="text-xs text-gray-500">{item.brand} - {item.size}</p>
+                            <p className="text-xs text-gray-500">SL: {item.quantity}</p>
+                          </div>
+                          <div className="text-sm font-semibold text-red-600">
+                            {(item.price * item.quantity).toLocaleString('vi-VN')}₫
+                          </div>
+                        </div>
+                      ))}
+                      {cartItems.length > 3 && (
+                        <p className="text-xs text-gray-500 text-center">... và {cartItems.length - 3} sản phẩm khác</p>
+                      )}
+                    </div>
+                    <div className="border-t pt-3 mt-3">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="font-semibold text-gray-900">Tổng cộng:</span>
+                        <span className="font-bold text-red-600">{getTotalPrice().toLocaleString('vi-VN')}₫</span>
+                      </div>
+                      <Link
+                        to="/cart"
+                        className="block w-full text-center py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Xem giỏ hàng
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* User Menu */}
             {isAuthenticated ? (
               <div className="ml-4 relative group">
@@ -182,7 +250,7 @@ export default function Header() {
                       to="/orders"
                       className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                     >
-                      Orders
+                      Đơn hàng
                     </Link>
                     <button
                       onClick={logout}
@@ -288,7 +356,7 @@ export default function Header() {
                     className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Orders
+                    Đơn hàng
                   </Link>
                   <button
                     onClick={() => {
