@@ -38,9 +38,9 @@ export default function Login() {
       setLoading(true)
       setError(null)
 
-      const success = await login(formData.email, formData.password)
+      const result = await login(formData.email, formData.password)
 
-      if (success) {
+      if (result.success) {
         // Store remember me preference
         if (rememberMe) {
           localStorage.setItem('rememberMe', 'true')
@@ -52,7 +52,7 @@ export default function Login() {
         
         // Show success message briefly before redirect
         const redirectTimer = setTimeout(() => {
-          navigate('/products')
+          navigate(result.redirectPath || '/products')
         }, 500)
 
         return () => clearTimeout(redirectTimer)

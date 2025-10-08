@@ -22,9 +22,6 @@ services:
       - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
     networks:
       - fashion_network
-    volumes:
-      - ./backend/user-service:/app
-      - /app/node_modules
 
   # Product Service
   product-service:
@@ -47,9 +44,6 @@ services:
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     networks:
       - fashion_network
-    volumes:
-      - ./backend/product-service:/app
-      - /app/node_modules
 
   # Order Service
   order-service:
@@ -75,9 +69,6 @@ services:
       - product-service
     networks:
       - fashion_network
-    volumes:
-      - ./backend/order-service:/app
-      - /app/node_modules
 
   # API Gateway
   api-gateway:
@@ -103,9 +94,6 @@ services:
       - order-service
     networks:
       - fashion_network
-    volumes:
-      - ./backend/api-gateway:/app
-      - /app/node_modules
 
   # Frontend
   frontend:
@@ -117,7 +105,7 @@ services:
     ports:
       - "5173:80"
     environment:
-      - VITE_API_URL=http://api-gateway:3000/api
+      - VITE_API_URL=http://localhost:3000/api
     depends_on:
       - api-gateway
     networks:

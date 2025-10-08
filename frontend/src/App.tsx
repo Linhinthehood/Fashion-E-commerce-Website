@@ -5,6 +5,8 @@ import ProductsPage from './pages/ProductsPage'
 import ProductDetail from './pages/ProductDetail.tsx'
 import Login from './pages/Login.tsx'
 import Register from './pages/Register'
+import AdminPage from './pages/AdminPage'
+import StockClerkPage from './pages/StockClerkPage'
 import Header from './components/Header.tsx'
 import Footer from './components/Footer.tsx'
 import { AuthProvider } from './contexts/AuthContext'
@@ -24,6 +26,8 @@ function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/stock-clerk" element={<StockClerkPage />} />
             <Route path="/c/apparel" element={<ApparelPage />} />
             <Route path="/c/apparel/topwear" element={<ApparelPage />} />
             <Route path="/c/apparel/bottomwear" element={<ApparelPage />} />

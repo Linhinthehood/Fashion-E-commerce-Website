@@ -150,9 +150,9 @@ export const authApi = {
     name: string;
     email: string;
     password: string;
-    dob: string;
-    phoneNumber: string;
-    gender: 'Male' | 'Female' | 'Others';
+    dob?: string;
+    phoneNumber?: string;
+    gender?: 'Male' | 'Female' | 'Others';
     role?: 'Manager' | 'Stock Clerk' | 'Customer';
   }) => apiClient.post(API_ENDPOINTS.auth.register(), userData, false),
 

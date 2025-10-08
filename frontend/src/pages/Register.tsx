@@ -67,8 +67,8 @@ export default function Register() {
         password: formData.password,
         phoneNumber: formData.phoneNumber || undefined,
         dob: formData.dob || undefined,
-        gender: formData.gender || undefined,
-        role: 'Customer' // Backend expects 'Customer' with capital C
+        gender: (formData.gender as 'Male' | 'Female' | 'Others') || undefined,
+        role: 'Customer' as const // Backend expects 'Customer' with capital C
       }
 
       // Call backend register API

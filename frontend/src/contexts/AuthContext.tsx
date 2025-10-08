@@ -16,7 +16,7 @@ type AuthContextType = {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (email: string, password: string) => Promise<boolean>
+  login: (email: string, password: string) => Promise<{ success: boolean; redirectPath?: string }>
   logout: () => void
   updateUser: (userData: Partial<User>) => void
 }
@@ -82,10 +82,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth()
   }, [])
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; redirectPath?: string }> => {
     try {
       // Use the same authAPI.login that works
-      const response = await authAPI.login(email, password) as LoginResponse
+      const response = await authAPI.login({ email, password }) as LoginResponse
 
       if (response.success && response.data) {
         // Store token and user data
@@ -95,13 +95,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Update state
         setUser(response.data.user)
         
-        return true
+        // Determine redirect path based on user role
+        let redirectPath = '/products' // Default for Customer
+        
+        if (response.data.user.role === 'Manager') {
+          redirectPath = '/admin'
+        } else if (response.data.user.role === 'Stock Clerk') {
+          redirectPath = '/stock-clerk'
+        }
+        
+        return { success: true, redirectPath }
       }
       
-      return false
+      return { success: false }
     } catch (error) {
       console.error('Login error:', error)
-      return false
+      return { success: false }
     }
   }
 
