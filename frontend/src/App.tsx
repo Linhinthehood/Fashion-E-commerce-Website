@@ -16,6 +16,7 @@ import { CartProvider } from './contexts/CartContext'
 import ApparelPage from './pages/ApparelPage.tsx'
 import AccessoriesPage from './pages/AccessoriesPage'
 import FootwearPage from './pages/FootwearPage'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<AdminPage />} />
