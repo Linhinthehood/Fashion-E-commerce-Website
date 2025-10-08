@@ -8,7 +8,7 @@ import Register from './pages/Register'
 import Header from './components/Header.tsx'
 import Footer from './components/Footer.tsx'
 import { AuthProvider } from './contexts/AuthContext'
-import ApparelPage from './pages/ApparelPage .tsx'
+import ApparelPage from './pages/ApparelPage.tsx'
 import AccessoriesPage from './pages/AccessoriesPage'
 import FootwearPage from './pages/FootwearPage'
 

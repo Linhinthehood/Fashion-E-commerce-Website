@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom' // For future use
 import ProductCard from '../components/ProductCard'
 import { productApi } from '../utils/apiService'
 
@@ -28,8 +28,7 @@ export default function FootwearPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
-  const [searchParams, setSearchParams] = useSearchParams()
-  const navigate = useNavigate()
+  // const navigate = useNavigate() // For future use
   
   // Filter states - footwear only has 'shoe' subcategory
   const [filters, setFilters] = useState({

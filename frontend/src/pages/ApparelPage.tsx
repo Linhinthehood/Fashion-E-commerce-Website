@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom' // Add useNavigate
+import { useNavigate } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { productApi } from '../utils/apiService'
 
@@ -28,12 +28,11 @@ export default function ApparelPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
-  const [searchParams, setSearchParams] = useSearchParams()
-  const navigate = useNavigate() // Add this
+  const navigate = useNavigate()
   
   // Filter states
   const [filters, setFilters] = useState({
-    subcategory: searchParams.get('type') || '', // topwear or bottomwear
+    subcategory: '', // topwear or bottomwear
     brand: '',
     gender: '',
     color: '',
@@ -207,16 +206,16 @@ export default function ApparelPage() {
     navigate('/c/apparel') // Navigate to base apparel page
   }
 
-  // Count products by type for display
-  const topwearCount = products.filter(p => 
-    p.name.toLowerCase().includes('áo') || 
-    p.name.toLowerCase().includes('shirt')
-  ).length
+  // Count products by type for display (for future use)
+  // const topwearCount = products.filter(p => 
+  //   p.name.toLowerCase().includes('áo') || 
+  //   p.name.toLowerCase().includes('shirt')
+  // ).length
   
-  const bottomwearCount = products.filter(p => 
-    p.name.toLowerCase().includes('quần') || 
-    p.name.toLowerCase().includes('pants')
-  ).length
+  // const bottomwearCount = products.filter(p => 
+  //   p.name.toLowerCase().includes('quần') || 
+  //   p.name.toLowerCase().includes('pants')
+  // ).length
 
   return (
     <div className="min-h-screen bg-gray-50">

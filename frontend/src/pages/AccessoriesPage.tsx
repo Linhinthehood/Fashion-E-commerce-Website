@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { productApi } from '../utils/apiService'
 
@@ -28,7 +28,6 @@ export default function AccessoriesPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
-  const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
   
   // Filter states
@@ -211,22 +210,22 @@ export default function AccessoriesPage() {
     navigate('/c/accessories')
   }
 
-  // Count products by type
-  const hatCount = products.filter(p => 
-    p.name.toLowerCase().includes('mũ') || 
-    p.name.toLowerCase().includes('hat') ||
-    p.name.toLowerCase().includes('cap')
-  ).length
+  // Count products by type (for future use)
+  // const hatCount = products.filter(p => 
+  //   p.name.toLowerCase().includes('mũ') || 
+  //   p.name.toLowerCase().includes('hat') ||
+  //   p.name.toLowerCase().includes('cap')
+  // ).length
   
-  const watchCount = products.filter(p => 
-    p.name.toLowerCase().includes('đồng hồ') || 
-    p.name.toLowerCase().includes('watch')
-  ).length
+  // const watchCount = products.filter(p => 
+  //   p.name.toLowerCase().includes('đồng hồ') || 
+  //   p.name.toLowerCase().includes('watch')
+  // ).length
 
-  const walletCount = products.filter(p => 
-    p.name.toLowerCase().includes('ví') || 
-    p.name.toLowerCase().includes('wallet')
-  ).length
+  // const walletCount = products.filter(p => 
+  //   p.name.toLowerCase().includes('ví') || 
+  //   p.name.toLowerCase().includes('wallet')
+  // ).length
 
   return (
     <div className="min-h-screen bg-gray-50">
