@@ -102,12 +102,12 @@ orderSchema.index({ shipmentStatus: 1 });
 orderSchema.index({ createdAt: -1 });
 orderSchema.index({ finalPrice: -1 });
 
-// Virtual for order number (for display purposes)
-orderSchema.virtual('orderNumber').get(function() {
+// Method to generate order number
+orderSchema.methods.generateOrderNumber = function() {
   const timestamp = this.createdAt.getTime();
   const id = this._id.toString().slice(-6);
   return `ORD-${timestamp}-${id}`;
-});
+};
 
 // Method to update payment status and add to history
 orderSchema.methods.updatePaymentStatus = function(newStatus) {
