@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom' // Add useNavigate
 import ProductCard from '../components/ProductCard'
 import { productApi } from '../utils/apiService'
 
@@ -19,7 +20,7 @@ type Product = {
   updatedAt: string
 }
 
-export default function ProductsPage() {
+export default function ApparelPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [page, setPage] = useState(1)
   const [totalProducts, setTotalProducts] = useState(0)
@@ -27,13 +28,15 @@ export default function ProductsPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate() // Add this
   
   // Filter states
   const [filters, setFilters] = useState({
+    subcategory: searchParams.get('type') || '', // topwear or bottomwear
     brand: '',
     gender: '',
     color: '',
-    categoryId: '',
     search: ''
   })
 
@@ -41,7 +44,6 @@ export default function ProductsPage() {
   const observerRef = useRef<HTMLDivElement>(null)
   const intersectionObserver = useRef<IntersectionObserver | null>(null)
 
-  // Update the fetchProducts function to fix the infinite scroll issue
   const fetchProducts = useCallback(async (pageNum: number, isLoadMore = false) => {
     try {
       if (isLoadMore) {
@@ -54,24 +56,21 @@ export default function ProductsPage() {
       // Prepare API parameters
       const apiParams: any = {
         page: pageNum,
-        limit: 18
+        limit: 50 // Get more products to filter on frontend
       }
       
-      // Add filters
+      // Add additional filters
       if (filters.brand) apiParams.brand = filters.brand
       if (filters.gender) apiParams.gender = filters.gender
       if (filters.color) apiParams.color = filters.color
-      if (filters.categoryId) apiParams.categoryId = filters.categoryId
       if (filters.search) apiParams.search = filters.search
       
-      // Use productApi instead of direct fetch
       const response = await productApi.getProducts(apiParams)
       
       if (!response.success) {
-        throw new Error(response.message || 'Failed to load products')
+        throw new Error(response.message || 'Failed to load apparel products')
       }
       
-      // Type assertion for response data
       const data = response.data as {
         products: Product[]
         total: number
@@ -79,27 +78,41 @@ export default function ProductsPage() {
         currentPage: number
       }
       
+      // Filter products on frontend for apparel items only
+      let filteredProducts = data.products.filter(product => {
+        // First filter: Only apparel items (exclude accessories, shoes, etc.)
+        const isApparel = product.name.toLowerCase().includes('áo') || 
+                         product.name.toLowerCase().includes('quần') ||
+                         product.name.toLowerCase().includes('shirt') ||
+                         product.name.toLowerCase().includes('pants')
+        
+        if (!isApparel) return false
+        
+        // Second filter: Apply subcategory filter
+        if (filters.subcategory === 'topwear') {
+          return product.name.toLowerCase().includes('áo') || 
+                 product.name.toLowerCase().includes('shirt')
+        } else if (filters.subcategory === 'bottomwear') {
+          return product.name.toLowerCase().includes('quần') || 
+                 product.name.toLowerCase().includes('pants')
+        }
+        
+        // If no subcategory, return all apparel
+        return true
+      })
+      
       if (isLoadMore) {
-        // Append new products to existing ones
-        setProducts(prev => [...prev, ...data.products])
+        setProducts(prev => [...prev, ...filteredProducts])
       } else {
-        // Replace products for fresh search/filter
-        setProducts(data.products)
+        setProducts(filteredProducts)
       }
       
-      setTotalProducts(data.total)
-      
-      // Fix: Calculate hasMore outside of setProducts
-      setTimeout(() => {
-        setHasMore(isLoadMore ? 
-          products.length + data.products.length < data.total : 
-          data.products.length < data.total
-        )
-      }, 0)
+      setTotalProducts(filteredProducts.length)
+      setHasMore(false) // Disable infinite scroll since we're filtering on frontend
       
     } catch (e: any) {
-      console.error('Error fetching products:', e)
-      setError(e?.message || 'Failed to load products')
+      console.error('Error fetching apparel products:', e)
+      setError(e?.message || 'Failed to load apparel products')
       if (!isLoadMore) {
         setProducts([])
       }
@@ -107,7 +120,7 @@ export default function ProductsPage() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }, [filters, products.length]) // Add products.length back
+  }, [filters]) // Remove products.length dependency
 
   // Initial load and filter changes
   useEffect(() => {
@@ -117,7 +130,7 @@ export default function ProductsPage() {
     fetchProducts(1, false)
   }, [filters])
 
-  // Load more when page changes (triggered by intersection observer)
+  // Load more when page changes
   useEffect(() => {
     if (page > 1) {
       fetchProducts(page, true)
@@ -138,7 +151,7 @@ export default function ProductsPage() {
         },
         {
           threshold: 0.1,
-          rootMargin: '100px' // Start loading 100px before reaching the element
+          rootMargin: '100px'
         }
       )
 
@@ -152,41 +165,148 @@ export default function ProductsPage() {
     }
   }, [hasMore, loading, loadingMore])
 
+  // Simplified URL handling - only check path
+  useEffect(() => {
+    const currentPath = window.location.pathname
+    let subcategoryFromPath = ''
+    
+    if (currentPath.includes('/topwear')) {
+      subcategoryFromPath = 'topwear'
+    } else if (currentPath.includes('/bottomwear')) {
+      subcategoryFromPath = 'bottomwear'
+    }
+    
+    if (subcategoryFromPath !== filters.subcategory) {
+      setFilters(prev => ({ ...prev, subcategory: subcategoryFromPath }))
+    }
+  }, [window.location.pathname])
+
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }))
+    
+    // Navigate to proper URL for subcategory changes
+    if (key === 'subcategory') {
+      if (value === 'topwear') {
+        navigate('/c/apparel/topwear')
+      } else if (value === 'bottomwear') {
+        navigate('/c/apparel/bottomwear')
+      } else {
+        navigate('/c/apparel')
+      }
+    }
   }
 
   const clearFilters = () => {
     setFilters({
+      subcategory: '',
       brand: '',
       gender: '',
       color: '',
-      categoryId: '',
       search: ''
     })
+    navigate('/c/apparel') // Navigate to base apparel page
   }
+
+  // Count products by type for display
+  const topwearCount = products.filter(p => 
+    p.name.toLowerCase().includes('áo') || 
+    p.name.toLowerCase().includes('shirt')
+  ).length
+  
+  const bottomwearCount = products.filter(p => 
+    p.name.toLowerCase().includes('quần') || 
+    p.name.toLowerCase().includes('pants')
+  ).length
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">All Products</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {filters.subcategory === 'topwear' ? 'Topwear Collection' :
+             filters.subcategory === 'bottomwear' ? 'Bottomwear Collection' : 
+             'Apparel Collection'}
+          </h1>
           <p className="text-gray-600">
-            Discover our collection of {totalProducts} premium fashion items
+            {filters.subcategory === 'topwear' ? 'Shirts, T-shirts & Tops' :
+             filters.subcategory === 'bottomwear' ? 'Pants, Jeans & Trousers' :
+             'Premium clothing collection - shirts, pants & more'} - {totalProducts} items available
           </p>
+          
+          {/* Breadcrumb */}
+          <nav className="flex items-center space-x-2 text-sm text-gray-500 mt-3">
+            <a href="/" className="hover:text-gray-700">Trang chủ</a>
+            <span>/</span>
+            <span className="text-gray-900">Apparel</span>
+            {filters.subcategory && (
+              <>
+                <span>/</span>
+                <span className="text-gray-900 capitalize">
+                  {filters.subcategory === 'topwear' ? 'Topwear' : 'Bottomwear'}
+                </span>
+              </>
+            )}
+          </nav>
         </div>
 
-        {/* Filters */}
+        {/* Category Quick Filter Tabs */}
         <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-lg font-semibold mb-4">Filters</h3>
+          <div className="flex flex-wrap gap-2 mb-6">
+            <button
+              onClick={() => handleFilterChange('subcategory', '')}
+              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
+                !filters.subcategory
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              All Apparel 
+            </button>
+            <button
+              onClick={() => handleFilterChange('subcategory', 'topwear')}
+              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
+                filters.subcategory === 'topwear'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              👕 Topwear
+            </button>
+            <button
+              onClick={() => handleFilterChange('subcategory', 'bottomwear')}
+              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
+                filters.subcategory === 'bottomwear'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              👖 Bottomwear 
+            </button>
+          </div>
+
+          {/* Description for current selection */}
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800">
+              {filters.subcategory === 'topwear' ? 
+                '👕 Showing shirts, t-shirts, and all upper body clothing items' :
+               filters.subcategory === 'bottomwear' ? 
+                '👖 Showing pants, jeans, trousers, and all lower body clothing items' :
+                '👔 Showing all clothing items - both topwear and bottomwear (excludes accessories & footwear)'
+              }
+            </p>
+          </div>
+
+          {/* Additional Filters */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={filters.subcategory === 'topwear' ? 'Search shirts, áo...' : 
+                           filters.subcategory === 'bottomwear' ? 'Search pants, quần...' : 
+                           'Search apparel...'}
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -213,7 +333,7 @@ export default function ProductsPage() {
                 onChange={(e) => handleFilterChange('gender', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">All</option>
+                <option value="">All Genders</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Unisex">Unisex</option>
@@ -247,7 +367,7 @@ export default function ProductsPage() {
         {/* Products Grid */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 12 }).map((_, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="animate-pulse">
                 <div className="aspect-square bg-gray-200 rounded-lg" />
                 <div className="mt-3 space-y-2">
@@ -259,7 +379,7 @@ export default function ProductsPage() {
           </div>
         ) : error ? (
           <div className="text-center py-12">
-            <div className="text-red-600 text-lg font-medium mb-2">Error Loading Products</div>
+            <div className="text-red-600 text-lg font-medium mb-2">Error Loading Apparel</div>
             <p className="text-gray-600 mb-4">{error}</p>
             <button
               onClick={() => {
@@ -275,8 +395,12 @@ export default function ProductsPage() {
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-600 text-lg font-medium mb-2">No Products Found</div>
-            <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
+            <div className="text-gray-600 text-lg font-medium mb-2">No Apparel Items Found</div>
+            <p className="text-gray-500 mb-4">
+              {filters.subcategory === 'topwear' ? 'No shirts or topwear found with current filters' :
+               filters.subcategory === 'bottomwear' ? 'No pants or bottomwear found with current filters' :
+               'No clothing items found - try adjusting your filters'}
+            </p>
             <button
               onClick={clearFilters}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -307,21 +431,7 @@ export default function ProductsPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span className="text-sm font-medium">Loading more products...</span>
-                </div>
-              )}
-              
-              {!hasMore && products.length > 0 && (
-                <div className="text-center py-8 border-t border-gray-200 w-full">
-                  <div className="flex items-center justify-center space-x-2 text-gray-500">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-sm font-medium">You've seen all products!</span>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Found {products.length} products matching your criteria
-                  </p>
+                  <span className="text-sm font-medium">Loading more apparel...</span>
                 </div>
               )}
             </div>
