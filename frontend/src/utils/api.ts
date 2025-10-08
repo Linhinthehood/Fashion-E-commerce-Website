@@ -1,10 +1,10 @@
 // API Configuration
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+export const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Service-specific base URLs for direct access (if needed)
-export const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001/api';
-export const PRODUCT_SERVICE_URL = import.meta.env.VITE_PRODUCT_SERVICE_URL || 'http://localhost:3002/api';
-export const ORDER_SERVICE_URL = import.meta.env.VITE_ORDER_SERVICE_URL || 'http://localhost:3003/api';
+export const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL;
+export const PRODUCT_SERVICE_URL = import.meta.env.VITE_PRODUCT_SERVICE_URL;
+export const ORDER_SERVICE_URL = import.meta.env.VITE_ORDER_SERVICE_URL;
 
 /**
  * Build API URL with proper path handling
