@@ -19,6 +19,24 @@ type Product = {
   updatedAt: string
 }
 
+<<<<<<< Updated upstream
+=======
+type ProductsResponse = {
+  success: boolean
+  data: {
+    products: Product[]
+    pagination: {
+      currentPage: number
+      totalPages: number
+      totalProducts: number
+      hasNextPage: boolean
+      hasPrevPage: boolean
+    }
+  }
+  message?: string
+}
+
+>>>>>>> Stashed changes
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [page, setPage] = useState(1)
@@ -49,6 +67,7 @@ export default function ProductsPage() {
       } else {
         setLoading(true)
         setError(null)
+<<<<<<< Updated upstream
       }
       
       // Prepare API parameters
@@ -101,6 +120,34 @@ export default function ProductsPage() {
       console.error('Error fetching products:', e)
       setError(e?.message || 'Failed to load products')
       if (!isLoadMore) {
+=======
+        
+        const params = new URLSearchParams()
+        params.append('page', String(page))
+        params.append('limit', '12')
+        
+        // Add filters
+        if (filters.brand) params.append('brand', filters.brand)
+        if (filters.gender) params.append('gender', filters.gender)
+        if (filters.color) params.append('color', filters.color)
+        if (filters.categoryId) params.append('categoryId', filters.categoryId)
+        if (filters.search) params.append('search', filters.search)
+        
+        const response = await fetch(buildUrl(`/products?${params.toString()}`))
+        const json: ProductsResponse = await response.json()
+        
+        if (!json.success) {
+          throw new Error(json.message || 'Failed to load products')
+        }
+        
+        setProducts(json.data.products)
+        setTotalPages(json.data.pagination.totalPages)
+        setTotalProducts(json.data.pagination.totalProducts)
+        
+      } catch (e: any) {
+        console.error('Error fetching products:', e)
+        setError(e?.message || 'Failed to load products')
+>>>>>>> Stashed changes
         setProducts([])
       }
     } finally {
