@@ -18,7 +18,10 @@ type Product = {
   createdAt: string
   updatedAt: string
 }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [page, setPage] = useState(1)
