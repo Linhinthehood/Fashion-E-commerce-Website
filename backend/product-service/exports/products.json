@@ -467,5 +467,395 @@
     "createdAt": "2025-10-04T08:12:08.705Z",
     "updatedAt": "2025-10-04T08:13:32.472Z",
     "__v": 0
+  },
+  {
+    "_id": "68e8dcb2d78957d01e035432",
+    "name": "Áo Sơ Mi Nữ Trắng Công Sở",
+    "description": "Áo sơ mi nữ trắng elegant, phù hợp môi trường văn phòng.",
+    "brand": "Root Rotation",
+    "gender": "Female",
+    "usage": "Formal",
+    "color": "White",
+    "defaultPrice": 380000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093953/fashion-ecommerce/products/-o-s--mi-n--tr-ng-c-ng-s--1.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093954/fashion-ecommerce/products/-o-s--mi-n--tr-ng-c-ng-s--2.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093956/fashion-ecommerce/products/-o-s--mi-n--tr-ng-c-ng-s--3.jpg"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68dfcc3f84cd07dea32e23b0",
+      "masterCategory": "Apparel",
+      "subCategory": "Topwear",
+      "articleType": "Shirt"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:14.741Z",
+    "updatedAt": "2025-10-10T10:59:16.945Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e8dcb2d78957d01e035435",
+    "name": "Áo Thun Nữ Cổ Tròn Pastel",
+    "description": "Áo thun nữ cổ tròn màu pastel, vải cotton mềm mại.",
+    "brand": "Root Rotation",
+    "gender": "Female",
+    "usage": "Casual",
+    "color": "Pink",
+    "defaultPrice": 280000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093957/fashion-ecommerce/products/-o-thun-n--c--tr-n-pastel-1.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093958/fashion-ecommerce/products/-o-thun-n--c--tr-n-pastel-2.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093960/fashion-ecommerce/products/-o-thun-n--c--tr-n-pastel-3.webp"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68dfcc3f84cd07dea32e23b0",
+      "masterCategory": "Apparel",
+      "subCategory": "Topwear",
+      "articleType": "Shirt"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:14.845Z",
+    "updatedAt": "2025-10-10T10:59:22.398Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e8dcb2d78957d01e035438",
+    "name": "Quần Jeans Nữ Skinny Fit",
+    "description": "Quần jeans nữ dáng skinny, co giãn thoải mái.",
+    "brand": "Root Rotation",
+    "gender": "Female",
+    "usage": "Casual",
+    "color": "Blue",
+    "defaultPrice": 520000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093962/fashion-ecommerce/products/qu-n-jeans-n--skinny-fit-1.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093964/fashion-ecommerce/products/qu-n-jeans-n--skinny-fit-2.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093966/fashion-ecommerce/products/qu-n-jeans-n--skinny-fit-3.avif"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68e0052a7d3c1abe691f508b",
+      "masterCategory": "Apparel",
+      "subCategory": "Bottomwear",
+      "articleType": "Pants"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:14.940Z",
+    "updatedAt": "2025-10-10T10:59:27.653Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e8dcb3d78957d01e03543b",
+    "name": "Quần Tây Nữ Công Sở Đen",
+    "description": "Quần tây nữ công sở màu đen, dáng straight fit thanh lịch.",
+    "brand": "Root Rotation",
+    "gender": "Female",
+    "usage": "Formal",
+    "color": "Black",
+    "defaultPrice": 480000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093968/fashion-ecommerce/products/qu-n-t-y-n--c-ng-s---en-1.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093969/fashion-ecommerce/products/qu-n-t-y-n--c-ng-s---en-2.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093970/fashion-ecommerce/products/qu-n-t-y-n--c-ng-s---en-3.jpg"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68e0052a7d3c1abe691f508b",
+      "masterCategory": "Apparel",
+      "subCategory": "Bottomwear",
+      "articleType": "Pants"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:15.028Z",
+    "updatedAt": "2025-10-10T10:59:31.478Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e8dcb3d78957d01e03543e",
+    "name": "Mũ Lưỡi Trai Nữ Hồng Pastel",
+    "description": "Mũ lưỡi trai nữ màu hồng pastel, thiết kế trendy.",
+    "brand": "Root Rotation",
+    "gender": "Female",
+    "usage": "Casual",
+    "color": "Pink",
+    "defaultPrice": 165000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093972/fashion-ecommerce/products/m--l--i-trai-n--h-ng-pastel-1.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093973/fashion-ecommerce/products/m--l--i-trai-n--h-ng-pastel-2.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093974/fashion-ecommerce/products/m--l--i-trai-n--h-ng-pastel-3.webp"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68dfcc1d84cd07dea32e23ad",
+      "masterCategory": "Accessories",
+      "subCategory": "Hat",
+      "articleType": "Baseball cap"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:15.125Z",
+    "updatedAt": "2025-10-10T10:59:35.596Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e8dcb3d78957d01e035444",
+    "name": "Đồng Hồ Nữ Dây Da Hồng",
+    "description": "Đồng hồ nữ dây da màu hồng, mặt số tinh tế feminine.",
+    "brand": "Silver Sunray and Bee Roman",
+    "gender": "Female",
+    "usage": "Formal",
+    "color": "Pink",
+    "defaultPrice": 4800000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093976/fashion-ecommerce/products/--ng-h--n--d-y-da-h-ng-1.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093977/fashion-ecommerce/products/--ng-h--n--d-y-da-h-ng-2.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093978/fashion-ecommerce/products/--ng-h--n--d-y-da-h-ng-3.avif"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68dfcc5184cd07dea32e23b3",
+      "masterCategory": "Accessories",
+      "subCategory": "Watch",
+      "articleType": "Watch"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:15.316Z",
+    "updatedAt": "2025-10-10T10:59:39.325Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e8dcb3d78957d01e035447",
+    "name": "Đồng Hồ Nữ Thể Thao Trắng",
+    "description": "Đồng hồ thể thao nữ màu trắng, chống nước và va đập.",
+    "brand": "Garmin",
+    "gender": "Female",
+    "usage": "Sports",
+    "color": "White",
+    "defaultPrice": 2800000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093979/fashion-ecommerce/products/--ng-h--n--th--thao-tr-ng-1.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093980/fashion-ecommerce/products/--ng-h--n--th--thao-tr-ng-2.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093982/fashion-ecommerce/products/--ng-h--n--th--thao-tr-ng-3.jpg"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68dfcc5184cd07dea32e23b3",
+      "masterCategory": "Accessories",
+      "subCategory": "Watch",
+      "articleType": "Watch"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:15.404Z",
+    "updatedAt": "2025-10-10T10:59:43.620Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e8dcb3d78957d01e03544a",
+    "name": "Giày Sneaker Nữ Trắng Hồng",
+    "description": "Giày sneaker nữ trắng phối hồng, phong cách năng động.",
+    "brand": "Root Rotation",
+    "gender": "Female",
+    "usage": "Casual",
+    "color": "White",
+    "defaultPrice": 2200000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093984/fashion-ecommerce/products/gi-y-sneaker-n--tr-ng-h-ng-1.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093985/fashion-ecommerce/products/gi-y-sneaker-n--tr-ng-h-ng-2.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093986/fashion-ecommerce/products/gi-y-sneaker-n--tr-ng-h-ng-3.jpg"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68e069a6ddce55ce977444e9",
+      "masterCategory": "Footwear",
+      "subCategory": "Shoes",
+      "articleType": "Casual shoes"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:15.492Z",
+    "updatedAt": "2025-10-10T10:59:46.819Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e8dcb3d78957d01e03544d",
+    "name": "Ví Da Nữ Mini Hồng",
+    "description": "Ví da nữ mini màu hồng, thiết kế compact và xinh xắn.",
+    "brand": "Root Rotation",
+    "gender": "Female",
+    "usage": "Daily",
+    "color": "Pink",
+    "defaultPrice": 420000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093987/fashion-ecommerce/products/v--da-n--mini-h-ng-1.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093988/fashion-ecommerce/products/v--da-n--mini-h-ng-2.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093990/fashion-ecommerce/products/v--da-n--mini-h-ng-3.webp"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68e0d5be535ec32cbe22462f",
+      "masterCategory": "Accessories",
+      "subCategory": "Wallet",
+      "articleType": "Wallet"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T10:15:15.583Z",
+    "updatedAt": "2025-10-10T10:59:51.197Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e97123a6704d9647769686",
+    "name": "Áo Polo Nam Pierre Cardin Classic",
+    "description": "Áo polo nam Pierre Cardin thiết kế classic với logo thêu tinh tế, chất liệu cotton cao cấp thoáng mát.",
+    "brand": "Pierre Cardin",
+    "gender": "Male",
+    "usage": "Casual",
+    "color": "Navy",
+    "defaultPrice": 890000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174842/fashion-ecommerce/products/-o-polo-nam-pierre-cardin-classic-1.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174844/fashion-ecommerce/products/-o-polo-nam-pierre-cardin-classic-2.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174845/fashion-ecommerce/products/-o-polo-nam-pierre-cardin-classic-3.jpg"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68dfcc3f84cd07dea32e23b0",
+      "masterCategory": "Apparel",
+      "subCategory": "Topwear",
+      "articleType": "Shirt"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T20:48:35.411Z",
+    "updatedAt": "2025-10-11T09:27:26.463Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e97123a6704d964776968c",
+    "name": "Giày Loafer Nam Gucci",
+    "description": "Giày loafer nam Gucci da thật cao cấp, thiết kế horsebit classic, crafted in Italy.",
+    "brand": "Gucci",
+    "gender": "Male",
+    "usage": "Formal",
+    "color": "Brown",
+    "defaultPrice": 18500000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174847/fashion-ecommerce/products/gi-y-loafer-nam-gucci-1.png",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174848/fashion-ecommerce/products/gi-y-loafer-nam-gucci-2.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174849/fashion-ecommerce/products/gi-y-loafer-nam-gucci-3.png"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68e069a6ddce55ce977444e9",
+      "masterCategory": "Footwear",
+      "subCategory": "Shoes",
+      "articleType": "Casual shoes"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T20:48:35.624Z",
+    "updatedAt": "2025-10-11T09:27:29.881Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e9727b5e6976da1d667885",
+    "name": "Mũ Lưỡi Trai Adidas Originals",
+    "description": "Mũ lưỡi trai Adidas Originals với logo 3 sọc iconic, chất liệu cotton twill bền bỉ.",
+    "brand": "Adidas",
+    "gender": "Unisex",
+    "usage": "Sports",
+    "color": "Black",
+    "defaultPrice": 650000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174850/fashion-ecommerce/products/m--l--i-trai-adidas-originals-1.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174851/fashion-ecommerce/products/m--l--i-trai-adidas-originals-2.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174853/fashion-ecommerce/products/m--l--i-trai-adidas-originals-3.avif"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68dfcc1d84cd07dea32e23ad",
+      "masterCategory": "Accessories",
+      "subCategory": "Hat",
+      "articleType": "Baseball cap"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T20:54:19.627Z",
+    "updatedAt": "2025-10-11T09:27:34.891Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e9727b5e6976da1d667888",
+    "name": "Đồng Hồ Nam Rolex Submariner",
+    "description": "Đồng hồ Rolex Submariner automatic, thép không gỉ 904L, chống nước 300m, Swiss Made.",
+    "brand": "Rolex",
+    "gender": "Male",
+    "usage": "Formal",
+    "color": "Black",
+    "defaultPrice": 285000000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174855/fashion-ecommerce/products/--ng-h--nam-rolex-submariner-1.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174856/fashion-ecommerce/products/--ng-h--nam-rolex-submariner-2.avif",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174857/fashion-ecommerce/products/--ng-h--nam-rolex-submariner-3.avif"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68dfcc5184cd07dea32e23b3",
+      "masterCategory": "Accessories",
+      "subCategory": "Watch",
+      "articleType": "Watch"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T20:54:19.716Z",
+    "updatedAt": "2025-10-11T09:27:38.560Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e9727b5e6976da1d66788b",
+    "name": "Quần Jeans Nam Levi's 501 Original",
+    "description": "Quần jeans nam Levi's 501 Original Fit, 100% cotton denim, button fly classic từ 1873.",
+    "brand": "Levi's",
+    "gender": "Male",
+    "usage": "Casual",
+    "color": "Blue",
+    "defaultPrice": 1250000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174859/fashion-ecommerce/products/qu-n-jeans-nam-levi-s-501-original-1.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174860/fashion-ecommerce/products/qu-n-jeans-nam-levi-s-501-original-2.jpg",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174861/fashion-ecommerce/products/qu-n-jeans-nam-levi-s-501-original-3.jpg"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68e0052a7d3c1abe691f508b",
+      "masterCategory": "Apparel",
+      "subCategory": "Bottomwear",
+      "articleType": "Pants"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T20:54:19.801Z",
+    "updatedAt": "2025-10-11T09:27:41.966Z",
+    "__v": 0
+  },
+  {
+    "_id": "68e9727b5e6976da1d66788e",
+    "name": "Ví Da Nam Louis Vuitton Monogram",
+    "description": "Ví da nam Louis Vuitton canvas Monogram, thiết kế compact với nhiều ngăn thẻ, made in France.",
+    "brand": "Louis Vuitton",
+    "gender": "Male",
+    "usage": "Daily",
+    "color": "Brown",
+    "defaultPrice": 12500000,
+    "images": [
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174862/fashion-ecommerce/products/v--da-nam-louis-vuitton-monogram-1.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174863/fashion-ecommerce/products/v--da-nam-louis-vuitton-monogram-2.webp",
+      "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174864/fashion-ecommerce/products/v--da-nam-louis-vuitton-monogram-3.webp"
+    ],
+    "hasImage": true,
+    "categoryId": {
+      "_id": "68e0d5be535ec32cbe22462f",
+      "masterCategory": "Accessories",
+      "subCategory": "Wallet",
+      "articleType": "Wallet"
+    },
+    "isActive": true,
+    "createdAt": "2025-10-10T20:54:19.882Z",
+    "updatedAt": "2025-10-11T09:27:45.438Z",
+    "__v": 0
   }
 ]

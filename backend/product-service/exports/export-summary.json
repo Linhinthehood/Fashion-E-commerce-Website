@@ -1,23 +1,27 @@
 {
-  "exportDate": "2025-10-04T08:59:08.212Z",
+  "exportDate": "2025-10-11T09:43:51.721Z",
   "totalCategories": 7,
-  "totalProducts": 18,
-  "activeProducts": 18,
+  "totalProducts": 33,
+  "activeProducts": 33,
   "inactiveProducts": 0,
-  "productsWithImages": 18,
+  "productsWithImages": 33,
   "productsWithoutImages": 0,
   "productsByCategory": {
-    "Shirt": 6,
-    "Baseball cap": 3,
-    "Pants": 3,
-    "Watch": 2,
-    "Casual shoes": 2,
-    "Wallet": 2
+    "Shirt": 9,
+    "Baseball cap": 5,
+    "Pants": 6,
+    "Watch": 5,
+    "Casual shoes": 4,
+    "Wallet": 4
   },
   "topBrands": [
     {
       "name": "Yame",
       "count": 10
+    },
+    {
+      "name": "Root Rotation",
+      "count": 7
     },
     {
       "name": "SWE",
@@ -34,11 +38,27 @@
     {
       "name": "Nike",
       "count": 1
+    },
+    {
+      "name": "Silver Sunray and Bee Roman",
+      "count": 1
+    },
+    {
+      "name": "Garmin",
+      "count": 1
+    },
+    {
+      "name": "Pierre Cardin",
+      "count": 1
+    },
+    {
+      "name": "Gucci",
+      "count": 1
     }
   ],
   "genderDistribution": {
-    "Male": 10,
-    "Female": 0,
-    "Unisex": 8
+    "Male": 15,
+    "Female": 9,
+    "Unisex": 9
   }
 }

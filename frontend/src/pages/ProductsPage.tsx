@@ -19,24 +19,6 @@ type Product = {
   updatedAt: string
 }
 
-<<<<<<< Updated upstream
-=======
-type ProductsResponse = {
-  success: boolean
-  data: {
-    products: Product[]
-    pagination: {
-      currentPage: number
-      totalPages: number
-      totalProducts: number
-      hasNextPage: boolean
-      hasPrevPage: boolean
-    }
-  }
-  message?: string
-}
-
->>>>>>> Stashed changes
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [page, setPage] = useState(1)
@@ -59,7 +41,10 @@ export default function ProductsPage() {
   const observerRef = useRef<HTMLDivElement>(null)
   const intersectionObserver = useRef<IntersectionObserver | null>(null)
 
-  // Update the fetchProducts function to fix the infinite scroll issue
+  // Increased limit for better lazy loading performance
+  const ITEMS_PER_PAGE = 24
+
+  // Updated fetchProducts function with fixed hasMore logic
   const fetchProducts = useCallback(async (pageNum: number, isLoadMore = false) => {
     try {
       if (isLoadMore) {
@@ -67,13 +52,12 @@ export default function ProductsPage() {
       } else {
         setLoading(true)
         setError(null)
-<<<<<<< Updated upstream
       }
       
       // Prepare API parameters
       const apiParams: any = {
         page: pageNum,
-        limit: 18
+        limit: ITEMS_PER_PAGE
       }
       
       // Add filters
@@ -83,14 +67,12 @@ export default function ProductsPage() {
       if (filters.categoryId) apiParams.categoryId = filters.categoryId
       if (filters.search) apiParams.search = filters.search
       
-      // Use productApi instead of direct fetch
       const response = await productApi.getProducts(apiParams)
       
       if (!response.success) {
         throw new Error(response.message || 'Failed to load products')
       }
       
-      // Type assertion for response data
       const data = response.data as {
         products: Product[]
         total: number
@@ -99,64 +81,49 @@ export default function ProductsPage() {
       }
       
       if (isLoadMore) {
-        // Append new products to existing ones
-        setProducts(prev => [...prev, ...data.products])
+        // Prevent duplicate products
+        setProducts(prev => {
+          const existingIds = new Set(prev.map(p => p._id))
+          const newProducts = data.products.filter(p => !existingIds.has(p._id))
+          return [...prev, ...newProducts]
+        })
       } else {
-        // Replace products for fresh search/filter
         setProducts(data.products)
       }
       
       setTotalProducts(data.total)
       
-      // Fix: Calculate hasMore outside of setProducts
-      setTimeout(() => {
-        setHasMore(isLoadMore ? 
-          products.length + data.products.length < data.total : 
-          data.products.length < data.total
-        )
-      }, 0)
+      // Fixed hasMore calculation - check if current page has reached the last page
+      // OR if we've loaded all available products
+      const totalLoadedAfterThis = isLoadMore ? 
+        products.length + data.products.length : 
+        data.products.length
+      
+      // hasMore is true if:
+      // 1. We haven't reached the total count AND
+      // 2. The current response returned at least 1 product AND  
+      // 3. We haven't reached the last page
+      setHasMore(
+        totalLoadedAfterThis < data.total && 
+        data.products.length > 0 && 
+        pageNum < data.totalPages
+      )
+      
+      console.log(`Page ${pageNum}: Loaded ${data.products.length} products, Total: ${totalLoadedAfterThis}/${data.total}, HasMore: ${totalLoadedAfterThis < data.total && data.products.length > 0 && pageNum < data.totalPages}`)
       
     } catch (e: any) {
       console.error('Error fetching products:', e)
       setError(e?.message || 'Failed to load products')
       if (!isLoadMore) {
-=======
-        
-        const params = new URLSearchParams()
-        params.append('page', String(page))
-        params.append('limit', '12')
-        
-        // Add filters
-        if (filters.brand) params.append('brand', filters.brand)
-        if (filters.gender) params.append('gender', filters.gender)
-        if (filters.color) params.append('color', filters.color)
-        if (filters.categoryId) params.append('categoryId', filters.categoryId)
-        if (filters.search) params.append('search', filters.search)
-        
-        const response = await fetch(buildUrl(`/products?${params.toString()}`))
-        const json: ProductsResponse = await response.json()
-        
-        if (!json.success) {
-          throw new Error(json.message || 'Failed to load products')
-        }
-        
-        setProducts(json.data.products)
-        setTotalPages(json.data.pagination.totalPages)
-        setTotalProducts(json.data.pagination.totalProducts)
-        
-      } catch (e: any) {
-        console.error('Error fetching products:', e)
-        setError(e?.message || 'Failed to load products')
->>>>>>> Stashed changes
         setProducts([])
       }
     } finally {
       setLoading(false)
       setLoadingMore(false)
     }
-  }, [filters, products.length]) // Add products.length back
+  }, [filters, products.length])
 
-  // Initial load and filter changes
+  // Reset and fetch when filters change
   useEffect(() => {
     setPage(1)
     setProducts([])
@@ -164,28 +131,29 @@ export default function ProductsPage() {
     fetchProducts(1, false)
   }, [filters])
 
-  // Load more when page changes (triggered by intersection observer)
+  // Load more when page changes
   useEffect(() => {
     if (page > 1) {
       fetchProducts(page, true)
     }
-  }, [page])
+  }, [page, fetchProducts])
 
-  // Intersection Observer setup
+  // Enhanced Intersection Observer with better performance
   useEffect(() => {
     const currentObserver = observerRef.current
 
-    if (currentObserver) {
+    if (currentObserver && hasMore && !loading && !loadingMore) {
       intersectionObserver.current = new IntersectionObserver(
         (entries) => {
           const target = entries[0]
           if (target.isIntersecting && hasMore && !loading && !loadingMore) {
+            console.log('Loading next page:', page + 1)
             setPage(prev => prev + 1)
           }
         },
         {
           threshold: 0.1,
-          rootMargin: '100px' // Start loading 100px before reaching the element
+          rootMargin: '200px'
         }
       )
 
@@ -197,7 +165,7 @@ export default function ProductsPage() {
         intersectionObserver.current.disconnect()
       }
     }
-  }, [hasMore, loading, loadingMore])
+  }, [hasMore, loading, loadingMore, page])
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }))
@@ -220,7 +188,8 @@ export default function ProductsPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">All Products</h1>
           <p className="text-gray-600">
-            Discover our collection of {totalProducts} premium fashion items
+            {loading ? 'Loading products...' : 
+             `Showing ${products.length} of ${totalProducts} premium fashion items`}
           </p>
         </div>
 
@@ -280,7 +249,6 @@ export default function ProductsPage() {
             </div>
           </div>
           
-          {/* Clear Filters Button */}
           <div className="mt-4">
             <button
               onClick={clearFilters}
@@ -291,10 +259,10 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        {/* Products Grid */}
+        {/* Products Grid with improved loading states */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 12 }).map((_, i) => (
+            {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
               <div key={i} className="animate-pulse">
                 <div className="aspect-square bg-gray-200 rounded-lg" />
                 <div className="mt-3 space-y-2">
@@ -346,28 +314,33 @@ export default function ProductsPage() {
               ))}
             </div>
 
-            {/* Intersection Observer Target */}
-            <div ref={observerRef} className="h-10 flex items-center justify-center">
+            {/* Enhanced loading indicator and completion message */}
+            <div ref={observerRef} className="h-16 flex items-center justify-center">
               {loadingMore && (
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span className="text-sm font-medium">Loading more products...</span>
+                <div className="flex flex-col items-center space-y-2 text-gray-600">
+                  <div className="flex items-center space-x-2">
+                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span className="text-sm font-medium">Loading more products...</span>
+                  </div>
+                  <p className="text-xs text-gray-400">
+                    {products.length} of {totalProducts} products loaded
+                  </p>
                 </div>
               )}
               
               {!hasMore && products.length > 0 && (
                 <div className="text-center py-8 border-t border-gray-200 w-full">
-                  <div className="flex items-center justify-center space-x-2 text-gray-500">
+                  <div className="flex items-center justify-center space-x-2 text-gray-500 mb-2">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-sm font-medium">You've seen all products!</span>
+                    <span className="text-sm font-medium">All products loaded!</span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Found {products.length} products matching your criteria
+                  <p className="text-xs text-gray-400">
+                    Showing all {products.length} products matching your criteria
                   </p>
                 </div>
               )}
