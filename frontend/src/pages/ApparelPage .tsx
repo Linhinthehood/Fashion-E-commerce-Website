@@ -13,7 +13,12 @@ type Product = {
   gender: 'Male' | 'Female' | 'Unisex'
   color: string
   usage: string
-  categoryId?: string
+  categoryId?: string | {
+    _id: string
+    masterCategory: string
+    subCategory: string
+    articleType: string
+  }
   categoryName?: string
   isActive: boolean
   createdAt: string
@@ -28,8 +33,8 @@ export default function ApparelPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
-  const [searchParams, setSearchParams] = useSearchParams()
-  const navigate = useNavigate() // Add this
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   
   // Filter states
   const [filters, setFilters] = useState({
@@ -73,31 +78,33 @@ export default function ApparelPage() {
       
       const data = response.data as {
         products: Product[]
-        total: number
-        totalPages: number
-        currentPage: number
+        pagination?: {
+          totalProducts: number
+          totalPages: number
+          currentPage: number
+          hasNextPage: boolean
+          hasPrevPage: boolean
+        }
       }
       
-      // Filter products on frontend for apparel items only
+      // Filter products on frontend for apparel items only using category data
       let filteredProducts = data.products.filter(product => {
-        // First filter: Only apparel items (exclude accessories, shoes, etc.)
-        const isApparel = product.name.toLowerCase().includes('áo') || 
-                         product.name.toLowerCase().includes('quần') ||
-                         product.name.toLowerCase().includes('shirt') ||
-                         product.name.toLowerCase().includes('pants')
+        // Get category info from the populated categoryId field
+        const category = product.categoryId as any
+        
+        // First filter: Only apparel items (masterCategory === "Apparel")
+        const isApparel = category?.masterCategory === 'Apparel'
         
         if (!isApparel) return false
         
-        // Second filter: Apply subcategory filter
+        // Second filter: Apply subcategory filter based on category subCategory
         if (filters.subcategory === 'topwear') {
-          return product.name.toLowerCase().includes('áo') || 
-                 product.name.toLowerCase().includes('shirt')
+          return category?.subCategory === 'Topwear'
         } else if (filters.subcategory === 'bottomwear') {
-          return product.name.toLowerCase().includes('quần') || 
-                 product.name.toLowerCase().includes('pants')
+          return category?.subCategory === 'Bottomwear'
         }
         
-        // If no subcategory, return all apparel
+        // If no subcategory, return all apparel items
         return true
       })
       
@@ -206,17 +213,6 @@ export default function ApparelPage() {
     })
     navigate('/c/apparel') // Navigate to base apparel page
   }
-
-  // Count products by type for display
-  const topwearCount = products.filter(p => 
-    p.name.toLowerCase().includes('áo') || 
-    p.name.toLowerCase().includes('shirt')
-  ).length
-  
-  const bottomwearCount = products.filter(p => 
-    p.name.toLowerCase().includes('quần') || 
-    p.name.toLowerCase().includes('pants')
-  ).length
 
   return (
     <div className="min-h-screen bg-gray-50">

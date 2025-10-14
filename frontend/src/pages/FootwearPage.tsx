@@ -13,7 +13,12 @@ type Product = {
   gender: 'Male' | 'Female' | 'Unisex'
   color: string
   usage: string
-  categoryId?: string
+  categoryId?: string | {
+    _id: string
+    masterCategory: string
+    subCategory: string
+    articleType: string
+  }
   categoryName?: string
   isActive: boolean
   createdAt: string
@@ -70,19 +75,22 @@ export default function FootwearPage() {
       
       const data = response.data as {
         products: Product[]
-        total: number
-        totalPages: number  
-        currentPage: number
+        pagination?: {
+          totalProducts: number
+          totalPages: number
+          currentPage: number
+          hasNextPage: boolean
+          hasPrevPage: boolean
+        }
       }
       
-      // Filter products for footwear only
+      // Filter products for footwear only using category data
       let filteredProducts = data.products.filter(product => {
-        const isFootwear = product.name.toLowerCase().includes('giày') || 
-                          product.name.toLowerCase().includes('shoe') ||
-                          product.name.toLowerCase().includes('sneaker') ||
-                          product.name.toLowerCase().includes('boot')
+        // Get category info from the populated categoryId field
+        const category = product.categoryId as any
         
-        return isFootwear
+        // Only footwear items (masterCategory === "Footwear")
+        return category?.masterCategory === 'Footwear'
       })
       
       if (isLoadMore) {

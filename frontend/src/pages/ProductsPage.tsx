@@ -75,9 +75,13 @@ export default function ProductsPage() {
       
       const data = response.data as {
         products: Product[]
-        total: number
-        totalPages: number
-        currentPage: number
+        pagination?: {
+          totalProducts: number
+          totalPages: number
+          currentPage: number
+          hasNextPage: boolean
+          hasPrevPage: boolean
+        }
       }
       
       if (isLoadMore) {
@@ -91,7 +95,10 @@ export default function ProductsPage() {
         setProducts(data.products)
       }
       
-      setTotalProducts(data.total)
+      const totalProducts = data.pagination?.totalProducts || 0
+      const totalPages = data.pagination?.totalPages || Math.ceil(totalProducts / ITEMS_PER_PAGE)
+      
+      setTotalProducts(totalProducts)
       
       // Fixed hasMore calculation - check if current page has reached the last page
       // OR if we've loaded all available products
@@ -104,12 +111,12 @@ export default function ProductsPage() {
       // 2. The current response returned at least 1 product AND  
       // 3. We haven't reached the last page
       setHasMore(
-        totalLoadedAfterThis < data.total && 
+        totalLoadedAfterThis < totalProducts && 
         data.products.length > 0 && 
-        pageNum < data.totalPages
+        pageNum < totalPages
       )
       
-      console.log(`Page ${pageNum}: Loaded ${data.products.length} products, Total: ${totalLoadedAfterThis}/${data.total}, HasMore: ${totalLoadedAfterThis < data.total && data.products.length > 0 && pageNum < data.totalPages}`)
+      console.log(`Page ${pageNum}: Loaded ${data.products.length} products, Total: ${totalLoadedAfterThis}/${totalProducts}, TotalPages: ${totalPages}, HasMore: ${totalLoadedAfterThis < totalProducts && data.products.length > 0 && pageNum < totalPages}`)
       
     } catch (e: any) {
       console.error('Error fetching products:', e)

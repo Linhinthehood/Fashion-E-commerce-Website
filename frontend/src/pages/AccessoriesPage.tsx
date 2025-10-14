@@ -13,7 +13,12 @@ type Product = {
   gender: 'Male' | 'Female' | 'Unisex'
   color: string
   usage: string
-  categoryId?: string
+  categoryId?: string | {
+    _id: string
+    masterCategory: string
+    subCategory: string
+    articleType: string
+  }
   categoryName?: string
   isActive: boolean
   createdAt: string
@@ -71,37 +76,35 @@ export default function AccessoriesPage() {
       
       const data = response.data as {
         products: Product[]
-        total: number
-        totalPages: number
-        currentPage: number
+        pagination?: {
+          totalProducts: number
+          totalPages: number
+          currentPage: number
+          hasNextPage: boolean
+          hasPrevPage: boolean
+        }
       }
       
-      // Filter products for accessories only
+      // Filter products for accessories only using category data
       let filteredProducts = data.products.filter(product => {
-        // First filter: Only accessories (exclude apparel, shoes)
-        const isAccessory = product.name.toLowerCase().includes('mũ') || 
-                           product.name.toLowerCase().includes('đồng hồ') ||
-                           product.name.toLowerCase().includes('ví') ||
-                           product.name.toLowerCase().includes('hat') ||
-                           product.name.toLowerCase().includes('watch') ||
-                           product.name.toLowerCase().includes('wallet') ||
-                           product.name.toLowerCase().includes('cap')
+        // Get category info from the populated categoryId field
+        const category = product.categoryId as any
+        
+        // First filter: Only accessories (masterCategory === "Accessories")
+        const isAccessory = category?.masterCategory === 'Accessories'
         
         if (!isAccessory) return false
         
-        // Second filter: Apply subcategory filter
+        // Second filter: Apply subcategory filter based on category subCategory
         if (filters.subcategory === 'hat') {
-          return product.name.toLowerCase().includes('mũ') || 
-                 product.name.toLowerCase().includes('hat') ||
-                 product.name.toLowerCase().includes('cap')
+          return category?.subCategory === 'Hat'
         } else if (filters.subcategory === 'watch') {
-          return product.name.toLowerCase().includes('đồng hồ') || 
-                 product.name.toLowerCase().includes('watch')
+          return category?.subCategory === 'Watch'
         } else if (filters.subcategory === 'wallet') {
-          return product.name.toLowerCase().includes('ví') || 
-                 product.name.toLowerCase().includes('wallet')
+          return category?.subCategory === 'Wallet'
         }
         
+        // If no subcategory, return all accessories
         return true
       })
       
