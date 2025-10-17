@@ -74,9 +74,17 @@ export default function ProductsPage() {
       // Type assertion for response data
       const data = response.data as {
         products: Product[]
-        total: number
-        totalPages: number
-        currentPage: number
+        pagination?: {
+          currentPage: number
+          totalPages: number
+          totalProducts: number
+          hasNextPage: boolean
+          hasPrevPage: boolean
+        }
+        // Legacy format support
+        total?: number
+        totalPages?: number
+        currentPage?: number
       }
       
       if (isLoadMore) {
@@ -87,14 +95,18 @@ export default function ProductsPage() {
         setProducts(data.products)
       }
       
-      setTotalProducts(data.total)
+      // Handle both new and legacy pagination formats
+      const totalProducts = data.pagination?.totalProducts || data.total || 0
+      setTotalProducts(totalProducts)
+      
+      // Log total products count
+      console.log(`📊 Products loaded: ${data.products.length} | Total: ${totalProducts}`)
       
       // Fix: Calculate hasMore outside of setProducts
       setTimeout(() => {
-        setHasMore(isLoadMore ? 
-          products.length + data.products.length < data.total : 
-          data.products.length < data.total
-        )
+        const currentProductsLength = isLoadMore ? products.length + data.products.length : data.products.length
+        const hasMoreProducts = currentProductsLength < (totalProducts || 0)
+        setHasMore(hasMoreProducts)
       }, 0)
       
     } catch (e: any) {
@@ -150,7 +162,7 @@ export default function ProductsPage() {
         intersectionObserver.current.disconnect()
       }
     }
-  }, [hasMore, loading, loadingMore])
+  }, [hasMore, loading, loadingMore, page])
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }))
