@@ -1,0 +1,22 @@
+{
+  "user1": {
+    "user_id": "user1",
+    "profile_created": "2025-09-30T23:59:22.618822",
+    "num_searches": 21,
+    "num_clicks": 0,
+    "top_search_terms": {
+      "red": 5,
+      "shoes": 5,
+      "blue": 3,
+      "flower": 3,
+      "shirt": 2,
+      "dress": 2,
+      "black": 2,
+      "[image]": 2,
+      "short": 2,
+      "pant": 1
+    },
+    "profile_type": "search_based",
+    "embedding_dim": 256
+  }
+}

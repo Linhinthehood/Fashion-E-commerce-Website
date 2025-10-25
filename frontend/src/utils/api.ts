@@ -5,6 +5,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:30
 export const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001/api';
 export const PRODUCT_SERVICE_URL = import.meta.env.VITE_PRODUCT_SERVICE_URL || 'http://localhost:3002/api';
 export const ORDER_SERVICE_URL = import.meta.env.VITE_ORDER_SERVICE_URL || 'http://localhost:3003/api';
+export const FASHION_SERVICE_URL = import.meta.env.VITE_FASHION_SERVICE_URL || 'http://localhost:8000';
 
 /**
  * Build API URL with proper path handling
@@ -97,6 +98,15 @@ export const API_ENDPOINTS = {
     updateItem: (itemId: string) => buildUrl(`/cart/items/${itemId}`),
     removeItem: (itemId: string) => buildUrl(`/cart/items/${itemId}`),
     clear: () => buildUrl('/cart/clear'),
+  },
+  // Fashion Service endpoints
+  fashion: {
+    searchText: () => `${FASHION_SERVICE_URL}/api/v1/search/text`,
+    personalizedRecommendations: () => `${FASHION_SERVICE_URL}/api/v1/recommendations/personalized`,
+    similarProducts: (productId: string) => `${FASHION_SERVICE_URL}/api/v1/recommendations/product/${productId}`,
+    userRecommendations: (userId: string) => `${FASHION_SERVICE_URL}/api/v1/recommendations/user/${userId}`,
+    trackInteraction: () => `${FASHION_SERVICE_URL}/api/v1/track/interaction`,
+    getProduct: (productId: string) => `${FASHION_SERVICE_URL}/api/v1/products/${productId}`,
   },
 } as const;
 

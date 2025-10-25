@@ -380,6 +380,64 @@ export const variantApi = {
     apiClient.patch(API_ENDPOINTS.variants.releaseStock(id), { quantity }, true), // Auth required
 };
 
+// Fashion API functions
+export const fashionApi = {
+  // Text-based search
+  searchByText: (query: string, k: number = 6) => {
+    const formData = new FormData();
+    formData.append('query', query);
+    formData.append('k', k.toString());
+    return fetch(API_ENDPOINTS.fashion.searchText(), {
+      method: 'POST',
+      body: formData,
+    }).then(res => res.json());
+  },
+
+  // Get personalized recommendations
+  getPersonalizedRecommendations: (userId: string, k: number = 10) => {
+    const formData = new FormData();
+    formData.append('user_id', userId);
+    formData.append('k', k.toString());
+    return fetch(API_ENDPOINTS.fashion.personalizedRecommendations(), {
+      method: 'POST',
+      body: formData,
+    }).then(res => res.json());
+  },
+
+  // Get similar products
+  getSimilarProducts: (productId: string, k: number = 6) => {
+    return fetch(`${API_ENDPOINTS.fashion.similarProducts(productId)}?k=${k}`, {
+      method: 'POST',
+    }).then(res => res.json());
+  },
+
+  // Get user recommendations
+  getUserRecommendations: (userId: string, k: number = 10) => {
+    return fetch(`${API_ENDPOINTS.fashion.userRecommendations(userId)}?k=${k}`, {
+      method: 'POST',
+    }).then(res => res.json());
+  },
+
+  // Track user interactions
+  trackInteraction: (userId: string, productId: string, interactionType: string) => {
+    const formData = new FormData();
+    formData.append('user_id', userId);
+    formData.append('product_id', productId);
+    formData.append('interaction_type', interactionType);
+    return fetch(API_ENDPOINTS.fashion.trackInteraction(), {
+      method: 'POST',
+      body: formData,
+    }).then(res => res.json());
+  },
+
+  // Get product details
+  getProduct: (productId: string) => {
+    return fetch(API_ENDPOINTS.fashion.getProduct(productId), {
+      method: 'GET',
+    }).then(res => res.json());
+  },
+};
+
 // Health check function
 export const healthCheck = () => apiClient.get('/health', false);
 
@@ -389,5 +447,6 @@ export default {
   productApi,
   categoryApi,
   variantApi,
+  fashionApi,
   healthCheck,
 };

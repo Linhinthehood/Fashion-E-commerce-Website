@@ -1,0 +1,41 @@
+FASHION RECOMMENDATION SYSTEM - DATA COLLECTION NOTICE
+
+This application collects the following information for analytics and personalization:
+
+COLLECTED DATA:
+- Search queries (text and image-based)
+- Purchase history
+- IP addresses
+- System information (OS, platform, etc.)
+- Timestamps of all actions
+- Image embeddings and similarity data
+
+PURPOSE:
+- Improve recommendation accuracy
+- Analyze usage patterns
+- Provide personalized fashion suggestions
+- System performance monitoring
+
+DATA STORAGE:
+- All data is stored locally in the 'data' directory
+- Individual files for searches, purchases, and analytics
+- No data is transmitted to external servers (except IP detection)
+
+IP ADDRESS USAGE:
+- Used for session tracking and analytics
+- Helps identify unique users and usage patterns
+- Not displayed in the application interface
+- Stored in JSON files for analysis
+
+DATA RETENTION:
+- Search and purchase history: Indefinitely (local storage)
+- Daily analytics: Last 30 days
+- Usage logs: Organized by date
+
+USER CONTROL:
+- All data files are in human-readable JSON format
+- Users can delete the 'data' directory to remove all tracking data
+- No personal information beyond usage patterns is collected
+
+This is a local application - your data remains on your computer.
+Generated on: 2025-10-15 21:52:47

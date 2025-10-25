@@ -116,6 +116,25 @@ services:
       - ./services/api-gateway:/app
       - /app/node_modules
 
+  # Fashion Service (AI Recommendations)
+  fashion-service:
+    build:
+      context: ./backend/fashion-service
+      dockerfile: Dockerfile
+    container_name: fashion_ecommerce_fashion_service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URI=mongodb://admin:password123@mongodb:27017/fashion_ecommerce_products?authSource=admin
+      - MONGODB_DATABASE=fashion_ecommerce_products
+      - PORT=8000
+      - DEBUG=false
+    depends_on:
+      - mongodb
+    networks:
+      - fashion_network
+
   # Frontend (Development)
   frontend:
     build:
@@ -127,8 +146,10 @@ services:
       - "3000:80"
     environment:
       - REACT_APP_API_URL=http://localhost:3000/api
+      - VITE_FASHION_SERVICE_URL=http://localhost:8000
     depends_on:
       - api-gateway
+      - fashion-service
     networks:
       - fashion_network
 
