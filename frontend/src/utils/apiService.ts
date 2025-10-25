@@ -165,12 +165,30 @@ export const authApi = {
     name?: string;
     phoneNumber?: string;
     avatar?: string;
+    dob?: string;
+    gender?: 'Male' | 'Female' | 'Others';
   }) => apiClient.put(API_ENDPOINTS.auth.updateProfile(), profileData),
 
   changePassword: (passwordData: {
     currentPassword: string;
     newPassword: string;
   }) => apiClient.put(API_ENDPOINTS.auth.changePassword(), passwordData),
+
+  // Google OAuth functions
+  googleLogin: () => {
+    // Redirect to Google OAuth (not an API call)
+    window.location.href = API_ENDPOINTS.auth.google();
+  },
+
+  googleCallback: () => {
+    // This is handled by the backend redirect, not a direct API call
+    return API_ENDPOINTS.auth.googleCallback();
+  },
+
+  googleFailure: () => {
+    // This is handled by the backend redirect, not a direct API call
+    return API_ENDPOINTS.auth.googleFailure();
+  },
 };
 
 // Customer API functions

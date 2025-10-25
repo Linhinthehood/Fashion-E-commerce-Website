@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { authApi, customerApi } from '../utils/apiService'
+import VietnamLocationSelector, { type LocationData } from '../components/VietnamLocationSelector'
 
 type User = {
   _id: string
@@ -43,13 +44,18 @@ export default function ProfilePage() {
   const [profileForm, setProfileForm] = useState({
     name: '',
     phoneNumber: '',
-    avatar: ''
+    avatar: '',
+    dob: '',
+    gender: '' as 'Male' | 'Female' | 'Others' | ''
   })
   
   // Address form
   const [addressForm, setAddressForm] = useState({
     name: '',
     addressInfo: '',
+    province: '',
+    district: '',
+    ward: '',
     isDefault: false
   })
 
@@ -58,35 +64,55 @@ export default function ProfilePage() {
   }, [])
 
   const loadProfile = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const res = await authApi.getProfile()
-      if (res.success && res.data) {
-        const data = res.data as any
-        setUser(data.user)
-        setCustomer(data.customer)
+      try {
+        setLoading(true)
+        setError(null)
+        const res = await authApi.getProfile()
+        if (res.success && res.data) {
+          const data = res.data as any
+          setUser(data.user)
+          setCustomer(data.customer)
         
         // Set form data
         setProfileForm({
           name: data.user.name || '',
           phoneNumber: data.user.phoneNumber || '',
-          avatar: data.user.avatar || ''
+          avatar: data.user.avatar || '',
+          dob: data.user.dob ? new Date(data.user.dob).toISOString().split('T')[0] : '',
+          gender: data.user.gender || ''
         })
-      } else {
-        throw new Error(res.message || 'Failed to load profile')
+        } else {
+          throw new Error(res.message || 'Failed to load profile')
+        }
+      } catch (e: any) {
+        setError(e.message || 'Có lỗi xảy ra khi tải hồ sơ')
+      } finally {
+        setLoading(false)
       }
-    } catch (e: any) {
-      setError(e.message || 'Có lỗi xảy ra khi tải hồ sơ')
-    } finally {
-      setLoading(false)
     }
-  }
 
   const handleUpdateProfile = async () => {
     try {
       setError(null)
-      const res = await authApi.updateProfile(profileForm)
+      
+      // Prepare data for API call, only include non-empty values
+      const updateData: {
+        name?: string;
+        phoneNumber?: string;
+        avatar?: string;
+        dob?: string;
+        gender?: 'Male' | 'Female' | 'Others';
+      } = {}
+      
+      if (profileForm.name) updateData.name = profileForm.name
+      if (profileForm.phoneNumber) updateData.phoneNumber = profileForm.phoneNumber
+      if (profileForm.avatar !== undefined) updateData.avatar = profileForm.avatar
+      if (profileForm.dob) updateData.dob = profileForm.dob
+      if (profileForm.gender) {
+        updateData.gender = profileForm.gender as 'Male' | 'Female' | 'Others'
+      }
+      
+      const res = await authApi.updateProfile(updateData)
       if (res.success) {
         setUser(prev => prev ? { ...prev, ...profileForm } : null)
         setIsEditingProfile(false)
@@ -103,11 +129,40 @@ export default function ProfilePage() {
   const handleAddAddress = async () => {
     try {
       setError(null)
-      const res = await customerApi.addAddress(addressForm)
+      
+      // Validate required fields
+      if (!addressForm.name.trim()) {
+        setError('Tên địa chỉ là bắt buộc')
+        return
+      }
+      if (!addressForm.province || !addressForm.district || !addressForm.ward) {
+        setError('Vui lòng chọn đầy đủ tỉnh/thành phố, quận/huyện và phường/xã')
+        return
+      }
+      if (!addressForm.addressInfo.trim()) {
+        setError('Địa chỉ chi tiết là bắt buộc')
+        return
+      }
+      
+      // Format full address: addressInfo + ward + district + province
+      const fullAddressInfo = [
+        addressForm.addressInfo.trim(),
+        addressForm.ward,
+        addressForm.district,
+        addressForm.province
+      ].join(', ')
+      
+      const addressData = {
+        name: addressForm.name.trim(),
+        addressInfo: fullAddressInfo,
+        isDefault: addressForm.isDefault
+      }
+      
+      const res = await customerApi.addAddress(addressData)
       if (res.success) {
         await loadProfile() // Reload to get updated addresses
         setIsAddingAddress(false)
-        setAddressForm({ name: '', addressInfo: '', isDefault: false })
+        setAddressForm({ name: '', addressInfo: '', province: '', district: '', ward: '', isDefault: false })
         setSuccess('Thêm địa chỉ thành công!')
         setTimeout(() => setSuccess(null), 3000)
       } else {
@@ -123,11 +178,40 @@ export default function ProfilePage() {
     
     try {
       setError(null)
-      const res = await customerApi.updateAddress(editingAddressId, addressForm)
+      
+      // Validate required fields
+      if (!addressForm.name.trim()) {
+        setError('Tên địa chỉ là bắt buộc')
+        return
+      }
+      if (!addressForm.province || !addressForm.district || !addressForm.ward) {
+        setError('Vui lòng chọn đầy đủ tỉnh/thành phố, quận/huyện và phường/xã')
+        return
+      }
+      if (!addressForm.addressInfo.trim()) {
+        setError('Địa chỉ chi tiết là bắt buộc')
+        return
+      }
+      
+      // Format full address: addressInfo + ward + district + province
+      const fullAddressInfo = [
+        addressForm.addressInfo.trim(),
+        addressForm.ward,
+        addressForm.district,
+        addressForm.province
+      ].join(', ')
+      
+      const addressData = {
+        name: addressForm.name.trim(),
+        addressInfo: fullAddressInfo,
+        isDefault: addressForm.isDefault
+      }
+      
+      const res = await customerApi.updateAddress(editingAddressId, addressData)
       if (res.success) {
         await loadProfile() // Reload to get updated addresses
         setEditingAddressId(null)
-        setAddressForm({ name: '', addressInfo: '', isDefault: false })
+        setAddressForm({ name: '', addressInfo: '', province: '', district: '', ward: '', isDefault: false })
         setSuccess('Cập nhật địa chỉ thành công!')
         setTimeout(() => setSuccess(null), 3000)
       } else {
@@ -157,9 +241,30 @@ export default function ProfilePage() {
   }
 
   const startEditAddress = (address: Address) => {
+    // Parse addressInfo to extract components
+    // Format: "123 Đường ABC, Phường XYZ, Quận ABC, TP.HCM"
+    const addressParts = address.addressInfo.split(', ')
+    let streetAddress = ''
+    let province = ''
+    let district = ''
+    let ward = ''
+    
+    if (addressParts.length >= 4) {
+      streetAddress = addressParts[0] || ''
+      ward = addressParts[1] || ''
+      district = addressParts[2] || ''
+      province = addressParts[3] || ''
+    } else {
+      // Fallback: use the full addressInfo as street address
+      streetAddress = address.addressInfo
+    }
+    
     setAddressForm({
       name: address.name,
-      addressInfo: address.addressInfo,
+      addressInfo: streetAddress,
+      province: province,
+      district: district,
+      ward: ward,
       isDefault: address.isDefault
     })
     setEditingAddressId(address._id)
@@ -167,7 +272,7 @@ export default function ProfilePage() {
 
   const cancelEditAddress = () => {
     setEditingAddressId(null)
-    setAddressForm({ name: '', addressInfo: '', isDefault: false })
+    setAddressForm({ name: '', addressInfo: '', province: '', district: '', ward: '', isDefault: false })
   }
 
   if (loading) {
@@ -186,15 +291,15 @@ export default function ProfilePage() {
         {success && (
           <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
             {success}
-          </div>
-        )}
+            </div>
+          )}
 
         {/* Error Message */}
-        {error && (
+          {error && (
           <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-            {error}
-          </div>
-        )}
+              {error}
+            </div>
+          )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -291,6 +396,28 @@ export default function ProfilePage() {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Ngày sinh</label>
+                        <input
+                          type="date"
+                          value={profileForm.dob}
+                          onChange={(e) => setProfileForm(prev => ({ ...prev, dob: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Giới tính</label>
+                        <select
+                          value={profileForm.gender}
+                          onChange={(e) => setProfileForm(prev => ({ ...prev, gender: e.target.value as 'Male' | 'Female' | 'Others' | '' }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Chọn giới tính</option>
+                          <option value="Male">Nam</option>
+                          <option value="Female">Nữ</option>
+                          <option value="Others">Khác</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -314,8 +441,8 @@ export default function ProfilePage() {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
+                </div>
+              </div>
 
         {/* Address Management */}
         <div className="mt-8">
@@ -345,7 +472,9 @@ export default function ProfilePage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tên địa chỉ</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Tên địa chỉ <span className="text-red-500">*</span>
+                      </label>
                       <input
                         type="text"
                         value={addressForm.name}
@@ -367,15 +496,39 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   
+                  {/* Location Selector */}
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ chi tiết</label>
+                    <VietnamLocationSelector
+                      value={{
+                        province: addressForm.province,
+                        district: addressForm.district,
+                        ward: addressForm.ward
+                      }}
+                      onChange={(location: LocationData) => {
+                        setAddressForm(prev => ({
+                          ...prev,
+                          province: location.province,
+                          district: location.district,
+                          ward: location.ward
+                        }))
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Địa chỉ chi tiết <span className="text-red-500">*</span>
+                    </label>
                     <textarea
                       value={addressForm.addressInfo}
                       onChange={(e) => setAddressForm(prev => ({ ...prev, addressInfo: e.target.value }))}
-                      placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..."
+                      placeholder="Số nhà, tên đường, tòa nhà..."
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Ví dụ: 123 Đường ABC, Tòa nhà XYZ
+                    </p>
                   </div>
                   
                   <div className="flex space-x-2">
@@ -425,11 +578,11 @@ export default function ProfilePage() {
                         <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium text-green-700 bg-green-100">
                           Mặc định
                         </span>
-                      )}
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : (
+                  ) : (
                 <div className="text-center py-8">
                   <div className="text-gray-400 mb-2">
                     <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">

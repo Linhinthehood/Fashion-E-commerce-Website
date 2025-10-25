@@ -29,6 +29,9 @@ export const API_ENDPOINTS = {
     profile: () => buildUrl('/auth/profile'),
     updateProfile: () => buildUrl('/auth/profile'),
     changePassword: () => buildUrl('/auth/change-password'),
+    google: () => buildUrl('/auth/google'),
+    googleCallback: () => buildUrl('/auth/google/callback'),
+    googleFailure: () => buildUrl('/auth/google/failure'),
   },
   customers: {
     profile: () => buildUrl('/customers/profile'),

@@ -164,13 +164,15 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
 
-    const { name, phoneNumber, avatar } = req.body;
+    const { name, phoneNumber, avatar, dob, gender } = req.body;
     const userId = req.user.userId;
 
     const updateData = {};
     if (name) updateData.name = name;
     if (phoneNumber) updateData.phoneNumber = phoneNumber;
     if (avatar !== undefined) updateData.avatar = avatar;
+    if (dob) updateData.dob = dob;
+    if (gender) updateData.gender = gender;
 
     const user = await User.findByIdAndUpdate(
       userId,
@@ -280,11 +282,56 @@ const getUserById = async (req, res) => {
   }
 };
 
+// Google OAuth callback handler
+const googleCallback = async (req, res) => {
+  try {
+    // This function is called after successful Google authentication
+    const user = req.user;
+    
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Google authentication failed'
+      });
+    }
+    
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+    
+    // Generate JWT token
+    const token = generateToken(user._id);
+    
+    // Redirect to frontend with token through API Gateway
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const redirectUrl = `${frontendUrl}/auth/callback?token=${token}&success=true`;
+    
+    res.redirect(redirectUrl);
+  } catch (error) {
+    console.error('Google callback error:', error);
+    
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const redirectUrl = `${frontendUrl}/auth/callback?success=false&error=authentication_failed`;
+    
+    res.redirect(redirectUrl);
+  }
+};
+
+// Google OAuth failure handler
+const googleFailure = (req, res) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const redirectUrl = `${frontendUrl}/auth/callback?success=false&error=google_auth_failed`;
+  
+  res.redirect(redirectUrl);
+};
+
 module.exports = {
   register,
   login,
   getProfile,
   updateProfile,
   changePassword,
-  getUserById
+  getUserById,
+  googleCallback,
+  googleFailure
 };

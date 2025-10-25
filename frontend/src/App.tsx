@@ -15,6 +15,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
 import CategoryPage from './pages/CategoryPage'
 import ProfilePage from './pages/ProfilePage'
+import AuthCallback from './pages/AuthCallback'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/stock-clerk" element={<StockClerkPage />} />
             <Route path="/c/:masterCategory" element={<CategoryPage />} />

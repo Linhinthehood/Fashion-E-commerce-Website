@@ -39,12 +39,21 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
+    required: function() {
+      return !this.googleId; // Password is required only if not Google OAuth user
+    },
     minlength: [6, 'Password must be at least 6 characters long']
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true // Allows multiple null values
   },
   dob: {
     type: Date,
-    required: [true, 'Date of birth is required'],
+    required: function() {
+      return !this.googleId; // DOB is required only if not Google OAuth user
+    },
     validate: {
       validator: function(date) {
         return date < new Date();
@@ -54,13 +63,17 @@ const userSchema = new mongoose.Schema({
   },
   phoneNumber: {
     type: String,
-    required: [true, 'Phone number is required'],
+    required: function() {
+      return !this.googleId; // Phone number is required only if not Google OAuth user
+    },
     trim: true,
     match: [/^[\+]?[0-9]{9,12}$/, 'Phone number must be 9 to 12 digits']
   },
   gender: {
     type: String,
-    required: [true, 'Gender is required'],
+    required: function() {
+      return !this.googleId; // Gender is required only if not Google OAuth user
+    },
     enum: {
       values: Object.values(genderEnum),
       message: 'Gender must be one of: Male, Female, Others'

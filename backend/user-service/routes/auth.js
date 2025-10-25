@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const { validationResult } = require('express-validator');
 const {
   register,
@@ -6,7 +7,9 @@ const {
   getProfile,
   updateProfile,
   changePassword,
-  getUserById
+  getUserById,
+  googleCallback,
+  googleFailure
 } = require('../controllers/authController');
 const { authenticate, internalAuth } = require('../middleware/auth');
 const { authValidation } = require('../middleware/validation');
@@ -29,6 +32,18 @@ const handleValidationErrors = (req, res, next) => {
 // Public routes
 router.post('/register', authValidation.register, handleValidationErrors, register);
 router.post('/login', authValidation.login, handleValidationErrors, login);
+
+// Google OAuth routes
+router.get('/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}));
+
+router.get('/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/api/auth/google/failure' }),
+  googleCallback
+);
+
+router.get('/google/failure', googleFailure);
 
 // Protected routes
 router.get('/profile', authenticate, getProfile);
