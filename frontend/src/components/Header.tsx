@@ -1,39 +1,87 @@
 import { Link, NavLink } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useCart } from '../contexts/CartContext'
+import { productApi } from '../utils/apiService'
 
-const menus = [
-  {
-    label: 'Apparel',
-    path: '/c/apparel',
-    children: [
-      { label: 'Topwear', path: '/c/apparel/topwear' },
-      { label: 'Bottomwear', path: '/c/apparel/bottomwear' }
-    ]
-  },
-  {
-    label: 'Accessories',
-    path: '/c/accessories',
-    children: [
-      { label: 'Hat', path: '/c/accessories/hat' },
-      { label: 'Watch', path: '/c/accessories/watch' },
-      { label: 'Wallet', path: '/c/accessories/wallet' } // Add this
-    ]
-  },
-  {
-    label: 'Footwear',
-    path: '/c/footwear',
-    children: [
-      { label: 'Shoe', path: '/c/footwear/shoe' }
-    ]
-  }
-]
+type SubCategory = {
+  id: string
+  name: string
+  productCount: number
+  articleTypes: Array<{
+    id: string
+    articleType: string
+    productCount: number
+  }>
+}
+
+type MasterCategory = {
+  name: string
+  subCategories: SubCategory[]
+}
+
+const masterCategories = ['Apparel', 'Accessories', 'Footwear']
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [masterCategoryData, setMasterCategoryData] = useState<Record<string, MasterCategory>>({})
+  const [loadingCategories, setLoadingCategories] = useState<Record<string, boolean>>({})
   const { user, isAuthenticated, logout } = useAuth()
   const { cartItemCount, cartItems, getTotalPrice } = useCart()
+
+  // Load sub-categories for a master category
+  const loadSubCategories = async (masterCategory: string) => {
+    if (masterCategoryData[masterCategory] || loadingCategories[masterCategory]) {
+      return
+    }
+
+    setLoadingCategories(prev => ({ ...prev, [masterCategory]: true }))
+    
+    try {
+      const response = await productApi.getSubCategoriesByMaster(masterCategory)
+      if (response.success && response.data) {
+        const data = response.data as {
+          masterCategory: string
+          subCategories: SubCategory[]
+        }
+        setMasterCategoryData(prev => ({
+          ...prev,
+          [masterCategory]: {
+            name: masterCategory,
+            subCategories: data.subCategories
+          }
+        }))
+      }
+    } catch (error) {
+      console.error(`Error loading sub-categories for ${masterCategory}:`, error)
+    } finally {
+      setLoadingCategories(prev => ({ ...prev, [masterCategory]: false }))
+    }
+  }
+
+  // Load sub-categories on component mount
+  useEffect(() => {
+    masterCategories.forEach(category => {
+      loadSubCategories(category)
+    })
+  }, [])
+
+  // Convert master category data to menu format
+  const menus = masterCategories.map(masterCategory => {
+    const data = masterCategoryData[masterCategory]
+    const isLoading = loadingCategories[masterCategory]
+    
+    return {
+      label: masterCategory,
+      path: `/c/${masterCategory.toLowerCase()}`,
+      children: data?.subCategories.map(subCategory => ({
+        label: subCategory.name,
+        path: `/c/${masterCategory}/${subCategory.name}`,
+        categoryId: subCategory.id,
+        productCount: subCategory.productCount
+      })) || (isLoading ? [{ label: 'Loading...', path: '#' }] : [])
+    }
+  })
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm">
@@ -125,9 +173,16 @@ export default function Header() {
                         to={child.path}
                         style={{ transitionDelay: `${index * 50}ms` }}
                       >
-                        <span className="group-hover/item:translate-x-1 transition-transform duration-200 inline-block">
-                          {child.label}
-                        </span>
+                        <div className="flex items-center justify-between">
+                          <span className="group-hover/item:translate-x-1 transition-transform duration-200 inline-block">
+                            {child.label}
+                          </span>
+                          {child.productCount !== undefined && (
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                              {child.productCount}
+                            </span>
+                          )}
+                        </div>
                       </Link>
                     ))}
                   </div>
@@ -154,7 +209,7 @@ export default function Header() {
             <div className="relative group">
               <Link
                 to="/cart"
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                className="flex items-center justify-center p-3 rounded-lg text-sm font-medium transition-all duration-200
                            hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 text-gray-700 hover:text-gray-900"
               >
                 <div className="relative">
@@ -167,7 +222,6 @@ export default function Header() {
                     </span>
                   )}
                 </div>
-                <span>Giỏ hàng</span>
               </Link>
 
               {/* Cart Dropdown */}
@@ -254,7 +308,7 @@ export default function Header() {
                     </Link>
                     <button
                       onClick={logout}
-                      className="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                      className="block w-full text-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
                     >
                       Logout
                     </button>

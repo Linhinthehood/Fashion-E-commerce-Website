@@ -420,27 +420,6 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-// Get products by category
-const getProductsByCategory = async (req, res) => {
-  try {
-    const { categoryId } = req.params;
-    const { limit = 20 } = req.query;
-    
-    const products = await Product.getByCategory(categoryId, parseInt(limit));
-
-    res.json({
-      success: true,
-      data: { products }
-    });
-  } catch (error) {
-    console.error('Get products by category error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
 
 // Get products by brand
 const getProductsByBrand = async (req, res) => {
@@ -610,6 +589,175 @@ const deleteProductImage = async (req, res) => {
   }
 };
 
+// Get products by sub-category name (convenience endpoint)
+const getProductsBySubCategory = async (req, res) => {
+  try {
+    const { masterCategory, subCategory } = req.params;
+    const {
+      page = 1,
+      limit = 12,
+      brand,
+      gender,
+      color,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+      search
+    } = req.query;
+
+    if (!masterCategory || !subCategory) {
+      return res.status(400).json({
+        success: false,
+        message: 'Master category and sub-category are required'
+      });
+    }
+
+    // Find category by master and sub category (case-insensitive)
+    const category = await Category.findOne({
+      masterCategory: { $regex: new RegExp(`^${masterCategory}$`, 'i') },
+      subCategory: { $regex: new RegExp(`^${subCategory}$`, 'i') },
+      isActive: true
+    });
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: 'Category not found'
+      });
+    }
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Build filter object
+    const filter = { 
+      categoryId: category._id,
+      isActive: true 
+    };
+
+    if (brand) filter.brand = new RegExp(brand, 'i');
+    if (gender) filter.gender = gender;
+    if (color) filter.color = new RegExp(color, 'i');
+
+    // Build sort object
+    const sort = {};
+    sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+
+    let query = Product.find(filter).populate('categoryId', 'masterCategory subCategory articleType');
+
+    // Add search functionality
+    if (search) {
+      query = query.find({
+        $text: { $search: search },
+        ...filter
+      });
+      sort.score = { $meta: 'textScore' };
+    }
+
+    // Execute query with pagination
+    const products = await query
+      .sort(sort)
+      .skip(skip)
+      .limit(limitNum)
+      .lean();
+
+    // Get total count for pagination
+    const total = await Product.countDocuments(filter);
+
+    // Add primaryImage to each product
+    const productsWithImages = products.map(product => ({
+      ...product,
+      primaryImage: product.images && product.images.length > 0 ? product.images[0] : null
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        products: productsWithImages,
+        pagination: {
+          currentPage: pageNum,
+          totalPages: Math.ceil(total / limitNum),
+          totalProducts: total,
+          hasNextPage: pageNum < Math.ceil(total / limitNum),
+          hasPrevPage: pageNum > 1
+        },
+        category: {
+          id: category._id,
+          masterCategory: category.masterCategory,
+          subCategory: category.subCategory,
+          articleType: category.articleType
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Get products by sub-category error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Get sub-categories by master category
+const getSubCategoriesByMaster = async (req, res) => {
+  try {
+    const { masterCategory } = req.params;
+    
+    if (!masterCategory) {
+      return res.status(400).json({
+        success: false,
+        message: 'Master category is required'
+      });
+    }
+
+    // Get all sub-categories for the given master category (case-insensitive)
+    const subCategories = await Category.find({ 
+      masterCategory: { $regex: new RegExp(`^${masterCategory}$`, 'i') },
+      isActive: true 
+    })
+    .select('_id subCategory articleType productCount')
+    .sort({ subCategory: 1, articleType: 1 });
+
+    // Group by subCategory and return unique sub-categories with their IDs
+    const subCategoryMap = new Map();
+    
+    subCategories.forEach(category => {
+      const subCategoryName = category.subCategory;
+      if (!subCategoryMap.has(subCategoryName)) {
+        subCategoryMap.set(subCategoryName, {
+          id: category._id,
+          name: subCategoryName,
+          productCount: category.productCount,
+          articleTypes: []
+        });
+      }
+      subCategoryMap.get(subCategoryName).articleTypes.push({
+        id: category._id,
+        articleType: category.articleType,
+        productCount: category.productCount
+      });
+    });
+
+    const result = Array.from(subCategoryMap.values());
+
+    res.json({
+      success: true,
+      data: {
+        masterCategory,
+        subCategories: result
+      }
+    });
+  } catch (error) {
+    console.error('Get sub-categories by master error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 // Get product statistics
 const getProductStats = async (req, res) => {
   try {
@@ -710,10 +858,11 @@ module.exports = {
   getProductById,
   updateProduct,
   deleteProduct,
-  getProductsByCategory,
+  getProductsBySubCategory,
   getProductsByBrand,
   getProductsByGender,
   searchProducts,
+  getSubCategoriesByMaster,
   getProductStats,
   uploadProductImages,
   deleteProductImage,

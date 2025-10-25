@@ -6,10 +6,11 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
-  getProductsByCategory,
+  getProductsBySubCategory,
   getProductsByBrand,
   getProductsByGender,
   searchProducts,
+  getSubCategoriesByMaster,
   getProductStats,
   uploadProductImages,
   deleteProductImage,
@@ -78,9 +79,10 @@ router.get('/', getProductsValidation, getProducts);
 router.post('/', upload.array('images', 10), createProductValidation, createProduct);
 router.get('/search', searchValidation, searchProducts);
 router.get('/stats', getProductStats);
+router.get('/master/:masterCategory/sub-categories', getSubCategoriesByMaster);
+router.get('/master/:masterCategory/sub-category/:subCategory', getProductsBySubCategory);
 router.get('/brand/:brand', getProductsByBrandValidation, getProductsByBrand);
 router.get('/gender/:gender', getProductsByGenderValidation, getProductsByGender);  
-router.get('/category/:categoryId', getProductsByCategory);
 router.get('/:id', getProductByIdValidation, getProductById);
 router.put('/:id', upload.array('images', 10), updateProductValidation, updateProduct);
 router.delete('/:id', getProductByIdValidation, deleteProduct);

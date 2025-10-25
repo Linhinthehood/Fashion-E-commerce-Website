@@ -13,9 +13,7 @@ import Header from './components/Header.tsx'
 import Footer from './components/Footer.tsx'
 import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
-import ApparelPage from './pages/ApparelPage.tsx'
-import AccessoriesPage from './pages/AccessoriesPage'
-import FootwearPage from './pages/FootwearPage'
+import CategoryPage from './pages/CategoryPage'
 import ProfilePage from './pages/ProfilePage'
 
 function App() {
@@ -36,15 +34,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/stock-clerk" element={<StockClerkPage />} />
-            <Route path="/c/apparel" element={<ApparelPage />} />
-            <Route path="/c/apparel/topwear" element={<ApparelPage />} />
-            <Route path="/c/apparel/bottomwear" element={<ApparelPage />} />
-            <Route path="/c/accessories" element={<AccessoriesPage />} />
-            <Route path="/c/accessories/hat" element={<AccessoriesPage />} />
-            <Route path="/c/accessories/watch" element={<AccessoriesPage />} />
-            <Route path="/c/accessories/wallet" element={<AccessoriesPage />} />
-            <Route path="/c/footwear" element={<FootwearPage />} />
-            <Route path="/c/footwear/shoe" element={<FootwearPage />} />
+            <Route path="/c/:masterCategory" element={<CategoryPage />} />
+            <Route path="/c/:masterCategory/:subCategory" element={<CategoryPage />} />
             <Route path="*" element={<div>Not Found. <Link to="/">Go Home</Link></div>} />
           </Routes>
           </main>

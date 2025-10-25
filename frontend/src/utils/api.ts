@@ -1,11 +1,5 @@
 // API Configuration
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
-// Service-specific base URLs for direct access (if needed)
-export const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3001/api';
-export const PRODUCT_SERVICE_URL = import.meta.env.VITE_PRODUCT_SERVICE_URL || 'http://localhost:3002/api';
-export const ORDER_SERVICE_URL = import.meta.env.VITE_ORDER_SERVICE_URL || 'http://localhost:3003/api';
-
 /**
  * Build API URL with proper path handling
  * @param path - API path (with or without leading slash)
@@ -23,13 +17,6 @@ export function buildUrl(path: string, useGateway: boolean = true): string {
   
   return `${baseUrl}${trimmed}`;
 }
-
-/**
- * Build service-specific URLs
- */
-export const buildUserApiUrl = (path: string) => buildUrl(path, false).replace(API_BASE_URL, USER_SERVICE_URL);
-export const buildProductApiUrl = (path: string) => buildUrl(path, false).replace(API_BASE_URL, PRODUCT_SERVICE_URL);
-export const buildOrderApiUrl = (path: string) => buildUrl(path, false).replace(API_BASE_URL, ORDER_SERVICE_URL);
 
 /**
  * API Endpoints
@@ -55,9 +42,10 @@ export const API_ENDPOINTS = {
     list: () => buildUrl('/products'),
     byId: (id: string) => buildUrl(`/products/${id}`),
     search: () => buildUrl('/products/search'),
-    byCategory: (categoryId: string) => buildUrl(`/products/category/${categoryId}`),
+    bySubCategory: (masterCategory: string, subCategory: string) => buildUrl(`/products/master/${masterCategory}/sub-category/${subCategory}`),
     byBrand: (brand: string) => buildUrl(`/products/brand/${brand}`),
     byGender: (gender: string) => buildUrl(`/products/gender/${gender}`),
+    subCategoriesByMaster: (masterCategory: string) => buildUrl(`/products/master/${masterCategory}/sub-categories`),
     stats: () => buildUrl('/products/stats'),
     images: (productId: string) => buildUrl(`/products/${productId}/images`),
   },

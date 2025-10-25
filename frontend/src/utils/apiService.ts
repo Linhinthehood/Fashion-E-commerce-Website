@@ -235,8 +235,29 @@ export const productApi = {
     return apiClient.get(`${API_ENDPOINTS.products.search()}?${searchParams.toString()}`, false); // No auth
   },
 
-  getProductsByCategory: (categoryId: string) =>
-    apiClient.get(API_ENDPOINTS.products.byCategory(categoryId), false), // No auth
+  getProductsBySubCategory: (masterCategory: string, subCategory: string, params?: {
+    page?: number;
+    limit?: number;
+    brand?: string;
+    gender?: string;
+    color?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    search?: string;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.products.bySubCategory(masterCategory, subCategory)}?${searchParams.toString()}`
+      : API_ENDPOINTS.products.bySubCategory(masterCategory, subCategory);
+    return apiClient.get(url, false); // No auth
+  },
 
   getProductsByBrand: (brand: string, limit?: number) => {
     const searchParams = new URLSearchParams();
@@ -257,6 +278,9 @@ export const productApi = {
   },
 
   getProductStats: () => apiClient.get(API_ENDPOINTS.products.stats(), true), // Auth required for stats
+
+  getSubCategoriesByMaster: (masterCategory: string) =>
+    apiClient.get(API_ENDPOINTS.products.subCategoriesByMaster(masterCategory), false), // No auth
 };
 
 // Category API functions (Public - No authentication required)
