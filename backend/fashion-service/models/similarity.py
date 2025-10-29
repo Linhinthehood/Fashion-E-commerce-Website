@@ -6,7 +6,12 @@ from transformers import CLIPProcessor
 import faiss
 
 from .FashionCLIP import FashionCLIP  # <- your model class file
-from ..config.config import DEFAULT_CHECKPOINT, DEFAULT_IMAGES_DIR, DEFAULT_NPZ, DEFAULT_INDEX, resolve_image_path
+try:
+    # Preferred absolute import when running scripts from service root
+    from config.config import DEFAULT_CHECKPOINT, DEFAULT_IMAGES_DIR, DEFAULT_NPZ, DEFAULT_INDEX, resolve_image_path
+except Exception:
+    # Fallback to package-relative import when running as a package
+    from ..config.config import DEFAULT_CHECKPOINT, DEFAULT_IMAGES_DIR, DEFAULT_NPZ, DEFAULT_INDEX, resolve_image_path
 
 # --- default paths (now imported from config) ---
 

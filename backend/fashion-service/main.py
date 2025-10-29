@@ -47,7 +47,8 @@ HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8000"))
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
-MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "fashion_ecommerce_products")
+# Default DB name set to 'products' which matches the product-service export
+MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "products")
 
 # CORS middleware
 allow_origins_list = ["*"] if ALLOWED_ORIGINS.strip() == "*" else [o.strip() for o in ALLOWED_ORIGINS.split(",") if o.strip()]
@@ -60,6 +61,10 @@ app.add_middleware(
 )
 
 # Connect to MongoDB
+# Initialize to None so code paths can check for availability
+client = None
+db = None
+products_collection = None
 try:
     client = MongoClient(MONGODB_URI)
     # Prefer explicit MONGODB_DATABASE, otherwise derive from URI if provided
@@ -68,17 +73,22 @@ try:
         try:
             db_name = client.get_default_database().name  # from URI path
         except Exception:
-            db_name = "fashion_ecommerce_products"
+            db_name = "products"
     db = client[db_name]
     products_collection = db.products
     # Ping to verify connection
     client.admin.command('ping')
     print(f"[OK] Connected to MongoDB: {MONGODB_URI}")
     print(f"[OK] Using database: {db_name}")
+    try:
+        cnt = products_collection.count_documents({})
+        print(f"[OK] products collection documents: {cnt}")
+    except Exception:
+        print("[INFO] Could not count products (permission or server error)")
 except Exception as e:
     print(f"[WARNING] MongoDB connection failed: {e}")
     print("[INFO] Running in mock data mode for products endpoints")
-products_collection = None
+# NOTE: don't overwrite products_collection here; leave it unset only when connection failed
 
 
 def _serialize(obj):
@@ -92,7 +102,7 @@ def _serialize(obj):
     return obj
 
 def _find_product_by_id(pid: str):
-    if not products_collection:
+    if products_collection is None:
         return None
     # Try as-is (string _id)
     doc = products_collection.find_one({'_id': pid})
@@ -222,7 +232,7 @@ async def track_user_interaction(
 @app.get("/api/v1/products/{product_id}")
 async def get_product_details(product_id: str):
     try:
-        if not products_collection:
+        if products_collection is None:
             return {
                 "success": True,
                 "data": {
@@ -268,13 +278,13 @@ async def get_similar_products(product_id: str, k: int = 6):
                         break
                 # Fetch documents
                 docs = []
-                if products_collection and neighbors:
+                if products_collection is not None and neighbors:
                     for nid in neighbors:
                         doc = _find_product_by_id(nid)
                         if doc:
                             docs.append(_serialize(doc))
                 # If no matching docs were found in Mongo (ID mismatch), fall back to sampling
-                if not docs and products_collection:
+                if not docs and products_collection is not None:
                     similar_products = list(products_collection.aggregate([
                         {"$match": {"_id": {"$ne": product_id}}},
                         {"$sample": {"size": k}}
@@ -282,7 +292,7 @@ async def get_similar_products(product_id: str, k: int = 6):
                     return {"success": True, "data": _serialize(similar_products), "message": f"Found {len(similar_products)} similar products (fallback: id mismatch)"}
                 return {"success": True, "data": docs, "message": f"Found {len(docs)} visually similar products"}
 
-        if not products_collection:
+        if products_collection is None:
             mock_products = [
                 {
                     "_id": f"similar_{i+1}",
@@ -306,11 +316,40 @@ async def get_similar_products(product_id: str, k: int = 6):
 @app.post("/api/v1/search/text")
 async def search_text_api(q: str, k: int = 6):
     try:
+        # If embeddings/index is not available, fall back to a simple DB text/regex search
         if _index is None or _emb_product_ids is None:
+            if products_collection is not None:
+                # Use a case-insensitive regex match against name, description, and brand
+                pipeline = [
+                    {"$match": {"$or": [
+                        {"name": {"$regex": q, "$options": "i"}},
+                        {"description": {"$regex": q, "$options": "i"}},
+                        {"brand": {"$regex": q, "$options": "i"}}
+                    ]}},
+                    {"$sample": {"size": min(k, 100)}},
+                    {"$project": {"name": 1, "brand": 1, "category": 1, "defaultPrice": 1, "images": {"$slice": ["$images", 1]}}}
+                ]
+                results = list(products_collection.aggregate(pipeline))
+                return {"success": True, "data": _serialize(results), "message": f"Found {len(results)} text-matched results (db fallback)"}
             return {"success": True, "data": [], "message": "Embeddings index not available"}
+
         qe = _embed_text_query(q)
         if qe is None:
+            # Model not available; also try DB fallback
+            if products_collection is not None:
+                pipeline = [
+                    {"$match": {"$or": [
+                        {"name": {"$regex": q, "$options": "i"}},
+                        {"description": {"$regex": q, "$options": "i"}},
+                        {"brand": {"$regex": q, "$options": "i"}}
+                    ]}},
+                    {"$sample": {"size": min(k, 100)}},
+                    {"$project": {"name": 1, "brand": 1, "category": 1, "defaultPrice": 1, "images": {"$slice": ["$images", 1]}}}
+                ]
+                results = list(products_collection.aggregate(pipeline))
+                return {"success": True, "data": _serialize(results), "message": f"Found {len(results)} text-matched results (db fallback)"}
             return {"success": True, "data": [], "message": "Model not available for text embedding"}
+
         sims, idxs = _index.search(qe, min(k, _index.ntotal))
         docs = _neighbors_to_docs(idxs[0], limit=k)
         return {"success": True, "data": docs, "message": f"Found {len(docs)} results for query"}
@@ -344,7 +383,7 @@ async def get_user_recommendations(user_id: str, k: int = 10):
         if rec_docs:
             return {"success": True, "data": rec_docs, "message": f"Found {len(rec_docs)} personalized recommendations"}
 
-        if not products_collection:
+        if products_collection is None:
             mock_products = [
                 {
                     "_id": f"recommended_{i+1}",

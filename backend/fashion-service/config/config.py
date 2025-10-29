@@ -16,9 +16,14 @@ class Config:
     # Project root directory
     PROJECT_ROOT = PROJECT_ROOT
     
-    # Model files (now in data/models/)
-    CHECKPOINT_BEST = PROJECT_ROOT / "data" / "models" / "fashion_clip_best.pt"
-    CHECKPOINT_FINAL = PROJECT_ROOT / "data" / "models" / "fashion_clip_final.pt"
+    # Model files
+    # Default previously pointed to backend/data/models, but this repo places the
+    # FashionCLIP checkpoints under the service's `models/` directory. Use a path
+    # relative to the service root so the existing file at
+    # backend/fashion-service/models/fashion_clip_best.pt will be found.
+    SERVICE_ROOT = Path(__file__).parent.parent.absolute()
+    CHECKPOINT_BEST = SERVICE_ROOT / "models" / "fashion_clip_best.pt"
+    CHECKPOINT_FINAL = SERVICE_ROOT / "models" / "fashion_clip_final.pt"
     
     # Data files (now in data/embeddings/)
     GALLERY_EMBEDDINGS = PROJECT_ROOT / "data" / "embeddings" / "gallery_embeddings.npz" 
