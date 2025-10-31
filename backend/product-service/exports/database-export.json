@@ -1,9 +1,9 @@
 {
-  "exportDate": "2025-10-11T09:43:51.718Z",
+  "exportDate": "2025-10-31T03:24:04.183Z",
   "statistics": {
     "totalCategories": 7,
-    "totalProducts": 33,
-    "activeProducts": 33,
+    "totalProducts": 40,
+    "activeProducts": 40,
     "inactiveProducts": 0
   },
   "categories": [
@@ -13,9 +13,9 @@
       "subCategory": "Hat",
       "articleType": "Baseball cap",
       "isActive": true,
-      "productCount": 5,
+      "productCount": 6,
       "createdAt": "2025-10-03T13:14:05.571Z",
-      "updatedAt": "2025-10-11T08:15:04.606Z",
+      "updatedAt": "2025-10-29T19:43:12.185Z",
       "__v": 0
     },
     {
@@ -24,9 +24,9 @@
       "subCategory": "Topwear",
       "articleType": "Shirt",
       "isActive": true,
-      "productCount": 9,
+      "productCount": 11,
       "createdAt": "2025-10-03T13:14:39.529Z",
-      "updatedAt": "2025-10-11T08:15:04.697Z",
+      "updatedAt": "2025-10-29T19:43:12.298Z",
       "__v": 0
     },
     {
@@ -35,9 +35,9 @@
       "subCategory": "Watch",
       "articleType": "Watch",
       "isActive": true,
-      "productCount": 5,
+      "productCount": 6,
       "createdAt": "2025-10-03T13:14:57.113Z",
-      "updatedAt": "2025-10-11T08:15:04.783Z",
+      "updatedAt": "2025-10-29T19:43:12.399Z",
       "__v": 0
     },
     {
@@ -46,9 +46,9 @@
       "subCategory": "Bottomwear",
       "articleType": "Pants",
       "isActive": true,
-      "productCount": 6,
+      "productCount": 8,
       "createdAt": "2025-10-03T17:17:30.723Z",
-      "updatedAt": "2025-10-11T08:15:04.871Z",
+      "updatedAt": "2025-10-29T19:43:12.506Z",
       "__v": 0
     },
     {
@@ -57,9 +57,9 @@
       "subCategory": "Shoes",
       "articleType": "Casual shoes",
       "isActive": true,
-      "productCount": 4,
+      "productCount": 5,
       "createdAt": "2025-10-04T00:26:14.102Z",
-      "updatedAt": "2025-10-11T08:15:04.959Z",
+      "updatedAt": "2025-10-29T19:43:12.610Z",
       "__v": 0
     },
     {
@@ -68,9 +68,9 @@
       "subCategory": "Wallet",
       "articleType": "Wallet",
       "isActive": true,
-      "productCount": 4,
+      "productCount": 6,
       "createdAt": "2025-10-04T08:07:26.848Z",
-      "updatedAt": "2025-10-11T08:15:05.047Z",
+      "updatedAt": "2025-10-29T19:43:12.723Z",
       "__v": 0
     },
     {
@@ -79,9 +79,9 @@
       "subCategory": "Sandal",
       "articleType": "Sandals",
       "isActive": true,
-      "productCount": 0,
+      "productCount": 1,
       "createdAt": "2025-10-06T10:20:36.180Z",
-      "updatedAt": "2025-10-11T08:15:05.133Z",
+      "updatedAt": "2025-10-29T19:43:12.833Z",
       "__v": 0
     }
   ],
@@ -943,6 +943,188 @@
       "isActive": true,
       "createdAt": "2025-10-10T20:54:19.882Z",
       "updatedAt": "2025-10-11T09:27:45.438Z",
+      "__v": 0
+    },
+    {
+      "_id": "69026e4f34fe8e3ddfaa6740",
+      "name": "Áo Thun Unisex Summer Breeze",
+      "description": "Áo thun nhẹ, thấm hút mồ hôi, phong cách unisex phù hợp đi chơi và dạo phố mùa hè.",
+      "brand": "LocalBrand",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "Light Blue",
+      "defaultPrice": 300000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761767387/fashion-ecommerce/products/-o-thun-unisex-summer-breeze-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761767389/fashion-ecommerce/products/-o-thun-unisex-summer-breeze-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761767390/fashion-ecommerce/products/-o-thun-unisex-summer-breeze-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc3f84cd07dea32e23b0",
+        "masterCategory": "Apparel",
+        "subCategory": "Topwear",
+        "articleType": "Shirt"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-29T19:43:11.086Z",
+      "updatedAt": "2025-10-29T19:49:51.595Z",
+      "__v": 0
+    },
+    {
+      "_id": "69026e4f34fe8e3ddfaa6743",
+      "name": "Quần Short Old Sailor Unisex",
+      "description": "Quần short form relaxed, chất liệu cotton co giãn thoải mái, thiết kế unisex.",
+      "brand": "Old Sailor",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "Beige",
+      "defaultPrice": 350000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769456/fashion-ecommerce/products/qu-n-short-chino-unisex-1.png",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769460/fashion-ecommerce/products/qu-n-short-chino-unisex-2.jpg",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769462/fashion-ecommerce/products/qu-n-short-chino-unisex-3.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e0052a7d3c1abe691f508b",
+        "masterCategory": "Apparel",
+        "subCategory": "Bottomwear",
+        "articleType": "Pants"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-29T19:43:11.196Z",
+      "updatedAt": "2025-10-29T20:24:23.260Z",
+      "__v": 0
+    },
+    {
+      "_id": "69026e4f34fe8e3ddfaa6749",
+      "name": "Đồng Hồ Thời Trang Nữ Casio",
+      "description": "Đồng hồ thời trang nữ Clarisse, mặt nhỏ thanh lịch, dây kim loại mỏng.",
+      "brand": "Casio",
+      "gender": "Female",
+      "usage": "Formal",
+      "color": "Rose Gold",
+      "defaultPrice": 2400000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769463/fashion-ecommerce/products/--ng-h--th-i-trang-n--clarisse-1.jpg",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769465/fashion-ecommerce/products/--ng-h--th-i-trang-n--clarisse-2.jpg",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769467/fashion-ecommerce/products/--ng-h--th-i-trang-n--clarisse-3.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68dfcc5184cd07dea32e23b3",
+        "masterCategory": "Accessories",
+        "subCategory": "Watch",
+        "articleType": "Watch"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-29T19:43:11.410Z",
+      "updatedAt": "2025-10-29T20:24:29.146Z",
+      "__v": 0
+    },
+    {
+      "_id": "69026e4f34fe8e3ddfaa674c",
+      "name": "Giày Slip-on Canvas Unisex",
+      "description": "Giày slip-on vải canvas, đế cao su nhẹ, phong cách unisex tiện dụng cho mọi hoạt động hằng ngày.",
+      "brand": "CanvasCo",
+      "gender": "Unisex",
+      "usage": "Casual",
+      "color": "Navy",
+      "defaultPrice": 650000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769469/fashion-ecommerce/products/gi-y-slip-on-canvas-unisex-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769471/fashion-ecommerce/products/gi-y-slip-on-canvas-unisex-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769473/fashion-ecommerce/products/gi-y-slip-on-canvas-unisex-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e069a6ddce55ce977444e9",
+        "masterCategory": "Footwear",
+        "subCategory": "Shoes",
+        "articleType": "Casual shoes"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-29T19:43:11.542Z",
+      "updatedAt": "2025-10-29T20:24:34.261Z",
+      "__v": 0
+    },
+    {
+      "_id": "69026e4f34fe8e3ddfaa674f",
+      "name": "Ví Da Slim WT Unisex",
+      "description": "Ví da slim phong cách minimal, nhiều ngăn thẻ, thiết kế mỏng gọn phù hợp cả nam và nữ.",
+      "brand": "WT",
+      "gender": "Unisex",
+      "usage": "Daily",
+      "color": "Black",
+      "defaultPrice": 520000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769474/fashion-ecommerce/products/v--da-slim-minimal-unisex-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769477/fashion-ecommerce/products/v--da-slim-minimal-unisex-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769478/fashion-ecommerce/products/v--da-slim-minimal-unisex-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e0d5be535ec32cbe22462f",
+        "masterCategory": "Accessories",
+        "subCategory": "Wallet",
+        "articleType": "Wallet"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-29T19:43:11.651Z",
+      "updatedAt": "2025-10-29T20:24:40.047Z",
+      "__v": 0
+    },
+    {
+      "_id": "69026e4f34fe8e3ddfaa6758",
+      "name": "Sandal Nữ Flat",
+      "description": "Sandal nữ đế thấp, quai bản, thiết kế comfortable cho mọi ngày.",
+      "brand": "SandalWorks",
+      "gender": "Female",
+      "usage": "Casual",
+      "color": "Beige",
+      "defaultPrice": 420000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769480/fashion-ecommerce/products/sandal-n--flat-1.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769482/fashion-ecommerce/products/sandal-n--flat-2.webp",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769483/fashion-ecommerce/products/sandal-n--flat-3.webp"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e397f4428dd87ba9cbd4a9",
+        "masterCategory": "Footwear",
+        "subCategory": "Sandal",
+        "articleType": "Sandals"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-29T19:43:11.964Z",
+      "updatedAt": "2025-10-29T20:24:45.227Z",
+      "__v": 0
+    },
+    {
+      "_id": "69026e5034fe8e3ddfaa675b",
+      "name": "Túi Đeo Chéo Nữ Herschel",
+      "description": "Túi đeo chéo nhỏ gọn, nhiều ngăn, phong cách tối giản phù hợp đi chơi và đi làm.",
+      "brand": "Herschel",
+      "gender": "Female",
+      "usage": "Daily",
+      "color": "Blush",
+      "defaultPrice": 780000,
+      "images": [
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769485/fashion-ecommerce/products/t-i--eo-ch-o-n--petite-1.jpg",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769486/fashion-ecommerce/products/t-i--eo-ch-o-n--petite-2.jpg",
+        "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769489/fashion-ecommerce/products/t-i--eo-ch-o-n--petite-3.jpg"
+      ],
+      "hasImage": true,
+      "categoryId": {
+        "_id": "68e0d5be535ec32cbe22462f",
+        "masterCategory": "Accessories",
+        "subCategory": "Wallet",
+        "articleType": "Wallet"
+      },
+      "isActive": true,
+      "createdAt": "2025-10-29T19:43:12.074Z",
+      "updatedAt": "2025-10-29T20:24:50.600Z",
       "__v": 0
     }
   ]

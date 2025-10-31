@@ -1,18 +1,19 @@
 {
-  "exportDate": "2025-10-11T09:43:51.721Z",
+  "exportDate": "2025-10-31T03:24:04.186Z",
   "totalCategories": 7,
-  "totalProducts": 33,
-  "activeProducts": 33,
+  "totalProducts": 40,
+  "activeProducts": 40,
   "inactiveProducts": 0,
-  "productsWithImages": 33,
+  "productsWithImages": 40,
   "productsWithoutImages": 0,
   "productsByCategory": {
-    "Shirt": 9,
+    "Shirt": 10,
     "Baseball cap": 5,
-    "Pants": 6,
-    "Watch": 5,
-    "Casual shoes": 4,
-    "Wallet": 4
+    "Pants": 7,
+    "Watch": 6,
+    "Casual shoes": 5,
+    "Wallet": 6,
+    "Sandals": 1
   },
   "topBrands": [
     {
@@ -58,7 +59,7 @@
   ],
   "genderDistribution": {
     "Male": 15,
-    "Female": 9,
-    "Unisex": 9
+    "Female": 12,
+    "Unisex": 13
   }
 }

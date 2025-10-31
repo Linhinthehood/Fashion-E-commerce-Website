@@ -5,9 +5,9 @@
     "subCategory": "Hat",
     "articleType": "Baseball cap",
     "isActive": true,
-    "productCount": 5,
+    "productCount": 6,
     "createdAt": "2025-10-03T13:14:05.571Z",
-    "updatedAt": "2025-10-11T08:15:04.606Z",
+    "updatedAt": "2025-10-29T19:43:12.185Z",
     "__v": 0
   },
   {
@@ -16,9 +16,9 @@
     "subCategory": "Topwear",
     "articleType": "Shirt",
     "isActive": true,
-    "productCount": 9,
+    "productCount": 11,
     "createdAt": "2025-10-03T13:14:39.529Z",
-    "updatedAt": "2025-10-11T08:15:04.697Z",
+    "updatedAt": "2025-10-29T19:43:12.298Z",
     "__v": 0
   },
   {
@@ -27,9 +27,9 @@
     "subCategory": "Watch",
     "articleType": "Watch",
     "isActive": true,
-    "productCount": 5,
+    "productCount": 6,
     "createdAt": "2025-10-03T13:14:57.113Z",
-    "updatedAt": "2025-10-11T08:15:04.783Z",
+    "updatedAt": "2025-10-29T19:43:12.399Z",
     "__v": 0
   },
   {
@@ -38,9 +38,9 @@
     "subCategory": "Bottomwear",
     "articleType": "Pants",
     "isActive": true,
-    "productCount": 6,
+    "productCount": 8,
     "createdAt": "2025-10-03T17:17:30.723Z",
-    "updatedAt": "2025-10-11T08:15:04.871Z",
+    "updatedAt": "2025-10-29T19:43:12.506Z",
     "__v": 0
   },
   {
@@ -49,9 +49,9 @@
     "subCategory": "Shoes",
     "articleType": "Casual shoes",
     "isActive": true,
-    "productCount": 4,
+    "productCount": 5,
     "createdAt": "2025-10-04T00:26:14.102Z",
-    "updatedAt": "2025-10-11T08:15:04.959Z",
+    "updatedAt": "2025-10-29T19:43:12.610Z",
     "__v": 0
   },
   {
@@ -60,9 +60,9 @@
     "subCategory": "Wallet",
     "articleType": "Wallet",
     "isActive": true,
-    "productCount": 4,
+    "productCount": 6,
     "createdAt": "2025-10-04T08:07:26.848Z",
-    "updatedAt": "2025-10-11T08:15:05.047Z",
+    "updatedAt": "2025-10-29T19:43:12.723Z",
     "__v": 0
   },
   {
@@ -71,9 +71,9 @@
     "subCategory": "Sandal",
     "articleType": "Sandals",
     "isActive": true,
-    "productCount": 0,
+    "productCount": 1,
     "createdAt": "2025-10-06T10:20:36.180Z",
-    "updatedAt": "2025-10-11T08:15:05.133Z",
+    "updatedAt": "2025-10-29T19:43:12.833Z",
     "__v": 0
   }
 ]
