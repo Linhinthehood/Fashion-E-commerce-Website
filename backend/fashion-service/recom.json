@@ -1,0 +1,64 @@
+{
+    "info": {
+      "_postman_id": "f0db8d8d-1a8e-4b27-9a1d-3c2f6e2b1234",
+      "name": "Fashion Service (main.py) - Tests",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "description": "Endpoints from backend/fashion-service/main.py"
+    },
+    "item": [
+      {
+        "name": "Health",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": "{{baseUrl}}/health"
+        }
+      },
+      {
+        "name": "Similar Products (by productId)",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"limit\": 5,\n  \"sameCategoryOnly\": true\n}"
+          },
+          "url": "{{baseUrl}}/api/similar-products"
+        }
+      },
+      {
+        "name": "Embed Image",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"imageUrl\": \"https://example.com/image.jpg\"\n}"
+          },
+          "url": "{{baseUrl}}/api/embed-image"
+        }
+      },
+      {
+        "name": "Search by Image",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"imageUrl\": \"https://example.com/image.jpg\",\n  \"limit\": 10,\n  \"categoryFilter\": \"T-Shirts\"\n}"
+          },
+          "url": "{{baseUrl}}/api/search-by-image"
+        }
+      }
+    ],
+    "variable": [
+      { "key": "baseUrl", "value": "http://localhost:5002" },
+      { "key": "productId", "value": "" }
+    ]
+  }
