@@ -313,6 +313,9 @@ export const productApi = {
 
   getProduct: (id: string) => apiClient.get(API_ENDPOINTS.products.byId(id), false), // No auth
 
+  createProduct: (productData: FormData) =>
+    apiClient.postFormData(API_ENDPOINTS.products.create(), productData, true),
+
   updateProduct: (id: string, formData: FormData) =>
     apiClient.putFormData(API_ENDPOINTS.products.byId(id), formData, true),
 
@@ -476,6 +479,14 @@ export const variantApi = {
   },
 
   // Admin/Staff endpoints (auth required)
+  createVariant: (payload: {
+    productId: string;
+    size: string;
+    stock: number;
+    status?: 'Active' | 'Inactive';
+    price?: number;
+  }) => apiClient.post(API_ENDPOINTS.variants.create(), payload, true),
+
   getLowStockVariants: (threshold?: number) => {
     const searchParams = new URLSearchParams();
     if (threshold) searchParams.append('threshold', threshold.toString());

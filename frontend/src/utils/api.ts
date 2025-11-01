@@ -45,6 +45,7 @@ export const API_ENDPOINTS = {
   // Product Service (via Gateway)
   products: {
     list: () => buildUrl('/products'),
+    create: () => buildUrl('/products'),
     byId: (id: string) => buildUrl(`/products/${id}`),
     search: () => buildUrl('/products/search'),
     bySubCategory: (masterCategory: string, subCategory: string) => buildUrl(`/products/master/${masterCategory}/sub-category/${subCategory}`),
@@ -65,6 +66,7 @@ export const API_ENDPOINTS = {
   },
   variants: {
     list: () => buildUrl('/variants'),
+    create: () => buildUrl('/variants'),
     byId: (id: string) => buildUrl(`/variants/${id}`),
     available: () => buildUrl('/variants/available'),
     lowStock: () => buildUrl('/variants/low-stock'),

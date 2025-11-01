@@ -62,7 +62,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const response = await authAPI.getProfile()
           
           if (response.success && response.data) {
-            setUser(response.data as User)
+            const profile = response.data as { user: User }
+            if (profile.user) {
+              setUser(profile.user)
+              localStorage.setItem('user', JSON.stringify(profile.user))
+            } else {
+              localStorage.removeItem('token')
+              localStorage.removeItem('user')
+            }
           } else {
             // Token is invalid, clear storage
             localStorage.removeItem('token')

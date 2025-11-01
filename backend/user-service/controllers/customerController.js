@@ -70,6 +70,19 @@ const updateCustomerProfile = async (req, res) => {
   }
 };
 
+const calculateLoyaltyPoints = (currentPoints, points, operation) => {
+  switch (operation) {
+    case 'add':
+      return currentPoints + points;
+    case 'subtract':
+      return Math.max(0, currentPoints - points);
+    case 'set':
+      return Math.max(0, points);
+    default:
+      throw new Error('Invalid operation. Must be: add, subtract, or set');
+  }
+};
+
 // Update loyalty points
 const updateLoyaltyPoints = async (req, res) => {
   try {
@@ -85,21 +98,13 @@ const updateLoyaltyPoints = async (req, res) => {
     }
 
     let newPoints;
-    switch (operation) {
-      case 'add':
-        newPoints = customer.loyaltyPoints + points;
-        break;
-      case 'subtract':
-        newPoints = Math.max(0, customer.loyaltyPoints - points);
-        break;
-      case 'set':
-        newPoints = Math.max(0, points);
-        break;
-      default:
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid operation. Must be: add, subtract, or set'
-        });
+    try {
+      newPoints = calculateLoyaltyPoints(customer.loyaltyPoints, points, operation);
+    } catch (validationError) {
+      return res.status(400).json({
+        success: false,
+        message: validationError.message
+      });
     }
 
     customer.loyaltyPoints = newPoints;
@@ -114,6 +119,49 @@ const updateLoyaltyPoints = async (req, res) => {
     });
   } catch (error) {
     console.error('Update loyalty points error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+const updateLoyaltyPointsInternal = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { points, operation = 'add' } = req.body;
+
+    const customer = await Customer.findOne({ userId });
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Customer profile not found'
+      });
+    }
+
+    let newPoints;
+    try {
+      newPoints = calculateLoyaltyPoints(customer.loyaltyPoints, points, operation);
+    } catch (validationError) {
+      return res.status(400).json({
+        success: false,
+        message: validationError.message
+      });
+    }
+
+    customer.loyaltyPoints = newPoints;
+    await customer.save();
+
+    res.json({
+      success: true,
+      message: 'Loyalty points updated successfully',
+      data: {
+        customer: customer.toJSON()
+      }
+    });
+  } catch (error) {
+    console.error('Update loyalty points (internal) error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -366,6 +414,7 @@ module.exports = {
   getCustomerProfile,
   updateCustomerProfile,
   updateLoyaltyPoints,
+  updateLoyaltyPointsInternal,
   getAllCustomers,
   getCustomerById,
   addAddress,

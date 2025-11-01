@@ -4,11 +4,12 @@ import { useAuth } from '../contexts/AuthContext'
 import UserManagement from '../components/admin/UserManagement'
 import ProductManagement from '../components/admin/ProductManagement'
 import OrderManagement from '../components/admin/OrderManagement'
+import AddProduct from '../components/admin/AddProduct'
 
-type TabType = 'users' | 'products' | 'orders'
+type TabType = 'users' | 'products' | 'create-product' | 'orders'
 
 const resolveTabParam = (value: string | null): TabType => {
-  if (value === 'products' || value === 'orders') {
+  if (value === 'products' || value === 'orders' || value === 'create-product') {
     return value
   }
   return 'users'
@@ -55,6 +56,7 @@ export default function AdminPage() {
   const tabs = [
     { id: 'users' as TabType, label: 'User Management', icon: '👥' },
     { id: 'products' as TabType, label: 'Product Management', icon: '🛍️' },
+    { id: 'create-product' as TabType, label: 'Add New Product', icon: '➕' },
     { id: 'orders' as TabType, label: 'Order Management', icon: '📦' }
   ]
 
@@ -64,6 +66,8 @@ export default function AdminPage() {
         return <UserManagement />
       case 'products':
         return <ProductManagement />
+      case 'create-product':
+        return <AddProduct />
       case 'orders':
         return <OrderManagement />
       default:

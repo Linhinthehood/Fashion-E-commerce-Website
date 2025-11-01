@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
 import { customerApi, orderApi } from '../utils/apiService'
+import { useToast } from '../contexts/ToastContext'
 
 type Address = {
   _id: string
@@ -35,6 +36,7 @@ export default function CartPage() {
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'Momo' | 'Bank'>('COD')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const toast = useToast()
 
   // Load customer data if authenticated
   useEffect(() => {
@@ -73,23 +75,23 @@ export default function CartPage() {
 
   const handlePlaceOrder = async () => {
     if (!isAuthenticated || !user) {
-      alert('Vui lòng đăng nhập để đặt hàng')
+      toast.error('Vui lòng đăng nhập để đặt hàng')
       navigate('/login')
       return
     }
 
     if (cartItems.length === 0) {
-      alert('Giỏ hàng trống')
+      toast.info('Giỏ hàng trống')
       return
     }
 
     if (!selectedAddressId) {
-      alert('Vui lòng chọn địa chỉ giao hàng')
+      toast.error('Vui lòng chọn địa chỉ giao hàng')
       return
     }
 
     if (!customer || customer.addresses.length === 0) {
-      alert('Vui lòng thêm địa chỉ giao hàng trong tài khoản của bạn')
+      toast.error('Vui lòng thêm địa chỉ giao hàng trong tài khoản của bạn')
       return
     }
 
@@ -132,12 +134,13 @@ export default function CartPage() {
 
       // Success - clear cart and show success message
       clearCart()
-      alert('Đã đặt hàng thành công!')
+      toast.success('Đã đặt hàng thành công!')
       navigate('/')
 
     } catch (error: any) {
       console.error('Error placing order:', error)
       setError(error.message || 'Có lỗi xảy ra khi đặt hàng')
+      toast.error(error.message || 'Có lỗi xảy ra khi đặt hàng')
     } finally {
       setLoading(false)
     }

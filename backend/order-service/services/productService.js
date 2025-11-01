@@ -2,7 +2,8 @@ const axios = require('axios');
 
 class ProductService {
   constructor() {
-    this.baseUrl = process.env.PRODUCT_SERVICE_URL || 'http://localhost:3002';
+    this.baseUrl = process.env.PRODUCT_SERVICE_URL;
+    this.serviceToken = process.env.INTERNAL_SERVICE_TOKEN;
   }
 
   // Normalize axios/network errors to meaningful service errors
@@ -40,6 +41,27 @@ class ProductService {
     } catch (error) {
       console.error('Error fetching variant details:', error);
       throw this.normalizeAxiosError(error, `Failed to fetch variant ${variantId}`);
+    }
+  }
+
+  // Update variant stock by quantity delta (positive to add, negative to subtract)
+  async updateVariantStock(variantId, quantity) {
+    try {
+      const headers = {};
+      if (this.serviceToken) {
+        headers['x-service-token'] = this.serviceToken;
+      }
+
+      const response = await axios.patch(
+        `${this.baseUrl}/api/variants/${variantId}/stock`,
+        { quantity },
+        { headers }
+      );
+
+      return response.data.data?.variant;
+    } catch (error) {
+      console.error('Error updating variant stock:', error);
+      throw this.normalizeAxiosError(error, `Failed to update stock for variant ${variantId}`);
     }
   }
 

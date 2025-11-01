@@ -150,6 +150,12 @@ const customerValidation = {
 
 // Parameter validation rules
 const paramValidation = {
+  userId: [
+    param('userId')
+      .isMongoId()
+      .withMessage('Invalid user ID')
+  ],
+
   customerId: [
     param('customerId')
       .isMongoId()

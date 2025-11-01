@@ -9,7 +9,8 @@ const {
   addAddress,
   updateAddress,
   deleteAddress,
-  getCustomerByUserId
+  getCustomerByUserId,
+  updateLoyaltyPointsInternal
 } = require('../controllers/customerController');
 const { authenticate, internalAuth } = require('../middleware/auth');
 const { customerValidation, paramValidation } = require('../middleware/validation');
@@ -46,5 +47,13 @@ router.get('/:customerId', authenticate, requireAdmin, paramValidation.customerI
 
 // Internal service routes (for service-to-service communication)
 router.get('/internal/user/:userId', internalAuth, getCustomerByUserId);
+router.post(
+  '/internal/user/:userId/loyalty-points',
+  internalAuth,
+  paramValidation.userId,
+  customerValidation.updateLoyaltyPoints,
+  handleValidationErrors,
+  updateLoyaltyPointsInternal
+);
 
 module.exports = router;

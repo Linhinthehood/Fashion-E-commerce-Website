@@ -142,6 +142,8 @@ export default function ProductManagement() {
   })
   const [isVariantLoadingMore, setIsVariantLoadingMore] = useState(false)
   const variantLoadMoreRef = useRef<HTMLDivElement | null>(null)
+  const [variantViewMode, setVariantViewMode] = useState<'all' | 'lowStock' | 'outOfStock'>('all')
+  const [lowStockThreshold, setLowStockThreshold] = useState(10)
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [editForm, setEditForm] = useState<ProductFormState>({ ...INITIAL_EDIT_FORM })
@@ -151,6 +153,13 @@ export default function ProductManagement() {
   const [editSubmitting, setEditSubmitting] = useState(false)
   const [editError, setEditError] = useState<string | null>(null)
   const [imageRemovalTarget, setImageRemovalTarget] = useState<string | null>(null)
+
+  const [editingVariant, setEditingVariant] = useState<Variant | null>(null)
+  const [showVariantModal, setShowVariantModal] = useState(false)
+  const [variantEditMode, setVariantEditMode] = useState<'add' | 'subtract' | 'set'>('add')
+  const [variantEditQuantity, setVariantEditQuantity] = useState('')
+  const [variantEditLoading, setVariantEditLoading] = useState(false)
+  const [variantEditError, setVariantEditError] = useState<string | null>(null)
 
   const tabs = [
     { id: 'products' as TabType, label: 'Products', icon: '🛍️' },
@@ -254,72 +263,122 @@ export default function ProductManagement() {
   // Load variants
   const loadVariants = useCallback(async (page: number = 1, append: boolean = false) => {
     try {
-      if (append) {
-        setIsVariantLoadingMore(true)
-      } else {
-        setVariantLoading(true)
-      }
-      setVariantError(null)
+      if (variantViewMode === 'all') {
+        if (append) {
+          setIsVariantLoadingMore(true)
+        } else {
+          setVariantLoading(true)
+        }
+        setVariantError(null)
 
-      const params = {
-        page,
-        limit: 12,
-        ...(variantFilters.productId && { productId: variantFilters.productId }),
-        status: variantFilters.status,
-        ...(variantFilters.size && { size: variantFilters.size }),
-        hasStock: variantFilters.hasStock
-      }
+        const params = {
+          page,
+          limit: 12,
+          ...(variantFilters.productId && { productId: variantFilters.productId }),
+          status: variantFilters.status,
+          ...(variantFilters.size && { size: variantFilters.size }),
+          hasStock: variantFilters.hasStock
+        }
 
-      const response = await variantApi.getVariants(params)
-      
-      if (response.success && response.data) {
-        const data = response.data as any
-        const incomingVariants: Variant[] = data.variants || []
-
-        setVariants(prevVariants => {
-          if (!append) {
-            return incomingVariants
+        const response = await variantApi.getVariants(params)
+        
+        if (response.success && response.data) {
+          const data = response.data as {
+            variants?: Variant[]
+            pagination?: typeof INITIAL_VARIANT_PAGINATION
           }
+          const incomingVariants: Variant[] = data.variants || []
 
-          const existingIds = new Set(prevVariants.map(variant => variant._id))
-          const mergedVariants = [...prevVariants]
-
-          incomingVariants.forEach(variant => {
-            if (!existingIds.has(variant._id)) {
-              mergedVariants.push(variant)
+          setVariants(prevVariants => {
+            if (!append) {
+              return incomingVariants
             }
+
+            const existingIds = new Set(prevVariants.map(variant => variant._id))
+            const mergedVariants = [...prevVariants]
+
+            incomingVariants.forEach(variant => {
+              if (!existingIds.has(variant._id)) {
+                mergedVariants.push(variant)
+              }
+            })
+
+            return mergedVariants
           })
 
-          return mergedVariants
-        })
-
-        if (data.pagination) {
-          setVariantPagination(prev => ({
-            ...prev,
-            ...data.pagination
-          }))
+          if (data.pagination) {
+            setVariantPagination(prev => ({
+              ...prev,
+              ...data.pagination
+            }))
+          } else {
+            setVariantPagination(prev => ({
+              ...prev,
+              currentPage: page,
+              hasPrevPage: page > 1,
+              hasNextPage: incomingVariants.length === 12
+            }))
+          }
         } else {
-          setVariantPagination(prev => ({
-            ...prev,
-            currentPage: page,
-            hasPrevPage: page > 1,
-            hasNextPage: incomingVariants.length === 12
-          }))
+          throw new Error(response.message || 'Failed to load variants')
+        }
+      } else if (variantViewMode === 'lowStock') {
+        if (!append) {
+          setVariantLoading(true)
+          setVariantError(null)
+        }
+
+        const response = await variantApi.getLowStockVariants(lowStockThreshold)
+
+        if (response.success && response.data) {
+          const data = response.data as { variants?: Variant[] }
+          const incomingVariants: Variant[] = data.variants || []
+          setVariants(incomingVariants)
+          setVariantPagination({
+            ...INITIAL_VARIANT_PAGINATION,
+            totalVariants: incomingVariants.length,
+            hasNextPage: false
+          })
+        } else {
+          throw new Error(response.message || 'Failed to load low stock variants')
         }
       } else {
-        throw new Error(response.message || 'Failed to load variants')
+        if (!append) {
+          setVariantLoading(true)
+          setVariantError(null)
+        }
+
+        const response = await variantApi.getOutOfStockVariants()
+
+        if (response.success && response.data) {
+          const data = response.data as { variants?: Variant[] }
+          const incomingVariants: Variant[] = data.variants || []
+          setVariants(incomingVariants)
+          setVariantPagination({
+            ...INITIAL_VARIANT_PAGINATION,
+            totalVariants: incomingVariants.length,
+            hasNextPage: false
+          })
+        } else {
+          throw new Error(response.message || 'Failed to load out of stock variants')
+        }
       }
     } catch (error: any) {
       console.error('Error loading variants:', error)
       setVariantError(error.message || 'Có lỗi xảy ra khi tải variants')
     } finally {
-      if (append) {
-        setIsVariantLoadingMore(false)
+      if (variantViewMode === 'all') {
+        if (append) {
+          setIsVariantLoadingMore(false)
+        } else {
+          setVariantLoading(false)
+        }
       } else {
         setVariantLoading(false)
+        setIsVariantLoadingMore(false)
       }
     }
-  }, [variantFilters])
+  }, [variantFilters, variantViewMode, lowStockThreshold])
 
   useEffect(() => {
     if (activeTab === 'products') {
@@ -350,7 +409,7 @@ export default function ProductManagement() {
   }, [activeTab, loadVariants])
 
   useEffect(() => {
-    if (activeTab !== 'variants') return
+    if (activeTab !== 'variants' || variantViewMode !== 'all') return
 
     const sentinel = variantLoadMoreRef.current
     if (!sentinel) return
@@ -372,7 +431,7 @@ export default function ProductManagement() {
     return () => {
       observer.disconnect()
     }
-  }, [activeTab, variantLoading, isVariantLoadingMore, variantPagination.currentPage, variantPagination.hasNextPage, loadVariants])
+  }, [activeTab, variantViewMode, variantLoading, isVariantLoadingMore, variantPagination.currentPage, variantPagination.hasNextPage, loadVariants])
 
   useEffect(() => {
     if (activeTab !== 'products') return
@@ -413,6 +472,19 @@ export default function ProductManagement() {
     resetEditState()
   }
 
+  const resetVariantEditState = () => {
+    setEditingVariant(null)
+    setVariantEditMode('add')
+    setVariantEditQuantity('')
+    setVariantEditError(null)
+    setVariantEditLoading(false)
+  }
+
+  const closeVariantModal = () => {
+    setShowVariantModal(false)
+    resetVariantEditState()
+  }
+
   const handleEditClick = (product: Product) => {
     setEditingProduct(product)
     setEditForm({
@@ -436,12 +508,35 @@ export default function ProductManagement() {
     }
   }
 
+  const handleVariantEditClick = (variant: Variant) => {
+    setEditingVariant(variant)
+    setVariantEditMode('add')
+    setVariantEditQuantity('')
+    setVariantEditError(null)
+    setShowVariantModal(true)
+  }
+
   const handleEditFormChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = event.target
     setEditForm(prev => ({
       ...prev,
       [name]: value
     }))
+  }
+
+  const handleVariantViewModeChange = (mode: 'all' | 'lowStock' | 'outOfStock') => {
+    setVariantViewMode(mode)
+    setVariants([])
+    setVariantPagination({ ...INITIAL_VARIANT_PAGINATION })
+  }
+
+  const handleLowStockThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10)
+    if (!Number.isNaN(value) && value > 0) {
+      setLowStockThreshold(value)
+    } else if (event.target.value === '') {
+      setLowStockThreshold(1)
+    }
   }
 
   const handleActiveToggle = (event: ChangeEvent<HTMLInputElement>) => {
@@ -458,6 +553,15 @@ export default function ProductManagement() {
       return
     }
     setNewImages(Array.from(event.target.files))
+  }
+
+  const handleVariantEditModeToggle = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value as 'add' | 'subtract' | 'set'
+    setVariantEditMode(value)
+  }
+
+  const handleVariantQuantityChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setVariantEditQuantity(event.target.value)
   }
 
   const handleRemoveExistingImage = async (imageUrl: string) => {
@@ -554,6 +658,67 @@ export default function ProductManagement() {
       setEditError(error instanceof Error ? error.message : 'Có lỗi xảy ra khi cập nhật sản phẩm')
     } finally {
       setEditSubmitting(false)
+    }
+  }
+
+  const handleVariantEditSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!editingVariant) return
+
+    const quantityValue = Number(variantEditQuantity)
+    if (variantEditMode !== 'set' && (Number.isNaN(quantityValue) || quantityValue <= 0)) {
+      setVariantEditError('Vui lòng nhập số lượng lớn hơn 0')
+      return
+    }
+
+    let delta = 0
+    if (variantEditMode === 'set') {
+      if (Number.isNaN(quantityValue) || quantityValue < 0) {
+        setVariantEditError('Tồn kho phải là số không âm')
+        return
+      }
+      delta = quantityValue - editingVariant.stock
+      if (delta === 0) {
+        setVariantEditError('Tồn kho không thay đổi')
+        return
+      }
+    } else if (variantEditMode === 'add') {
+      delta = quantityValue
+    } else {
+      if (quantityValue > editingVariant.stock) {
+        setVariantEditError('Số lượng cần trừ vượt quá tồn kho hiện tại')
+        return
+      }
+      delta = -quantityValue
+    }
+
+    try {
+      setVariantEditLoading(true)
+      setVariantEditError(null)
+
+      const response = await variantApi.updateStock(editingVariant._id, delta)
+
+      if (!response.success || !response.data) {
+        throw new Error(response.message || 'Failed to update stock')
+      }
+
+      const data = response.data as { variant?: { _id: string; stock: number } }
+      const updatedStock = data.variant?.stock ?? editingVariant.stock + delta
+
+      if (variantViewMode === 'all') {
+        setVariants(prev => prev.map(variant => variant._id === editingVariant._id ? { ...variant, stock: updatedStock } : variant))
+      } else {
+        await loadVariants(1, false)
+      }
+
+      setEditingVariant(prev => prev ? { ...prev, stock: updatedStock } : prev)
+      setVariantEditQuantity('')
+      closeVariantModal()
+    } catch (error) {
+      console.error('Error updating variant stock:', error)
+      setVariantEditError(error instanceof Error ? error.message : 'Có lỗi xảy ra khi cập nhật tồn kho')
+    } finally {
+      setVariantEditLoading(false)
     }
   }
 
@@ -777,6 +942,54 @@ export default function ProductManagement() {
         </button>
       </div>
 
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+        <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 text-sm font-medium text-gray-600">
+          <button
+            type="button"
+            onClick={() => handleVariantViewModeChange('all')}
+            className={`px-3 py-1.5 rounded-md transition ${variantViewMode === 'all' ? 'bg-white text-blue-600 shadow' : 'hover:text-gray-900'}`}
+          >
+            Tất cả
+          </button>
+          <button
+            type="button"
+            onClick={() => handleVariantViewModeChange('lowStock')}
+            className={`px-3 py-1.5 rounded-md transition ${variantViewMode === 'lowStock' ? 'bg-white text-blue-600 shadow' : 'hover:text-gray-900'}`}
+          >
+            Sắp hết hàng
+          </button>
+          <button
+            type="button"
+            onClick={() => handleVariantViewModeChange('outOfStock')}
+            className={`px-3 py-1.5 rounded-md transition ${variantViewMode === 'outOfStock' ? 'bg-white text-blue-600 shadow' : 'hover:text-gray-900'}`}
+          >
+            Hết hàng
+          </button>
+        </div>
+
+        {variantViewMode === 'lowStock' && (
+          <div className="flex items-center gap-2">
+            <label htmlFor="lowStockThreshold" className="text-sm font-medium text-gray-700">
+              Ngưỡng tồn kho ≤
+            </label>
+            <input
+              id="lowStockThreshold"
+              type="number"
+              min={1}
+              value={lowStockThreshold}
+              onChange={handleLowStockThresholdChange}
+              className="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        )}
+
+        {variantViewMode !== 'all' && (
+          <p className="text-sm text-gray-500">
+            Hiển thị {variantViewMode === 'lowStock' ? 'các biến thể sắp hết hàng' : 'các biến thể đã hết hàng'} (tổng {variants.length})
+          </p>
+        )}
+      </div>
+
       {/* Variants Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
@@ -786,6 +999,7 @@ export default function ProductManagement() {
             <select
               value={variantFilters.productId}
               onChange={(e) => setVariantFilters(prev => ({ ...prev, productId: e.target.value }))}
+              disabled={variantViewMode !== 'all'}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">All Products</option>
@@ -801,6 +1015,7 @@ export default function ProductManagement() {
             <select
               value={variantFilters.status}
               onChange={(e) => setVariantFilters(prev => ({ ...prev, status: e.target.value as 'Active' | 'Inactive' }))}
+              disabled={variantViewMode !== 'all'}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Active">Active</option>
@@ -814,6 +1029,7 @@ export default function ProductManagement() {
               value={variantFilters.size}
               onChange={(e) => setVariantFilters(prev => ({ ...prev, size: e.target.value }))}
               placeholder="Enter size..."
+              disabled={variantViewMode !== 'all'}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -823,6 +1039,7 @@ export default function ProductManagement() {
               id="hasStock"
               checked={variantFilters.hasStock}
               onChange={(e) => setVariantFilters(prev => ({ ...prev, hasStock: e.target.checked }))}
+              disabled={variantViewMode !== 'all'}
               className="mr-2"
             />
             <label htmlFor="hasStock" className="text-sm font-medium text-gray-700">
@@ -879,7 +1096,10 @@ export default function ProductManagement() {
                     }`}>
                       {variant.status}
                     </span>
-                    <button className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors">
+                    <button
+                      onClick={() => handleVariantEditClick(variant)}
+                      className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                    >
                       Edit Stock
                     </button>
                   </div>
@@ -1128,6 +1348,119 @@ export default function ProductManagement() {
                   className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-70"
                 >
                   {editSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showVariantModal && editingVariant && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+          onClick={closeVariantModal}
+        >
+          <div
+            className="w-full max-w-md rounded-xl bg-white shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Điều chỉnh tồn kho</h3>
+                <p className="text-sm text-gray-500">{editingVariant.productId?.name} · Size {editingVariant.size}</p>
+              </div>
+              <button
+                type="button"
+                onClick={closeVariantModal}
+                className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            {variantEditError && (
+              <div className="mx-5 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {variantEditError}
+              </div>
+            )}
+
+            <form onSubmit={handleVariantEditSubmit} className="px-5 py-5 space-y-4">
+              <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
+                <span className="text-sm text-gray-600">Tồn kho hiện tại</span>
+                <span className="text-lg font-semibold text-gray-900">{editingVariant.stock}</span>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-700">Kiểu cập nhật</p>
+                <div className="flex flex-col gap-2 text-sm text-gray-600">
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="variantEditMode"
+                      value="add"
+                      checked={variantEditMode === 'add'}
+                      onChange={handleVariantEditModeToggle}
+                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span>Tăng thêm số lượng</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="variantEditMode"
+                      value="subtract"
+                      checked={variantEditMode === 'subtract'}
+                      onChange={handleVariantEditModeToggle}
+                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span>Giảm bớt số lượng</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="variantEditMode"
+                      value="set"
+                      checked={variantEditMode === 'set'}
+                      onChange={handleVariantEditModeToggle}
+                      className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span>Đặt tồn kho chính xác</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {variantEditMode === 'set' ? 'Tồn kho mới' : 'Số lượng'}
+                </label>
+                <input
+                  type="number"
+                  min={variantEditMode === 'set' ? 0 : 1}
+                  value={variantEditQuantity}
+                  onChange={handleVariantQuantityChange}
+                  required
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                />
+                {variantEditMode === 'set' && (
+                  <p className="mt-1 text-xs text-gray-500">Nhập giá trị tồn kho mong muốn (≥ 0)</p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={closeVariantModal}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                  disabled={variantEditLoading}
+                >
+                  Huỷ
+                </button>
+                <button
+                  type="submit"
+                  disabled={variantEditLoading}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-70"
+                >
+                  {variantEditLoading ? 'Đang cập nhật...' : 'Cập nhật'}
                 </button>
               </div>
             </form>

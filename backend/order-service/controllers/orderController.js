@@ -4,6 +4,9 @@ const { validationResult } = require('express-validator');
 const productService = require('../services/productService');
 const userService = require('../services/userService');
 
+const LOYALTY_POINT_EARNING_UNIT = 10_000; // 10,000 VND -> 1 point
+const LOYALTY_POINT_REDEMPTION_VALUE = 1_000; // 1 point = 1,000 VND when redeemed
+
 // Create new order (Step 1: Create order with basic info)
 const createOrder = async (req, res) => {
   try {
@@ -131,6 +134,22 @@ const createOrder = async (req, res) => {
 
 // Add order items to existing order (Step 2: Add products to order)
 const addOrderItems = async (req, res) => {
+  const adjustedVariants = [];
+
+  const revertVariantAdjustments = async () => {
+    if (!adjustedVariants.length) return;
+
+    for (const adjustment of adjustedVariants) {
+      try {
+        await productService.updateVariantStock(adjustment.variantId, adjustment.quantity);
+      } catch (rollbackError) {
+        console.error('Rollback variant stock failed:', rollbackError);
+      }
+    }
+
+    adjustedVariants.length = 0;
+  };
+
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -215,6 +234,19 @@ const addOrderItems = async (req, res) => {
         return res.status(400).json({
           success: false,
           message: `Insufficient stock for ${product.name} - ${variant.size}. Available: ${variant.stock}, Requested: ${quantity}`
+        });
+      }
+
+      try {
+        await productService.updateVariantStock(variantId, -quantity);
+        adjustedVariants.push({ variantId, quantity });
+      } catch (stockError) {
+        console.error('Failed to update variant stock:', stockError);
+        await revertVariantAdjustments();
+        return res.status(stockError.customStatus || 500).json({
+          success: false,
+          message: stockError.message || 'Failed to update variant stock',
+          code: stockError.customCode || 'VARIANT_STOCK_UPDATE_FAILED'
         });
       }
 
@@ -306,6 +338,7 @@ const addOrderItems = async (req, res) => {
     });
   } catch (error) {
     console.error('Add order items error:', error);
+    await revertVariantAdjustments();
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -443,12 +476,50 @@ const updatePaymentStatus = async (req, res) => {
       });
     }
 
-    await order.updatePaymentStatus(status);
+    const rawStatus = typeof status === 'string' ? status.trim() : '';
+    const lowerStatus = rawStatus.toLowerCase();
+
+    let normalizedStatus;
+    if (lowerStatus === 'complete' || lowerStatus === 'completed') {
+      normalizedStatus = 'Paid';
+    } else if (['pending', 'paid', 'failed', 'refunded'].includes(lowerStatus)) {
+      normalizedStatus = lowerStatus.charAt(0).toUpperCase() + lowerStatus.slice(1);
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid payment status'
+      });
+    }
+
+    const previousStatus = order.paymentStatus;
+    const shouldAwardPoints = normalizedStatus === 'Paid' && previousStatus !== 'Paid';
+    let loyaltyPointsAwarded = 0;
+
+    if (shouldAwardPoints) {
+      const finalPrice = Number(order.finalPrice || 0);
+      const calculatedPoints = Math.floor(finalPrice / LOYALTY_POINT_EARNING_UNIT);
+
+      if (calculatedPoints > 0) {
+        try {
+          await userService.addLoyaltyPoints(order.userId, calculatedPoints);
+          loyaltyPointsAwarded = calculatedPoints;
+        } catch (svcErr) {
+          console.error('Failed to update loyalty points:', svcErr);
+          return res.status(svcErr.customStatus || 503).json({
+            success: false,
+            message: svcErr.message || 'Failed to update loyalty points',
+            code: svcErr.customCode || 'LOYALTY_UPDATE_FAILED'
+          });
+        }
+      }
+    }
+
+    await order.updatePaymentStatus(normalizedStatus);
 
     res.json({
       success: true,
       message: 'Payment status updated successfully',
-      data: { order }
+      data: { order, loyaltyPointsAwarded, loyaltyPointRedemptionValue: LOYALTY_POINT_REDEMPTION_VALUE }
     });
   } catch (error) {
     console.error('Update payment status error:', error);

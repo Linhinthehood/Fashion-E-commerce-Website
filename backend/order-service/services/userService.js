@@ -2,8 +2,8 @@ const axios = require('axios');
 
 class UserService {
   constructor() {
-    this.baseUrl = process.env.USER_SERVICE_URL || 'http://localhost:3001';
-    this.serviceToken = process.env.INTERNAL_SERVICE_TOKEN || 'internal-service-secret';
+    this.baseUrl = process.env.USER_SERVICE_URL;
+    this.serviceToken = process.env.INTERNAL_SERVICE_TOKEN;
   }
 
   // Normalize axios/network errors to meaningful service errors
@@ -115,6 +115,29 @@ class UserService {
     } catch (error) {
       if (error.customStatus === 503) throw error; // bubble up service down
       return false;
+    }
+  }
+
+  async addLoyaltyPoints(userId, points) {
+    try {
+      const headers = {};
+      if (this.serviceToken) {
+        headers['x-service-token'] = this.serviceToken;
+      }
+
+      const response = await axios.post(
+        `${this.baseUrl}/api/customers/internal/user/${userId}/loyalty-points`,
+        {
+          points,
+          operation: 'add'
+        },
+        { headers }
+      );
+
+      return response.data.data?.customer;
+    } catch (error) {
+      console.error('Error adding loyalty points:', error);
+      throw this.normalizeAxiosError(error, `Failed to add loyalty points for user ${userId}`);
     }
   }
 }

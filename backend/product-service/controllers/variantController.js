@@ -318,8 +318,17 @@ const getAvailableVariants = async (req, res) => {
 const getLowStockVariants = async (req, res) => {
   try {
     const { threshold = 10 } = req.query;
-    
-    const variants = await Variant.getLowStock(parseInt(threshold));
+    const rawThreshold = Array.isArray(threshold) ? threshold[0] : threshold;
+    const thresholdNumber = parseInt(rawThreshold, 10);
+    const effectiveThreshold = Number.isNaN(thresholdNumber) || thresholdNumber <= 0 ? 10 : thresholdNumber;
+
+    const variants = await Variant.find({
+      status: 'Active',
+      stock: { $gt: 0, $lte: effectiveThreshold }
+    })
+      .populate('productId', 'name brand gender season categoryId')
+      .sort({ stock: 1, updatedAt: -1 })
+      .lean();
 
     res.json({
       success: true,
@@ -338,7 +347,13 @@ const getLowStockVariants = async (req, res) => {
 // Get out of stock variants
 const getOutOfStockVariants = async (req, res) => {
   try {
-    const variants = await Variant.getOutOfStock();
+    const variants = await Variant.find({
+      status: 'Active',
+      stock: 0
+    })
+      .populate('productId', 'name brand gender season categoryId')
+      .sort({ updatedAt: -1 })
+      .lean();
 
     res.json({
       success: true,

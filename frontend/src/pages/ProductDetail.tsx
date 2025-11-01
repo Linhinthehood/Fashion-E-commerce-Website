@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { productApi, variantApi } from '../utils/apiService'
 import { useCart, type CartItem } from '../contexts/CartContext'
+import { useToast } from '../contexts/ToastContext'
 
 type Product = {
   _id: string
@@ -45,6 +46,7 @@ function formatCurrencyVND(amount: number): string {
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>()
   const { addToCart } = useCart()
+  const toast = useToast()
   const [product, setProduct] = useState<Product | null>(null)
   const [variants, setVariants] = useState<Variant[]>([])
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
@@ -128,7 +130,7 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!selectedVariant || !product) {
-      alert('Vui lòng chọn size')
+      toast.error('Vui lòng chọn size')
       return
     }
     
@@ -146,7 +148,7 @@ export default function ProductDetail() {
     }
     
     addToCart(cartItem)
-    alert(`Đã thêm ${quantity} ${selectedVariant.size} vào giỏ hàng!`)
+    toast.success(`Đã thêm ${quantity} sản phẩm size ${selectedVariant.size} vào giỏ hàng!`)
   }
 
   const displayPrice = selectedVariant?.price || product?.defaultPrice
