@@ -96,24 +96,6 @@ services:
       - user-service
       - product-service
       - order-service
-      - fashion-service
-    networks:
-      - fashion_network
-
-  # Fashion Service (AI Recommendations)
-  fashion-service:
-    build:
-      context: ./backend/fashion-service
-      dockerfile: Dockerfile
-    container_name: fashion_ecommerce_fashion_service
-    restart: unless-stopped
-    ports:
-      - "3008:3008"
-    environment:
-      - PORT=3008
-      - RECOMMEND_SERVICE_PORT=3008
-      - PRODUCT_SERVICE_URL=http://product-service:3002
-      - DEBUG=false
     networks:
       - fashion_network
 
@@ -130,7 +112,6 @@ services:
       - REACT_APP_API_URL=http://localhost:3000/api
     depends_on:
       - api-gateway
-      - fashion-service
     networks:
       - fashion_network
 
