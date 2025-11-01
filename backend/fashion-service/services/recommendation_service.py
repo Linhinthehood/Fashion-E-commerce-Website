@@ -17,9 +17,11 @@ import logging
 
 from transformers import CLIPProcessor
 from models.FashionCLIP import FashionCLIP
-from utils.db_helper import (
+from utils.product_api_client import (
     get_product_by_id,
-    get_all_active_products,
+    get_all_active_products
+)
+from utils.db_helper import (
     get_first_image,
     serialize_product
 )
@@ -654,19 +656,83 @@ class RecommendationService:
                     'count': 0
                 }
             
+            # Pre-filter candidates by category if needed
+            candidate_pool = None
+            if options.get('same_category_only', True):
+                # Extract category fields from target
+                target_article_type = target_product.get('articleType')
+                target_master_category = target_product.get('masterCategory')
+                target_sub_category = target_product.get('subCategory')
+                
+                # Fallback to categoryId if fields not in root
+                if not target_article_type and not target_master_category and not target_sub_category:
+                    category_info = target_product.get('categoryId', {})
+                    if isinstance(category_info, dict):
+                        target_article_type = category_info.get('articleType')
+                        target_master_category = category_info.get('masterCategory')
+                        target_sub_category = category_info.get('subCategory')
+                
+                logger.info(f"Pre-filtering by category: articleType={target_article_type}, "
+                           f"masterCategory={target_master_category}, subCategory={target_sub_category}")
+                
+                # Get all products and filter by category fields BEFORE AI search
+                all_products = get_all_active_products(db)
+                candidate_pool = []
+                
+                for product in all_products:
+                    # Get product's category fields
+                    product_article_type = product.get('articleType')
+                    product_master_category = product.get('masterCategory')
+                    product_sub_category = product.get('subCategory')
+                    
+                    # Fallback to categoryId
+                    if not product_article_type and not product_master_category and not product_sub_category:
+                        category_info = product.get('categoryId', {})
+                        if isinstance(category_info, dict):
+                            product_article_type = category_info.get('articleType')
+                            product_master_category = category_info.get('masterCategory')
+                            product_sub_category = category_info.get('subCategory')
+                    
+                    # Check if category fields match
+                    matches = True
+                    if target_article_type and product_article_type != target_article_type:
+                        matches = False
+                    if target_master_category and product_master_category != target_master_category:
+                        matches = False
+                    if target_sub_category and product_sub_category != target_sub_category:
+                        matches = False
+                    
+                    if matches:
+                        candidate_pool.append(product)
+                
+                logger.info(f"Pre-filtered to {len(candidate_pool)} products in same category")
+            
             # Choose search strategy
             candidates = []
             method = 'unknown'
             
             if self.use_faiss and self.index is not None:
                 # Try FAISS first
-                candidates = self._search_with_faiss(db, target_product, k=50)
+                all_faiss_results = self._search_with_faiss(db, target_product, k=50)
+                
+                # Filter FAISS results by category if pre-filtering is enabled
+                if candidate_pool is not None:
+                    logger.info(f"Filtering FAISS results by category (got {len(all_faiss_results)} results)")
+                    candidates = [
+                        (prod, score) for prod, score in all_faiss_results
+                        if any(prod.get('_id') == cp.get('_id') for cp in candidate_pool)
+                    ]
+                    logger.info(f"After category filtering: {len(candidates)} results remain")
+                else:
+                    candidates = all_faiss_results
+                
                 method = 'faiss'
             
             # Fallback to on-the-fly if FAISS failed or returned nothing
             if not candidates:
                 logger.info("Falling back to on-the-fly mode")
-                candidates = self._search_on_the_fly(db, target_product)
+                # Pass pre-filtered candidates to on-the-fly search
+                candidates = self._search_on_the_fly(db, target_product, candidate_products=candidate_pool)
                 method = 'on-the-fly'
             
             if not candidates:

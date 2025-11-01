@@ -5,15 +5,7 @@ import torch, torch.nn as nn, torch.nn.functional as F
 from transformers import CLIPProcessor
 import faiss
 
-from .FashionCLIP import FashionCLIP  # <- your model class file
-try:
-    # Preferred absolute import when running scripts from service root
-    from config.config import DEFAULT_CHECKPOINT, DEFAULT_IMAGES_DIR, DEFAULT_NPZ, DEFAULT_INDEX, resolve_image_path
-except Exception:
-    # Fallback to package-relative import when running as a package
-    from ..config.config import DEFAULT_CHECKPOINT, DEFAULT_IMAGES_DIR, DEFAULT_NPZ, DEFAULT_INDEX, resolve_image_path
-
-# --- default paths (now imported from config) ---
+from .FashionCLIP import FashionCLIP
 
 # --- model ---
 class FashionCLIPWrapper(nn.Module):
@@ -52,8 +44,6 @@ def embed_text(model, processor, query, device, cfg):
 
 @torch.no_grad()
 def embed_one_image(model, processor, img_path, device, cfg):
-    # Resolve the image path to handle legacy/incorrect paths
-    img_path = resolve_image_path(img_path)
     img = Image.open(img_path).convert("RGB")
     enc = processor(text=[""], images=[img], return_tensors="pt",
                     padding="max_length", truncation=True, max_length=cfg.get("max_length",77))
@@ -68,10 +58,10 @@ def search(index, q, k=6):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--checkpoint", default=DEFAULT_CHECKPOINT)
-    ap.add_argument("--images_dir", default=DEFAULT_IMAGES_DIR)
-    ap.add_argument("--npz", default=DEFAULT_NPZ)
-    ap.add_argument("--index", default=DEFAULT_INDEX)
+    ap.add_argument("--checkpoint", required=True)
+    ap.add_argument("--images_dir", required=True)
+    ap.add_argument("--npz", required=True)
+    ap.add_argument("--index", required=True)
     ap.add_argument("--query_text", default=None)
     ap.add_argument("--query_image", default=None)
     ap.add_argument("--k", type=int, default=6)

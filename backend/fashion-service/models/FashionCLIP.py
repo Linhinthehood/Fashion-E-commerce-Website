@@ -119,3 +119,4 @@ class FashionCLIP(nn.Module):
         """Encode image into normalized embeddings."""
         image, _ = self.forward(pixel_values=pixel_values, input_ids=None, attention_mask=None)
         return image
+# --- product_api_client.py ---
