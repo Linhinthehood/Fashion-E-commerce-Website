@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './BannerCarousel.css'
+import banner1 from '../assets/banner1.png'
+import banner2 from '../assets/banner2.png'
+import banner3 from '../assets/banner3.jpg'
 
 type Slide = {
   id: string
-  title: string
-  subtitle?: string
-  ctaText?: string
-  ctaHref?: string
-  background?: string
   imageUrl?: string
+  imageAlt?: string
 }
 
 type BannerCarouselProps = {
@@ -20,27 +19,18 @@ export default function BannerCarousel({ slides: providedSlides, intervalMs = 45
   const slides = useMemo<Slide[]>(() => providedSlides ?? [
     {
       id: 's1',
-      title: 'New Season, New Styles',
-      subtitle: 'Discover our latest arrivals for everyone',
-      ctaText: 'Shop Now',
-      ctaHref: '/c/apparel',
-      background: 'from-pink-100 to-indigo-100'
+      imageUrl: banner1,
+      imageAlt: 'Fashion banner 1'
     },
     {
       id: 's2',
-      title: 'Accessories That Elevate',
-      subtitle: 'Hats, watches, and more',
-      ctaText: 'Explore Accessories',
-      ctaHref: '/c/accessories',
-      background: 'from-amber-100 to-rose-100'
+      imageUrl: banner2,
+      imageAlt: 'Fashion banner 2'
     },
     {
       id: 's3',
-      title: 'Step Into Comfort',
-      subtitle: 'Footwear built for your lifestyle',
-      ctaText: 'Browse Footwear',
-      ctaHref: '/c/footwear',
-      background: 'from-sky-100 to-emerald-100'
+      imageUrl: banner3,
+      imageAlt: 'Fashion banner 3'
     },
   ], [providedSlides])
 
@@ -69,16 +59,10 @@ export default function BannerCarousel({ slides: providedSlides, intervalMs = 45
     <section className="banner relative rounded-xl overflow-hidden">
       <div className="banner-track" style={{ transform: `translateX(-${index * 100}%)` }}>
         {slides.map((s) => (
-          <div key={s.id} className={`banner-slide bg-gradient-to-br ${s.background ?? 'from-gray-100 to-gray-200'}`}>
-            <div className="banner-content">
-              <h2 className="banner-title">{s.title}</h2>
-              {s.subtitle && <p className="banner-subtitle">{s.subtitle}</p>}
-              {s.ctaText && s.ctaHref && (
-                <a href={s.ctaHref} className="banner-cta">
-                  {s.ctaText}
-                </a>
-              )}
-            </div>
+          <div key={s.id} className="banner-slide">
+            {s.imageUrl && (
+              <img src={s.imageUrl} alt={s.imageAlt ?? 'banner'} className="banner-image" loading="lazy" />
+            )}
           </div>
         ))}
       </div>

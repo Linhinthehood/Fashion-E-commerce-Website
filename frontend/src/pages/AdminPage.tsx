@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Navigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserManagement from '../components/admin/UserManagement'
 import ProductManagement from '../components/admin/ProductManagement'
@@ -6,9 +7,50 @@ import OrderManagement from '../components/admin/OrderManagement'
 
 type TabType = 'users' | 'products' | 'orders'
 
+const resolveTabParam = (value: string | null): TabType => {
+  if (value === 'products' || value === 'orders') {
+    return value
+  }
+  return 'users'
+}
+
 export default function AdminPage() {
-  const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState<TabType>('users')
+  const { user, isAuthenticated, isLoading } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const [activeTab, setActiveTab] = useState<TabType>(() => resolveTabParam(searchParams.get('tab')))
+
+  useEffect(() => {
+    const nextTab = resolveTabParam(searchParams.get('tab'))
+    if (nextTab !== activeTab) {
+      setActiveTab(nextTab)
+    }
+  }, [searchParams, activeTab])
+
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab)
+    if (tab === 'users') {
+      setSearchParams({}, { replace: true })
+    } else {
+      setSearchParams({ tab }, { replace: true })
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-gray-600">Đang tải thông tin quản trị...</div>
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+
+  if (user?.role !== 'Manager') {
+    return <Navigate to="/" replace />
+  }
 
   const tabs = [
     { id: 'users' as TabType, label: 'User Management', icon: '👥' },
@@ -59,7 +101,7 @@ export default function AdminPage() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'

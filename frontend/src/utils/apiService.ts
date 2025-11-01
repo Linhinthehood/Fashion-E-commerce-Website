@@ -58,12 +58,22 @@ class ApiClient {
     includeAuth: boolean = true
   ): Promise<ApiResponse<T>> {
     try {
+      const headers = new Headers(createHeaders(includeAuth));
+
+      if (options.headers) {
+        const customHeaders = new Headers(options.headers);
+        customHeaders.forEach((value, key) => {
+          headers.set(key, value);
+        });
+      }
+
+      if (options.body instanceof FormData) {
+        headers.delete('Content-Type');
+      }
+
       const response = await fetch(url, {
         ...options,
-        headers: {
-          ...createHeaders(includeAuth),
-          ...options.headers,
-        },
+        headers,
       });
 
       const data = await response.json();
@@ -106,6 +116,21 @@ class ApiClient {
     );
   }
 
+  async postFormData<T>(
+    url: string,
+    formData: FormData,
+    includeAuth: boolean = true
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>(
+      url,
+      {
+        method: 'POST',
+        body: formData,
+      },
+      includeAuth
+    );
+  }
+
   async put<T>(
     url: string,
     body?: any,
@@ -116,6 +141,21 @@ class ApiClient {
       {
         method: 'PUT',
         body: body ? JSON.stringify(body) : undefined,
+      },
+      includeAuth
+    );
+  }
+
+  async putFormData<T>(
+    url: string,
+    formData: FormData,
+    includeAuth: boolean = true
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>(
+      url,
+      {
+        method: 'PUT',
+        body: formData,
       },
       includeAuth
     );
@@ -217,6 +257,32 @@ export const customerApi = {
 
   deleteAddress: (addressId: string) =>
     apiClient.delete(API_ENDPOINTS.customers.addressById(addressId)),
+
+  getAllCustomers: (params?: {
+    page?: number
+    limit?: number
+    city?: string
+    district?: string
+    status?: 'active' | 'inactive'
+  }) => {
+    const searchParams = new URLSearchParams()
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, value.toString())
+        }
+      })
+    }
+
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.customers.all()}?${searchParams.toString()}`
+      : API_ENDPOINTS.customers.all()
+
+    return apiClient.get(url, true)
+  },
+
+  getCustomerById: (customerId: string) =>
+    apiClient.get(API_ENDPOINTS.customers.byId(customerId), true)
 };
 
 // Product API functions (Public - No authentication required)
@@ -247,11 +313,22 @@ export const productApi = {
 
   getProduct: (id: string) => apiClient.get(API_ENDPOINTS.products.byId(id), false), // No auth
 
+  updateProduct: (id: string, formData: FormData) =>
+    apiClient.putFormData(API_ENDPOINTS.products.byId(id), formData, true),
+
+  deleteProduct: (id: string) => apiClient.delete(API_ENDPOINTS.products.byId(id), true),
+
   searchProducts: (query: string, limit?: number) => {
     const searchParams = new URLSearchParams({ q: query });
     if (limit) searchParams.append('limit', limit.toString());
     return apiClient.get(`${API_ENDPOINTS.products.search()}?${searchParams.toString()}`, false); // No auth
   },
+
+  uploadProductImages: (productId: string, formData: FormData) =>
+    apiClient.postFormData(API_ENDPOINTS.products.images(productId), formData, true),
+
+  deleteProductImage: (productId: string, imageUrl: string) =>
+    apiClient.delete(`${API_ENDPOINTS.products.images(productId)}/${encodeURIComponent(imageUrl)}`, true),
 
   getProductsBySubCategory: (masterCategory: string, subCategory: string, params?: {
     page?: number;

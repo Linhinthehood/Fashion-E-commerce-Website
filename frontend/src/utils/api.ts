@@ -39,6 +39,8 @@ export const API_ENDPOINTS = {
     loyaltyPoints: () => buildUrl('/customers/loyalty-points'),
     addresses: () => buildUrl('/customers/addresses'),
     addressById: (id: string) => buildUrl(`/customers/addresses/${id}`),
+    all: () => buildUrl('/customers/all'),
+    byId: (customerId: string) => buildUrl(`/customers/${customerId}`),
   },
   // Product Service (via Gateway)
   products: {
