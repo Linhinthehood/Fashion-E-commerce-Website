@@ -1,339 +1,284 @@
-import os, json, torch, numpy as np, requests, sys
-from io import BytesIO
-from PIL import Image
-import pillow_avif  # needed to decode .avif files
-from sklearn.metrics.pairwise import cosine_similarity
-from transformers import CLIPProcessor
-from models.FashionCLIP import FashionCLIP
+# main.py
+"""
+Fashion Recommendation Service API
+Provides product similarity recommendations using FashionCLIP model.
+"""
+
+import os
+import sys
 from pathlib import Path
-from bson import ObjectId
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from pymongo import MongoClient
+import logging
 
-# Optional: load environment variables from .env in the service root
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Load environment variables
 try:
     from dotenv import load_dotenv
-    load_dotenv(dotenv_path=Path(__file__).resolve().parent / '.env')
+    env_path = Path(__file__).resolve().parent / '.env'
+    load_dotenv(dotenv_path=env_path)
 except Exception:
     pass
+
+# Import recommendation service
+from services.recommendation_service import RecommendationService
 
 # =========================================================
 # CONFIGURATION
 # =========================================================
 SERVICE_ROOT = Path(__file__).resolve().parent
-BACKEND_ROOT = SERVICE_ROOT.parent
-
 MODEL_PATH = Path(os.environ.get("FASHION_MODEL_PATH", SERVICE_ROOT / "models" / "fashion_clip_best.pt"))
+INDEX_PATH = Path(os.environ.get("FAISS_INDEX_PATH", SERVICE_ROOT / "models" / "cloud_gallery_ip.index"))
+NPZ_PATH = Path(os.environ.get("NPZ_PATH", SERVICE_ROOT / "models" / "cloud_gallery_embeddings.npz"))
 PORT = int(os.environ.get("FASHION_SERVICE_PORT", 5002))
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/products')
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# Helpful diagnostics when things are missing
+# Check model file exists
 if not MODEL_PATH.exists():
-    try:
-        from config.config import DEFAULT_CHECKPOINT
-        fallback = Path(DEFAULT_CHECKPOINT)
-        if fallback.exists():
-            MODEL_PATH = fallback
-    except Exception:
-        pass
-
-if not MODEL_PATH.exists():
-    print(f"❌ Model file not found: {MODEL_PATH}")
-    print("Please place the checkpoint at that path, or set the FASHION_MODEL_PATH environment variable to a valid .pt file.")
-    print(f"Expected location (service relative): {SERVICE_ROOT / 'models' / 'fashion_clip_best.pt'}")
+    logger.error(f"❌ Model file not found: {MODEL_PATH}")
     sys.exit(1)
 
 # =========================================================
-# LOAD MODEL
-# =========================================================
-print("🧠 Loading FashionCLIP model...")
-import numpy, torch.serialization
-torch.serialization.add_safe_globals([numpy._core.multiarray.scalar])
-
-ckpt = torch.load(MODEL_PATH, map_location="cpu", weights_only=False)
-cfg = ckpt["config"]
-processor = CLIPProcessor.from_pretrained(cfg["model_name"])
-model = FashionCLIP(cfg["model_name"], cfg["embedding_dim"]).to(device)
-model.load_state_dict(ckpt["model_state_dict"])
-model.eval()
-print("✅ Model loaded successfully!")
-
-# =========================================================
-# FLASK APP
+# INITIALIZE FLASK APP
 # =========================================================
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
 # =========================================================
-# MONGODB CONNECTION
+# INITIALIZE SERVICES
 # =========================================================
-def get_mongo_connection():
-    """Get MongoDB connection."""
-    try:
-        from pymongo import MongoClient
-        mongo_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/products')
-        client = MongoClient(mongo_uri)
-        db = client.get_default_database()
-        if db is None:
-            db = client.get_database(os.environ.get('MONGO_DB', 'products'))
-        return db
-    except Exception as e:
-        print(f"⚠️ MongoDB connection failed: {e}")
-        return None
+logger.info("🚀 Initializing Fashion Recommendation Service...")
 
-# =========================================================
-# HELPER FUNCTIONS
-# =========================================================
-def load_image_from_url(url):
-    """Load image from URL."""
-    try:
-        r = requests.get(url, timeout=10)
-        img = Image.open(BytesIO(r.content)).convert("RGB")
-        return img
-    except Exception as e:
-        print(f"⚠️ Error loading {url} : {e}")
-        return None
+# MongoDB connection
+try:
+    mongo_client = MongoClient(MONGODB_URI)
+    db = mongo_client.get_default_database()
+    db.command('ping')
+    logger.info("✅ MongoDB connected")
+except Exception as e:
+    logger.error(f"❌ MongoDB connection failed: {e}")
+    sys.exit(1)
 
-@torch.no_grad()
-def embed_image(img):
-    """Generate embedding for an image."""
-    inputs = processor(images=[img], text=[""], return_tensors="pt",
-                      truncation=True, max_length=77).to(device)
-    img_emb, _ = model(**inputs)
-    return img_emb.cpu().numpy().astype("float32")[0]
-
-def safe_id(x):
-    """Handles both {'$oid': '...'} and plain string IDs"""
-    if isinstance(x, dict) and "$oid" in x:
-        return x["$oid"]
-    if isinstance(x, ObjectId):
-        return str(x)
-    return str(x)
-
-def safe_subcategory(product):
-    """Safely extract subcategory from product."""
-    cat_id = product.get("categoryId")
+# Recommendation service
+try:
+    # Initialize with FAISS if available, otherwise on-the-fly
+    if INDEX_PATH.exists() and NPZ_PATH.exists():
+        logger.info("🔥 Initializing with FAISS (fast mode)...")
+        recommendation_service = RecommendationService(
+            model_path=str(MODEL_PATH),
+            index_path=str(INDEX_PATH),
+            npz_path=str(NPZ_PATH),
+            device='cpu'  # Change to 'cuda' if you have GPU
+        )
+    else:
+        logger.info("⚡ Initializing without FAISS (on-the-fly mode)...")
+        recommendation_service = RecommendationService(
+            model_path=str(MODEL_PATH),
+            device='cpu'
+        )
     
-    if isinstance(cat_id, dict):
-        return cat_id.get("subCategory", "Unknown")
+    stats = recommendation_service.get_stats()
+    logger.info(f"✅ Recommendation service ready - Mode: {stats['mode']}")
     
-    return "Unknown"
-
-def load_products_with_category(db, category_filter=None):
-    """Load products from MongoDB with populated category information."""
-    products_coll = db.get_collection(os.environ.get('MONGO_COLLECTION', 'products'))
-    categories_coll = db.get_collection('categories')
-    
-    # Load all categories into a dictionary
-    categories = {cat['_id']: cat for cat in categories_coll.find()}
-    
-    # Build query
-    query = {}
-    if category_filter:
-        query['categoryId'] = category_filter
-    
-    # Load products and populate categoryId
-    products = []
-    for product in products_coll.find(query):
-        if isinstance(product.get('categoryId'), ObjectId):
-            cat_id = product['categoryId']
-            if cat_id in categories:
-                product['categoryId'] = categories[cat_id]
-            else:
-                product['categoryId'] = {
-                    '_id': cat_id,
-                    'subCategory': 'Unknown',
-                    'masterCategory': 'Unknown',
-                    'articleType': 'Unknown'
-                }
-        products.append(product)
-    
-    return products
+except Exception as e:
+    logger.error(f"❌ Failed to initialize recommendation service: {e}")
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
 
 # =========================================================
 # API ENDPOINTS
 # =========================================================
+
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint."""
+    try:
+        # Check MongoDB
+        db.command('ping')
+        mongo_status = 'connected'
+    except Exception:
+        mongo_status = 'disconnected'
+    
+    # Get service stats
+    stats = recommendation_service.get_stats()
+    
     return jsonify({
         'status': 'healthy',
-        'model': 'FashionCLIP',
-        'device': str(device)
+        'service': 'fashion-recommendation',
+        'version': '1.0.0',
+        'mongodb': mongo_status,
+        'recommendation_engine': {
+            'mode': stats['mode'],
+            'faiss_enabled': stats['faiss_enabled'],
+            'indexed_products': stats['indexed_products'],
+            'cached_embeddings': stats['cached_embeddings'],
+            'device': stats['device']
+        }
     })
 
-@app.route('/api/similar-products', methods=['POST'])
+
+@app.route('/api/recommendations/similar', methods=['POST'])
 def find_similar_products():
     """
     Find similar products based on a target product ID.
     
     Request Body:
     {
-        "productId": "string",
-        "limit": int (optional, default: 5),
-        "sameCategoryOnly": bool (optional, default: true)
+        "productId": "68dfcc7484cd07dea32e23b6",
+        "limit": 6,
+        "options": {
+            "sameCategoryOnly": true,
+            "priceTolerance": 0.5,
+            "filterGender": true,
+            "filterUsage": true,
+            "brandBoost": 0.05,
+            "minSimilarity": 0.6
+        }
     }
     
     Response:
     {
         "targetProduct": {...},
-        "similarProducts": [
-            {
-                "product": {...},
-                "similarity": float
-            }
-        ]
+        "recommendations": [...],
+        "count": 6,
+        "method": "faiss"
     }
     """
     try:
         data = request.get_json()
         
         if not data or 'productId' not in data:
-            return jsonify({'error': 'productId is required'}), 400
+            return jsonify({
+                'error': 'Missing required field',
+                'message': 'productId is required in request body'
+            }), 400
         
-        target_id = data['productId']
-        limit = data.get('limit', 5)
-        same_category_only = data.get('sameCategoryOnly', True)
+        product_id = data['productId']
+        limit = data.get('limit', 6)
         
-        # Get MongoDB connection
-        db = get_mongo_connection()
-        if db is None:
-            return jsonify({'error': 'Database connection failed'}), 500
+        # Validate limit
+        if not isinstance(limit, int) or limit < 1 or limit > 50:
+            return jsonify({
+                'error': 'Invalid limit',
+                'message': 'limit must be between 1 and 50'
+            }), 400
         
-        products_coll = db.get_collection(os.environ.get('MONGO_COLLECTION', 'products'))
+        # Map frontend options to service options
+        frontend_options = data.get('options', {})
+        service_options = {
+            'price_tolerance': frontend_options.get('priceTolerance', 0.5),
+            'filter_gender': frontend_options.get('filterGender', True),
+            'filter_usage': frontend_options.get('filterUsage', True),
+            'same_category_only': frontend_options.get('sameCategoryOnly', True),
+            'brand_boost': frontend_options.get('brandBoost', 0.05),
+            'min_similarity': frontend_options.get('minSimilarity', 0.6)
+        }
         
-        # Find target product
-        try:
-            target_oid = ObjectId(target_id)
-        except:
-            return jsonify({'error': 'Invalid productId format'}), 400
+        logger.info(f"Finding similar products for: {product_id}, limit: {limit}")
         
-        target_prod = products_coll.find_one({'_id': target_oid})
-        if not target_prod:
-            return jsonify({'error': 'Product not found'}), 404
+        # Get recommendations
+        result = recommendation_service.get_similar_products(
+            db=db,
+            product_id=product_id,
+            limit=limit,
+            options=service_options
+        )
         
-        # Load target image
-        target_imgs = target_prod.get("images", [])
-        if not target_imgs:
-            return jsonify({'error': 'Target product has no images'}), 400
+        # Check if error occurred
+        if 'error' in result:
+            return jsonify(result), 404 if result['error'] == 'Product not found' else 500
         
-        target_img = load_image_from_url(target_imgs[0])
-        if target_img is None:
-            return jsonify({'error': 'Failed to load target image'}), 500
-        
-        # Generate target embedding
-        target_emb = embed_image(target_img)
-        
-        # Determine category filter
-        category_filter = None
-        if same_category_only:
-            category_filter = target_prod.get('categoryId')
-        
-        # Load candidate products
-        products = load_products_with_category(db, category_filter)
-        
-        # Compute similarities
-        similarities = []
-        for p in products:
-            pid = safe_id(p["_id"])
-            if pid == target_id:
-                continue
-            
-            imgs = p.get("images", [])
-            if not imgs:
-                continue
-            
-            img = load_image_from_url(imgs[0])
-            if img is None:
-                continue
-            
-            emb = embed_image(img)
-            sim_score = float(cosine_similarity([target_emb], [emb])[0][0])
-            
-            # Convert ObjectId to string for JSON serialization
-            p['_id'] = safe_id(p['_id'])
-            if 'categoryId' in p and isinstance(p['categoryId'], dict) and '_id' in p['categoryId']:
-                p['categoryId']['_id'] = safe_id(p['categoryId']['_id'])
-            
-            similarities.append({
-                'product': p,
-                'similarity': sim_score
-            })
-        
-        # Sort by similarity and get top results
-        similarities.sort(key=lambda x: -x['similarity'])
-        top_results = similarities[:limit]
-        
-        # Prepare target product for response
-        target_prod['_id'] = safe_id(target_prod['_id'])
-        if 'categoryId' in target_prod and isinstance(target_prod['categoryId'], ObjectId):
-            target_prod['categoryId'] = safe_id(target_prod['categoryId'])
-        
-        return jsonify({
-            'targetProduct': target_prod,
-            'similarProducts': top_results,
-            'totalFound': len(similarities)
-        })
+        return jsonify(result), 200
         
     except Exception as e:
-        print(f"❌ Error in find_similar_products: {e}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"❌ Error in find_similar_products: {e}", exc_info=True)
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
 
-@app.route('/api/embed-image', methods=['POST'])
-def embed_image_endpoint():
+
+@app.route('/api/recommendations/product/<product_id>', methods=['GET'])
+def get_product_recommendations(product_id):
     """
-    Generate embedding for an image URL.
+    Get recommendations for a specific product (GET endpoint).
+    Optimized for product detail pages with sensible defaults.
     
-    Request Body:
-    {
-        "imageUrl": "string"
-    }
+    Query Parameters:
+        limit: int (optional, default: 6, max: 20)
+        sameCategoryOnly: bool (optional, default: true)
+        minSimilarity: float (optional, default: 0.6)
     
-    Response:
-    {
-        "embedding": [float, ...]
-    }
+    Example:
+        GET /api/recommendations/product/68dfcc7484cd07dea32e23b6?limit=6&sameCategoryOnly=true
+    
+    Response: Same as /api/recommendations/similar
     """
     try:
-        data = request.get_json()
+        # Parse query parameters
+        limit = int(request.args.get('limit', 6))
+        limit = min(limit, 20)  # Cap at 20
         
-        if not data or 'imageUrl' not in data:
-            return jsonify({'error': 'imageUrl is required'}), 400
+        same_category = request.args.get('sameCategoryOnly', 'true').lower() == 'true'
+        min_similarity = float(request.args.get('minSimilarity', 0.6))
         
-        image_url = data['imageUrl']
+        logger.info(f"GET recommendations for: {product_id}, limit: {limit}")
         
-        # Load image
-        img = load_image_from_url(image_url)
-        if img is None:
-            return jsonify({'error': 'Failed to load image'}), 400
+        # Default options optimized for product pages
+        options = {
+            'price_tolerance': 0.5,
+            'filter_gender': True,
+            'filter_usage': True,
+            'same_category_only': same_category,
+            'brand_boost': 0.05,
+            'min_similarity': min_similarity
+        }
         
-        # Generate embedding
-        emb = embed_image(img)
+        result = recommendation_service.get_similar_products(
+            db=db,
+            product_id=product_id,
+            limit=limit,
+            options=options
+        )
         
+        if 'error' in result:
+            return jsonify(result), 404 if result['error'] == 'Product not found' else 500
+        
+        return jsonify(result), 200
+        
+    except ValueError as e:
         return jsonify({
-            'embedding': emb.tolist(),
-            'dimension': len(emb)
-        })
-        
+            'error': 'Invalid parameter',
+            'message': f'Invalid query parameter: {str(e)}'
+        }), 400
     except Exception as e:
-        print(f"❌ Error in embed_image_endpoint: {e}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"❌ Error in get_product_recommendations: {e}")
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
 
-@app.route('/api/search-by-image', methods=['POST'])
+
+@app.route('/api/recommendations/search-by-image', methods=['POST'])
 def search_by_image():
     """
     Search for similar products using an image URL.
     
     Request Body:
     {
-        "imageUrl": "string",
-        "limit": int (optional, default: 10),
-        "categoryFilter": "string" (optional, subcategory name)
+        "imageUrl": "https://example.com/image.jpg",
+        "limit": 10,
+        "options": {
+            "minSimilarity": 0.6
+        }
     }
     
     Response:
@@ -341,87 +286,232 @@ def search_by_image():
         "results": [
             {
                 "product": {...},
-                "similarity": float
+                "similarity": 0.95
             }
-        ]
+        ],
+        "count": 10,
+        "method": "faiss"
     }
     """
     try:
         data = request.get_json()
         
         if not data or 'imageUrl' not in data:
-            return jsonify({'error': 'imageUrl is required'}), 400
+            return jsonify({
+                'error': 'Missing required field',
+                'message': 'imageUrl is required in request body'
+            }), 400
         
         image_url = data['imageUrl']
         limit = data.get('limit', 10)
-        category_filter = data.get('categoryFilter')
         
-        # Load image
-        img = load_image_from_url(image_url)
-        if img is None:
-            return jsonify({'error': 'Failed to load image'}), 400
+        # Validate limit
+        if not isinstance(limit, int) or limit < 1 or limit > 50:
+            return jsonify({
+                'error': 'Invalid limit',
+                'message': 'limit must be between 1 and 50'
+            }), 400
         
-        # Generate query embedding
-        query_emb = embed_image(img)
+        # Validate URL
+        if not image_url.startswith(('http://', 'https://')):
+            return jsonify({
+                'error': 'Invalid imageUrl',
+                'message': 'imageUrl must be a valid HTTP/HTTPS URL'
+            }), 400
         
-        # Get MongoDB connection
-        db = get_mongo_connection()
-        if db is None:
-            return jsonify({'error': 'Database connection failed'}), 500
+        frontend_options = data.get('options', {})
+        service_options = {
+            'min_similarity': frontend_options.get('minSimilarity', 0.6)
+        }
         
-        # Load products
-        products = load_products_with_category(db)
+        logger.info(f"Searching by image: {image_url[:70]}..., limit: {limit}")
         
-        # Filter by category if specified
-        if category_filter:
-            products = [p for p in products if safe_subcategory(p) == category_filter]
+        # Search by image
+        result = recommendation_service.search_by_image(
+            db=db,
+            image_url=image_url,
+            limit=limit,
+            options=service_options
+        )
         
-        # Compute similarities
-        similarities = []
-        for p in products:
-            imgs = p.get("images", [])
-            if not imgs:
-                continue
-            
-            img = load_image_from_url(imgs[0])
-            if img is None:
-                continue
-            
-            emb = embed_image(img)
-            sim_score = float(cosine_similarity([query_emb], [emb])[0][0])
-            
-            # Convert ObjectId to string
-            p['_id'] = safe_id(p['_id'])
-            if 'categoryId' in p and isinstance(p['categoryId'], dict) and '_id' in p['categoryId']:
-                p['categoryId']['_id'] = safe_id(p['categoryId']['_id'])
-            
-            similarities.append({
-                'product': p,
-                'similarity': sim_score
-            })
+        if 'error' in result:
+            return jsonify(result), 400
         
-        # Sort by similarity and get top results
-        similarities.sort(key=lambda x: -x['similarity'])
-        top_results = similarities[:limit]
-        
-        return jsonify({
-            'results': top_results,
-            'totalFound': len(similarities)
-        })
+        return jsonify(result), 200
         
     except Exception as e:
-        print(f"❌ Error in search_by_image: {e}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"❌ Error in search_by_image: {e}", exc_info=True)
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
+
+
+@app.route('/api/recommendations/stats', methods=['GET'])
+def get_recommendation_stats():
+    """
+    Get recommendation service statistics and health info.
+    
+    Response:
+    {
+        "mode": "hybrid",
+        "faiss_enabled": true,
+        "index_vectors": 40,
+        "indexed_products": 40,
+        "cached_embeddings": 5,
+        "device": "cpu",
+        "model_config": {...}
+    }
+    """
+    try:
+        stats = recommendation_service.get_stats()
+        return jsonify(stats), 200
+        
+    except Exception as e:
+        logger.error(f"❌ Error in get_recommendation_stats: {e}")
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
+
+
+@app.route('/api/recommendations/batch', methods=['POST'])
+def get_batch_recommendations():
+    """
+    Get recommendations for multiple products in one request.
+    Useful for homepage "You may also like" sections.
+    
+    Request Body:
+    {
+        "productIds": ["id1", "id2", "id3"],
+        "limit": 3
+    }
+    
+    Response:
+    {
+        "results": {
+            "id1": {
+                "recommendations": [...],
+                "count": 3
+            },
+            "id2": {...}
+        },
+        "totalProcessed": 3,
+        "method": "faiss"
+    }
+    """
+    try:
+        data = request.get_json()
+        
+        if not data or 'productIds' not in data:
+            return jsonify({
+                'error': 'Missing required field',
+                'message': 'productIds array is required'
+            }), 400
+        
+        product_ids = data['productIds']
+        
+        if not isinstance(product_ids, list) or len(product_ids) == 0:
+            return jsonify({
+                'error': 'Invalid productIds',
+                'message': 'productIds must be a non-empty array'
+            }), 400
+        
+        if len(product_ids) > 10:
+            return jsonify({
+                'error': 'Too many products',
+                'message': 'Maximum 10 products per batch request'
+            }), 400
+        
+        limit = data.get('limit', 3)
+        
+        logger.info(f"Batch recommendations for {len(product_ids)} products")
+        
+        results = {}
+        method = None
+        
+        for product_id in product_ids:
+            result = recommendation_service.get_similar_products(
+                db=db,
+                product_id=product_id,
+                limit=limit,
+                options={'min_similarity': 0.65}
+            )
+            
+            if 'error' not in result:
+                results[product_id] = {
+                    'recommendations': result.get('recommendations', []),
+                    'count': result.get('count', 0)
+                }
+                if method is None:
+                    method = result.get('method', 'unknown')
+        
+        return jsonify({
+            'results': results,
+            'totalProcessed': len(results),
+            'method': method
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"❌ Error in get_batch_recommendations: {e}")
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
+
+
+# =========================================================
+# ERROR HANDLERS
+# =========================================================
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        'error': 'Endpoint not found',
+        'message': 'The requested endpoint does not exist'
+    }), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({
+        'error': 'Internal server error',
+        'message': 'An unexpected error occurred'
+    }), 500
+
+
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify({
+        'error': 'Bad request',
+        'message': 'Invalid request format or parameters'
+    }), 400
+
 
 # =========================================================
 # RUN SERVER
 # =========================================================
 if __name__ == '__main__':
-    print(f"\n🚀 Starting Fashion Similarity API on port {PORT}...")
-    print(f"📍 Health check: http://localhost:{PORT}/health")
-    print(f"📍 Similar products: POST http://localhost:{PORT}/api/similar-products")
-    print(f"📍 Embed image: POST http://localhost:{PORT}/api/embed-image")
-    print(f"📍 Search by image: POST http://localhost:{PORT}/api/search-by-image")
+    print("\n" + "=" * 70)
+    print("🚀 FASHION RECOMMENDATION SERVICE")
+    print("=" * 70)
+    print(f"📍 Port: {PORT}")
+    print(f"🔧 Mode: {recommendation_service.get_stats()['mode']}")
+    print(f"📊 Indexed Products: {recommendation_service.get_stats()['indexed_products']}")
+    print(f"💾 Device: {recommendation_service.get_stats()['device']}")
+    print("\n📍 API Endpoints:")
+    print(f"   • Health Check:")
+    print(f"     GET  http://localhost:{PORT}/health")
+    print(f"\n   • Get Similar Products (POST):")
+    print(f"     POST http://localhost:{PORT}/api/recommendations/similar")
+    print(f"\n   • Get Product Recommendations (GET):")
+    print(f"     GET  http://localhost:{PORT}/api/recommendations/product/<product_id>")
+    print(f"\n   • Search by Image:")
+    print(f"     POST http://localhost:{PORT}/api/recommendations/search-by-image")
+    print(f"\n   • Batch Recommendations:")
+    print(f"     POST http://localhost:{PORT}/api/recommendations/batch")
+    print(f"\n   • Service Statistics:")
+    print(f"     GET  http://localhost:{PORT}/api/recommendations/stats")
+    print("=" * 70 + "\n")
+    
     app.run(host='0.0.0.0', port=PORT, debug=False)
