@@ -13,7 +13,12 @@ type Product = {
   gender: 'Male' | 'Female' | 'Unisex'
   color: string
   usage: string
-  categoryId?: string
+  categoryId?: string | {
+    _id: string
+    masterCategory: string
+    subCategory: string
+    articleType: string
+  }
   categoryName?: string
   isActive: boolean
   createdAt: string
@@ -72,31 +77,33 @@ export default function ApparelPage() {
       
       const data = response.data as {
         products: Product[]
-        total: number
-        totalPages: number
-        currentPage: number
+        pagination?: {
+          totalProducts: number
+          totalPages: number
+          currentPage: number
+          hasNextPage: boolean
+          hasPrevPage: boolean
+        }
       }
       
-      // Filter products on frontend for apparel items only
+      // Filter products on frontend for apparel items only using category data
       let filteredProducts = data.products.filter(product => {
-        // First filter: Only apparel items (exclude accessories, shoes, etc.)
-        const isApparel = product.name.toLowerCase().includes('áo') || 
-                         product.name.toLowerCase().includes('quần') ||
-                         product.name.toLowerCase().includes('shirt') ||
-                         product.name.toLowerCase().includes('pants')
+        // Get category info from the populated categoryId field
+        const category = product.categoryId as any
+        
+        // First filter: Only apparel items (masterCategory === "Apparel")
+        const isApparel = category?.masterCategory === 'Apparel'
         
         if (!isApparel) return false
         
-        // Second filter: Apply subcategory filter
+        // Second filter: Apply subcategory filter based on category subCategory
         if (filters.subcategory === 'topwear') {
-          return product.name.toLowerCase().includes('áo') || 
-                 product.name.toLowerCase().includes('shirt')
+          return category?.subCategory === 'Topwear'
         } else if (filters.subcategory === 'bottomwear') {
-          return product.name.toLowerCase().includes('quần') || 
-                 product.name.toLowerCase().includes('pants')
+          return category?.subCategory === 'Bottomwear'
         }
         
-        // If no subcategory, return all apparel
+        // If no subcategory, return all apparel items
         return true
       })
       

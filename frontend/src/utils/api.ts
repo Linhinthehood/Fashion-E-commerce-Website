@@ -90,6 +90,14 @@ export const API_ENDPOINTS = {
     applyDiscount: (id: string) => buildUrl(`/orders/${id}/discount`),
     adminAll: () => buildUrl('/orders'), // GET with query params
   },
+  // Fashion Service endpoints (proxied through API Gateway)
+  fashion: {
+    similar: () => buildUrl('/recommendations/similar'),
+    productRecommendations: (productId: string) => buildUrl(`/recommendations/product/${productId}`),
+    searchByImage: () => buildUrl('/recommendations/search-by-image'),
+    stats: () => buildUrl('/recommendations/stats'),
+    batch: () => buildUrl('/recommendations/batch'),
+  },
 } as const;
 
 // Auth API functions - use apiService.ts instead

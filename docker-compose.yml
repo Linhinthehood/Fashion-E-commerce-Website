@@ -87,6 +87,7 @@ services:
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
+      - FASHION_SERVICE_URL=http://fashion-service:3008
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
@@ -95,10 +96,28 @@ services:
       - user-service
       - product-service
       - order-service
+      - fashion-service
     networks:
       - fashion_network
 
-  # Frontend
+  # Fashion Service (AI Recommendations)
+  fashion-service:
+    build:
+      context: ./backend/fashion-service
+      dockerfile: Dockerfile
+    container_name: fashion_ecommerce_fashion_service
+    restart: unless-stopped
+    ports:
+      - "3008:3008"
+    environment:
+      - PORT=3008
+      - RECOMMEND_SERVICE_PORT=3008
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+      - DEBUG=false
+    networks:
+      - fashion_network
+
+  # Frontend (Development)
   frontend:
     build:
       context: ./frontend
@@ -108,9 +127,10 @@ services:
     ports:
       - "5173:80"
     environment:
-      - VITE_API_URL=http://localhost:3000/api
+      - REACT_APP_API_URL=http://localhost:3000/api
     depends_on:
       - api-gateway
+      - fashion-service
     networks:
       - fashion_network
 

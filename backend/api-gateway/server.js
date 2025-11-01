@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:3002';
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:3001';
 const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || 'http://localhost:3003';
+const FASHION_SERVICE_URL = process.env.FASHION_SERVICE_URL || 'http://localhost:3008';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.use(helmet());
@@ -32,6 +33,7 @@ app.use(cors({
     'http://localhost:3001',
     'http://localhost:3002',
     'http://localhost:3003',
+    'http://localhost:3008',
     FRONTEND_URL
   ],
   credentials: true,
@@ -48,7 +50,8 @@ app.get('/health', (req, res) => {
     services: {
       user: USER_SERVICE_URL,
       product: PRODUCT_SERVICE_URL,
-      order: ORDER_SERVICE_URL
+      order: ORDER_SERVICE_URL,
+      fashion: FASHION_SERVICE_URL
     }
   });
 });
@@ -121,6 +124,9 @@ app.use('/api/orders', buildServiceProxy(ORDER_SERVICE_URL, 'order-service'));
 app.use('/api/products', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
 app.use('/api/categories', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
 app.use('/api/variants', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
+
+// Fashion Service routes
+app.use('/api/recommendations', buildServiceProxy(FASHION_SERVICE_URL, 'fashion-service'));
 
 // 404 for non-API routes
 app.use('*', (req, res) => {

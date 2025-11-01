@@ -600,6 +600,192 @@ export const orderApi = {
   applyDiscount: (id: string, body: { discount: number }) =>
     apiClient.put(API_ENDPOINTS.orders.applyDiscount(id), body, true),
 };
+// Helpers for Fashion API local history
+const FASHION_HISTORY_PREFIX = 'fashion_recent_products_';
+
+const persistInteraction = (userId: string, productId: string) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    const storageKey = `${FASHION_HISTORY_PREFIX}${userId}`;
+    const rawHistory = window.localStorage.getItem(storageKey);
+    const history: string[] = rawHistory ? JSON.parse(rawHistory) : [];
+
+    const nextHistory = [productId, ...history.filter((id) => id !== productId)];
+    window.localStorage.setItem(storageKey, JSON.stringify(nextHistory.slice(0, 10)));
+  } catch (error) {
+    console.warn('[fashionApi] Failed to persist interaction', error);
+  }
+};
+
+const getRecentProductId = (userId: string): string | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const storageKey = `${FASHION_HISTORY_PREFIX}${userId}`;
+    const rawHistory = window.localStorage.getItem(storageKey);
+    const history: string[] = rawHistory ? JSON.parse(rawHistory) : [];
+    return history.length > 0 ? history[0] : null;
+  } catch (error) {
+    console.warn('[fashionApi] Failed to read interaction history', error);
+    return null;
+  }
+};
+
+const handleJsonResponse = async (response: Response) => {
+  const data = await response.json();
+  if (!response.ok) {
+    return {
+      success: false,
+      message: data?.message || data?.error || 'Fashion service request failed',
+      error: data?.error,
+      data,
+    };
+  }
+
+  return {
+    success: true,
+    data,
+  };
+};
+
+const fetchSimilarProducts = async (
+  productId: string,
+  params?: { limit?: number; sameCategoryOnly?: boolean; minSimilarity?: number }
+) => {
+  const url = new URL(API_ENDPOINTS.fashion.productRecommendations(productId));
+
+  if (params?.limit) {
+    url.searchParams.set('limit', params.limit.toString());
+  }
+
+  if (params?.sameCategoryOnly !== undefined) {
+    url.searchParams.set('sameCategoryOnly', params.sameCategoryOnly ? 'true' : 'false');
+  }
+
+  if (params?.minSimilarity !== undefined) {
+    url.searchParams.set('minSimilarity', params.minSimilarity.toString());
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+  });
+
+  return handleJsonResponse(response);
+};
+
+// Fashion API functions
+export const fashionApi = {
+  // Fetch recommendations for a given product (GET)
+  getSimilarProducts: fetchSimilarProducts,
+
+  // Request similar products with custom options (POST)
+  findSimilarProducts: async (payload: {
+    productId: string;
+    limit?: number;
+    options?: Record<string, unknown>;
+  }) => {
+    const response = await fetch(API_ENDPOINTS.fashion.similar(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return handleJsonResponse(response);
+  },
+
+  // Search similar products by image URL
+  searchByImage: async (payload: {
+    imageUrl: string;
+    limit?: number;
+    options?: Record<string, unknown>;
+  }) => {
+    const response = await fetch(API_ENDPOINTS.fashion.searchByImage(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return handleJsonResponse(response);
+  },
+
+  // Batch recommendations for multiple products
+  getBatchRecommendations: async (payload: {
+    productIds: string[];
+    limit?: number;
+  }) => {
+    const response = await fetch(API_ENDPOINTS.fashion.batch(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return handleJsonResponse(response);
+  },
+
+  // Fetch service statistics
+  getStats: async () => {
+    const response = await fetch(API_ENDPOINTS.fashion.stats(), {
+      method: 'GET',
+    });
+
+    return handleJsonResponse(response);
+  },
+
+  // Get user-tailored recommendations based on recent interactions stored locally
+  getUserRecommendations: async (userId: string, limit: number = 8) => {
+    const recentProductId = getRecentProductId(userId);
+
+    if (!recentProductId) {
+      return {
+        success: false,
+        message: 'Chưa có dữ liệu tương tác để gợi ý',
+      };
+    }
+
+    const similarResponse = await fetchSimilarProducts(recentProductId, { limit });
+
+    if (!similarResponse.success || !similarResponse.data) {
+      return {
+        success: false,
+        message: similarResponse.message || 'Không lấy được gợi ý',
+      };
+    }
+
+    const recommendations = Array.isArray(similarResponse.data.recommendations)
+      ? similarResponse.data.recommendations.map((item: any) => ({
+          ...item.product,
+          similarity: item.similarity,
+        }))
+      : [];
+
+    return {
+      success: true,
+      data: recommendations,
+    };
+  },
+
+  // Track user interaction locally (future: send to backend when endpoint available)
+  trackInteraction: async (userId: string, productId: string, interactionType: string) => {
+    persistInteraction(userId, productId);
+
+    return {
+      success: true,
+      message: `Tracked ${interactionType}`,
+    };
+  },
+};
+
 // Health check function
 export const healthCheck = () => apiClient.get('/health', false);
 
@@ -610,5 +796,6 @@ export default {
   categoryApi,
   variantApi,
   orderApi,
+  fashionApi,
   healthCheck,
 };

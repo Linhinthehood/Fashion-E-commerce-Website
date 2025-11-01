@@ -1,10 +1,77 @@
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import BannerCarousel from '../components/BannerCarousel'
+import ProductCard from '../components/ProductCard'
+import { fashionApi } from '../utils/apiService'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Home() {
+  const [recommendations, setRecommendations] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const { user } = useAuth()
+
+  useEffect(() => {
+    loadRecommendations()
+  }, [user])
+
+  const loadRecommendations = async () => {
+    if (user?._id) {
+      try {
+        const response = await fashionApi.getUserRecommendations(user._id, 8)
+        if (response.success && Array.isArray(response.data)) {
+          setRecommendations(response.data)
+        } else {
+          setRecommendations([])
+        }
+      } catch (error) {
+        console.error('Failed to load recommendations:', error)
+      }
+    }
+    setLoading(false)
+  }
+
   return (
     <div className="space-y-10">
       <BannerCarousel />
+      
+      {/* AI-Powered Recommendations Section */}
+      {user && (
+        <section className="py-16">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              Recommended for You
+            </h2>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="bg-gray-300 h-64 rounded-lg"></div>
+                    <div className="h-4 bg-gray-300 rounded mt-2"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {recommendations.map((product) => (
+                  <ProductCard
+                    key={product._id}
+                    id={product._id}
+                    name={product.displayName || product.name || 'Product'}
+                    imageUrl={
+                      product.imageUrl ||
+                      product.imageUrls?.[0] ||
+                      product.images?.[0]?.url ||
+                      product.images?.[0]
+                    }
+                    price={product.defaultPrice ?? product.price}
+                    brand={product.brand}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
       
       {/* Hero Section */}
       <section className="text-center py-16">

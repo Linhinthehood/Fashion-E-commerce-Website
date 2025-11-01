@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "service": "order-service",
+    "startedAt": "2025-10-31T09:39:11.159Z",
+    "filters": {
+      "startDate": null,
+      "endDate": null
+    },
+    "finishedAt": "2025-10-31T09:39:12.542Z",
+    "durationMs": 1383
+  },
+  "files": {
+    "orders": "D:\\Secret\\duan\\Fashion-E-commerce-Website\\backend\\order-service\\exports\\orders-1761903552472.json",
+    "carts": "D:\\Secret\\duan\\Fashion-E-commerce-Website\\backend\\order-service\\exports\\carts-1761903552542.json"
+  },
+  "counts": {
+    "orders": 3,
+    "carts": 0
+  }
+}

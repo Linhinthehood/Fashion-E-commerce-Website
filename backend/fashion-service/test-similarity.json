@@ -1,0 +1,146 @@
+{
+  "info": {
+    "name": "Fashion AI - Test Similarity",
+    "description": "Simple test for product recommendations with similarity filtering",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "fashion_service",
+      "value": "http://localhost:3008",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{fashion_service}}/health",
+          "host": ["{{fashion_service}}"],
+          "path": ["health"]
+        },
+        "description": "Check if service is running"
+      }
+    },
+    {
+      "name": "Get Similar Products - Default",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{fashion_service}}/api/recommendations/product/68e0cee62ca76bf7ae455b95?limit=6",
+          "host": ["{{fashion_service}}"],
+          "path": ["api", "recommendations", "product", "68e0cee62ca76bf7ae455b95"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "6",
+              "description": "Number of recommendations"
+            }
+          ]
+        },
+        "description": "Test with Watch product (Garmin)"
+      }
+    },
+    {
+      "name": "Get Similar Products - minSimilarity 0.7",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{fashion_service}}/api/recommendations/product/68e0cee62ca76bf7ae455b95?limit=10&minSimilarity=0.7",
+          "host": ["{{fashion_service}}"],
+          "path": ["api", "recommendations", "product", "68e0cee62ca76bf7ae455b95"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "10",
+              "description": "More results"
+            },
+            {
+              "key": "minSimilarity",
+              "value": "0.7",
+              "description": "Only 70%+ similarity"
+            }
+          ]
+        },
+        "description": "Only products with 70%+ similarity"
+      }
+    },
+    {
+      "name": "Get Similar Products - minSimilarity 0.8",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{fashion_service}}/api/recommendations/product/68e0cee62ca76bf7ae455b95?limit=5&minSimilarity=0.8",
+          "host": ["{{fashion_service}}"],
+          "path": ["api", "recommendations", "product", "68e0cee62ca76bf7ae455b95"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "5",
+              "description": "Top 5"
+            },
+            {
+              "key": "minSimilarity",
+              "value": "0.8",
+              "description": "Only 80%+ similarity (very similar)"
+            }
+          ]
+        },
+        "description": "Only very similar products (80%+)"
+      }
+    },
+    {
+      "name": "Test with Shirt Product",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{fashion_service}}/api/recommendations/product/68dfcc7484cd07dea32e23b6?limit=6&minSimilarity=0.6",
+          "host": ["{{fashion_service}}"],
+          "path": ["api", "recommendations", "product", "68dfcc7484cd07dea32e23b6"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "6"
+            },
+            {
+              "key": "minSimilarity",
+              "value": "0.6",
+              "description": "Minimum 60% similarity"
+            }
+          ]
+        },
+        "description": "Test with Shirt (SWE RING BOXY TEE)"
+      }
+    },
+    {
+      "name": "Test with Pants Product",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{fashion_service}}/api/recommendations/product/68e005f17d3c1abe691f508f?limit=6&minSimilarity=0.6",
+          "host": ["{{fashion_service}}"],
+          "path": ["api", "recommendations", "product", "68e005f17d3c1abe691f508f"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "6"
+            },
+            {
+              "key": "minSimilarity",
+              "value": "0.6"
+            }
+          ]
+        },
+        "description": "Test with Pants (SWE AIRWAVE SWEATPANTS)"
+      }
+    }
+  ]
+}

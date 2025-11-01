@@ -1,7 +1,7 @@
 import { Routes, Route, Link } from 'react-router-dom'
+import  { lazy } from 'react'
 import './App.css'
 import Home from './pages/Home'
-import ProductsPage from './pages/ProductsPage'
 import ProductDetail from './pages/ProductDetail.tsx'
 import Login from './pages/Login.tsx'
 import Register from './pages/Register'
@@ -17,6 +17,19 @@ import { ToastProvider } from './contexts/ToastContext'
 import CategoryPage from './pages/CategoryPage'
 import ProfilePage from './pages/ProfilePage'
 import AuthCallback from './pages/AuthCallback'
+
+// Only ProductsPage is lazy loaded
+const ProductsPage = lazy(() => import('./pages/ProductsPage'))
+
+// Loading fallback for ProductsPage only
+// const ProductsLoader = () => (
+//   <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+//     <div className="text-center">
+//       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+//       <p className="text-gray-600">Loading products...</p>
+//     </div>
+//   </div>
+// )
 
 function App() {
   return (

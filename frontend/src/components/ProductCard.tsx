@@ -1,4 +1,7 @@
 import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { fashionApi } from '../utils/apiService'
+import { useAuth } from '../contexts/AuthContext'
 
 type ProductCardProps = {
   id: string
@@ -23,6 +26,23 @@ export default function ProductCard({
   price, 
   brand
 }: ProductCardProps) {
+  const { user } = useAuth()
+
+  // Track product view for AI learning
+  useEffect(() => {
+    const trackProductView = async () => {
+      if (user?._id) {
+        try {
+          await fashionApi.trackInteraction(user._id, id, 'view')
+        } catch (error) {
+          console.error('Failed to track product view:', error)
+        }
+      }
+    }
+    
+    trackProductView()
+  }, [id, user?._id])
+
   return (
     <div className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200">
       <Link to={`/product/${id}`} className="block">
