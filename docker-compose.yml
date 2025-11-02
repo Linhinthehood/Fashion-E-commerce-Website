@@ -87,7 +87,7 @@ services:
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
-      - FASHION_SERVICE_URL=http://fashion-service:3008
+      - FASHION_SERVICE_URL=http://host.docker.internal:3008
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
