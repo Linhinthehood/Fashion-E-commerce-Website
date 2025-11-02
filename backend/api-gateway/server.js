@@ -27,15 +27,26 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:5173', 
-    'http://localhost:3001',
-    'http://localhost:3002',
-    'http://localhost:3003',
-    'http://localhost:3008',
-    FRONTEND_URL
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, postman)
+    if (!origin) return callback(null, true);
+    
+    // Allow all localhost and 172.* IPs for development
+    const allowedPatterns = [
+      /^http:\/\/localhost(:\d+)?$/,
+      /^http:\/\/127\.0\.0\.1(:\d+)?$/,
+      /^http:\/\/172\.\d+\.\d+\.\d+(:\d+)?$/,
+      /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/
+    ];
+    
+    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
+    
+    if (isAllowed || origin === FRONTEND_URL) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
