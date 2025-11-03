@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const orderRoutes = require('./routes/orders');
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -47,6 +48,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/orders', orderRoutes);
+app.use('/api/orders/analytics', analyticsRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

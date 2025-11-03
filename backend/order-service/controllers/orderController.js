@@ -689,11 +689,41 @@ const getAllOrders = async (req, res) => {
 
     const total = await Order.countDocuments(filter);
 
-    // Add order numbers
-    const ordersWithNumber = orders.map(order => ({
-      ...order,
-      orderNumber: `ORD-${order.createdAt.getTime()}-${order._id.toString().slice(-6)}`
-    }));
+    // Enrich orders with user information and order numbers
+    const ordersWithNumber = await Promise.all(
+      orders.map(async (order) => {
+        let userInfo = {
+          name: 'Unknown User',
+          email: 'N/A'
+        };
+
+        try {
+          const user = await userService.getUserById(order.userId);
+          if (user) {
+            userInfo = {
+              name: user.name || 'Unknown User',
+              email: user.email || 'N/A'
+            };
+          }
+        } catch (error) {
+          console.error(`Failed to fetch user ${order.userId}:`, error.message);
+          // Continue with default values if user service fails
+        }
+
+        // Format order number: ORD-YYYYMMDD-HHMMSS-XXXXXX
+        const createdAt = new Date(order.createdAt);
+        const dateStr = createdAt.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD
+        const timeStr = createdAt.toTimeString().slice(0, 8).replace(/:/g, ''); // HHMMSS
+        const orderIdSuffix = order._id.toString().slice(-6);
+        const orderNumber = `ORD-${dateStr}-${timeStr}-${orderIdSuffix}`;
+
+        return {
+          ...order,
+          orderNumber,
+          user: userInfo
+        };
+      })
+    );
 
     res.json({
       success: true,

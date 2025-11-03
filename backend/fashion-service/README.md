@@ -21,12 +21,29 @@ AI-powered product recommendation service using FashionCLIP and FAISS for simila
 
 ## Installation
 
-1. Install dependencies:
+### Quick Start (Recommended)
+
+1. Create and activate virtual environment:
+```bash
+cd backend/fashion-service
+python3 -m venv venv
+source venv/bin/activate
+```
+
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Configure environment variables in `.env`:
+**OR** use the provided script:
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+### Configuration (Optional)
+
+Create `.env` file to customize settings:
 ```env
 RECOMMEND_SERVICE_PORT=3008
 PRODUCT_SERVICE_URL=http://localhost:3002
@@ -37,11 +54,30 @@ NPZ_PATH=models/cloud_gallery_embeddings.npz
 
 ## Running the Service
 
+### First Time Setup
 ```bash
+cd backend/fashion-service
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python main.py
+```
+
+### Subsequent Runs
+```bash
+cd backend/fashion-service
+source venv/bin/activate
 python main.py
 ```
 
 The service will start on `http://localhost:3008`
+
+### Verify Service is Running
+```bash
+curl http://localhost:3008/health
+```
+
+For detailed instructions, see [QUICKSTART.md](QUICKSTART.md)
 
 ## API Endpoints
 

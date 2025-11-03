@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import DashboardAnalytics from '../components/admin/DashboardAnalytics'
 import UserManagement from '../components/admin/UserManagement'
 import ProductManagement from '../components/admin/ProductManagement'
 import OrderManagement from '../components/admin/OrderManagement'
 import AddProduct from '../components/admin/AddProduct'
 
-type TabType = 'users' | 'products' | 'create-product' | 'orders'
+type TabType = 'dashboard' | 'users' | 'products' | 'create-product' | 'orders'
 
 const resolveTabParam = (value: string | null): TabType => {
-  if (value === 'products' || value === 'orders' || value === 'create-product') {
+  if (value === 'products' || value === 'orders' || value === 'create-product' || value === 'dashboard') {
     return value
   }
-  return 'users'
+  return 'dashboard' // Default to dashboard
 }
 
 export default function AdminPage() {
@@ -30,7 +31,7 @@ export default function AdminPage() {
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab)
-    if (tab === 'users') {
+    if (tab === 'dashboard') {
       setSearchParams({}, { replace: true })
     } else {
       setSearchParams({ tab }, { replace: true })
@@ -54,6 +55,7 @@ export default function AdminPage() {
   }
 
   const tabs = [
+    { id: 'dashboard' as TabType, label: 'Dashboard', icon: '📊' },
     { id: 'users' as TabType, label: 'User Management', icon: '👥' },
     { id: 'products' as TabType, label: 'Product Management', icon: '🛍️' },
     { id: 'create-product' as TabType, label: 'Add New Product', icon: '➕' },
@@ -62,6 +64,8 @@ export default function AdminPage() {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case 'dashboard':
+        return <DashboardAnalytics />
       case 'users':
         return <UserManagement />
       case 'products':
@@ -71,7 +75,7 @@ export default function AdminPage() {
       case 'orders':
         return <OrderManagement />
       default:
-        return <UserManagement />
+        return <DashboardAnalytics />
     }
   }
 

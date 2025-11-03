@@ -18,6 +18,10 @@ type Order = {
   orderNumber: string
   createdAt: string
   updatedAt: string
+  user?: {
+    name: string
+    email: string
+  }
 }
 
 type OrderItem = {
@@ -112,12 +116,32 @@ export default function OrderManagement() {
   const [showOrderDetail, setShowOrderDetail] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   
-  // Filters
+  // Get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date()
+    return today.toISOString().split('T')[0]
+  }
+
+  // Get maximum date (today + 1 day) for date inputs
+  const getMaxDate = () => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    return tomorrow.toISOString().split('T')[0]
+  }
+
+  // Get tomorrow's date in YYYY-MM-DD format
+  const getTomorrowDate = () => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    return tomorrow.toISOString().split('T')[0]
+  }
+
+  // Filters - default startDate to today, endDate to tomorrow
   const [filters, setFilters] = useState({
     paymentStatus: '',
     shipmentStatus: '',
-    startDate: '',
-    endDate: '',
+    startDate: getTodayDate(),
+    endDate: getTomorrowDate(),
     sortBy: 'createdAt',
     sortOrder: 'desc' as 'asc' | 'desc'
   })
@@ -167,6 +191,7 @@ export default function OrderManagement() {
 
   useEffect(() => {
     loadOrders()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters])
 
   // Load order details
@@ -290,7 +315,14 @@ export default function OrderManagement() {
             <input
               type="date"
               value={filters.startDate}
-              onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value }))}
+              max={getMaxDate()}
+              onChange={(e) => {
+                const selectedDate = e.target.value
+                // Prevent selecting future dates
+                if (selectedDate <= getMaxDate()) {
+                  setFilters(prev => ({ ...prev, startDate: selectedDate }))
+                }
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -299,7 +331,14 @@ export default function OrderManagement() {
             <input
               type="date"
               value={filters.endDate}
-              onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value }))}
+              max={getMaxDate()}
+              onChange={(e) => {
+                const selectedDate = e.target.value
+                // Prevent selecting future dates
+                if (selectedDate <= getMaxDate()) {
+                  setFilters(prev => ({ ...prev, endDate: selectedDate }))
+                }
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -364,6 +403,11 @@ export default function OrderManagement() {
                     <p className="text-sm text-gray-500">
                       Ngày đặt: {formatDateTime(order.createdAt)}
                     </p>
+                    {order.user && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        👤 Khách hàng: <span className="font-medium">{order.user.name}</span> ({order.user.email})
+                      </p>
+                    )}
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-red-600">
@@ -465,9 +509,10 @@ export default function OrderManagement() {
       {/* Order Detail Modal */}
       {showOrderDetail && selectedOrder && (
         <div 
-          className={`fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 transition-all duration-300 ${
+          className={`fixed inset-0 flex items-center justify-center p-4 z-50 transition-all duration-300 ${
             isClosing ? 'animate-out fade-out duration-300' : 'animate-in fade-in duration-300'
           }`}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
           onClick={handleCloseModal}
         >
           <div 
