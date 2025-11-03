@@ -87,7 +87,7 @@ export default function AdminPage() {
           <div className="py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Bảng quản trị</h1>
                 <p className="mt-2 text-gray-600">Quản lý hệ thống và dữ liệu</p>
               </div>
               <div className="text-right">

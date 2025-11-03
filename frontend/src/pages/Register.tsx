@@ -26,32 +26,32 @@ export default function Register() {
     
     // Client-side validation
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError('Please fill in all required fields')
+      setError('Vui lòng điền đầy đủ các trường bắt buộc')
       return
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address')
+      setError('Vui lòng nhập địa chỉ email hợp lệ')
       return
     }
 
     // Password validation
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long')
+      setError('Mật khẩu phải có ít nhất 6 ký tự')
       return
     }
 
     // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError('Mật khẩu và xác nhận mật khẩu không khớp')
       return
     }
 
     // Terms acceptance validation
     if (!acceptTerms) {
-      setError('Please accept the Terms of Service and Privacy Policy')
+      setError('Vui lòng chấp nhận Điều khoản dịch vụ và Chính sách bảo mật')
       return
     }
 
@@ -163,10 +163,10 @@ export default function Register() {
             <span className="text-white font-bold text-2xl">F</span>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Create Account
+            Tạo tài khoản
           </h2>
           <p className="text-gray-600">
-            Join Fashion Store and start shopping today
+            Tham gia Cửa hàng Thời trang và bắt đầu mua sắm ngay
           </p>
         </div>
 
@@ -176,7 +176,7 @@ export default function Register() {
             {/* Full Name Field */}
             <div>
               <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                Full Name *
+                Họ và tên *
               </label>
               <div className="relative">
                 <input
@@ -187,7 +187,7 @@ export default function Register() {
                   value={formData.name}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 placeholder-gray-400"
-                  placeholder="Enter your full name"
+                  placeholder="Nhập họ và tên"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -200,7 +200,7 @@ export default function Register() {
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                Email Address *
+                Email *
               </label>
               <div className="relative">
                 <input
@@ -212,7 +212,7 @@ export default function Register() {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 placeholder-gray-400"
-                  placeholder="Enter your email address"
+                  placeholder="Nhập email của bạn"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -226,7 +226,7 @@ export default function Register() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="phoneNumber" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Phone Number
+                  Số điện thoại
                 </label>
                 <input
                   id="phoneNumber"
@@ -240,7 +240,7 @@ export default function Register() {
               </div>
               <div>
                 <label htmlFor="dob" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Date of Birth
+                  Ngày sinh
                 </label>
                 <input
                   id="dob"
@@ -256,7 +256,7 @@ export default function Register() {
             {/* Gender Field */}
             <div>
               <label htmlFor="gender" className="block text-sm font-semibold text-gray-700 mb-2">
-                Gender
+                Giới tính
               </label>
               <select
                 id="gender"
@@ -265,17 +265,17 @@ export default function Register() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 bg-white"
               >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="">Chọn giới tính</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
+                <option value="Other">Khác</option>
               </select>
             </div>
 
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-                Password *
+                Mật khẩu *
               </label>
               <div className="relative">
                 <input
@@ -287,7 +287,7 @@ export default function Register() {
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 placeholder-gray-400 pr-12"
-                  placeholder="Create a strong password"
+                  placeholder="Tạo mật khẩu mạnh"
                 />
                 <button
                   type="button"
@@ -302,14 +302,14 @@ export default function Register() {
                 </button>
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Password must be at least 6 characters long
+                Mật khẩu phải có ít nhất 6 ký tự
               </p>
             </div>
 
             {/* Confirm Password Field */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 mb-2">
-                Confirm Password *
+                Xác nhận mật khẩu *
               </label>
               <div className="relative">
                 <input
@@ -321,7 +321,7 @@ export default function Register() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 placeholder-gray-400 pr-12"
-                  placeholder="Confirm your password"
+                  placeholder="Xác nhận mật khẩu"
                 />
                 <button
                   type="button"
@@ -348,13 +348,13 @@ export default function Register() {
                 className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded mt-1"
               />
               <label htmlFor="accept-terms" className="ml-2 block text-sm text-gray-700">
-                I agree to the{' '}
+                Tôi đồng ý với{' '}
                 <Link to="/terms" className="text-green-600 hover:text-green-500 font-medium">
-                  Terms of Service
+                  Điều khoản dịch vụ
                 </Link>{' '}
-                and{' '}
+                và{' '}
                 <Link to="/privacy" className="text-green-600 hover:text-green-500 font-medium">
-                  Privacy Policy
+                  Chính sách bảo mật
                 </Link>
               </label>
             </div>
@@ -391,14 +391,14 @@ export default function Register() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Creating Account...
+                  Đang tạo tài khoản...
                 </div>
               ) : (
                 <>
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
-                  Create Account
+                  Tạo tài khoản
                 </>
               )}
             </button>
@@ -415,7 +415,7 @@ export default function Register() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Continue with Google
+              Tiếp tục với Google
             </button>
 
             {/* Quick Demo Fill */}
@@ -424,7 +424,7 @@ export default function Register() {
               onClick={handleQuickFill}
               className="w-full py-2 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200"
             >
-              🚀 Fill Demo Data
+              🚀 Điền dữ liệu mẫu
             </button>
           </form>
 
@@ -435,7 +435,7 @@ export default function Register() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Already have an account?</span>
+                <span className="px-2 bg-white text-gray-500">Bạn đã có tài khoản?</span>
               </div>
             </div>
 
@@ -448,7 +448,7 @@ export default function Register() {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                 </svg>
-                Sign In to Existing Account
+                Đăng nhập vào tài khoản hiện có
               </Link>
             </div>
           </div>
@@ -456,13 +456,13 @@ export default function Register() {
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-500">
-          By creating an account, you agree to our{' '}
+          Bằng việc tạo tài khoản, bạn đồng ý với{' '}
           <Link to="/terms" className="text-green-600 hover:text-green-500">
-            Terms of Service
+            Điều khoản dịch vụ
           </Link>{' '}
-          and{' '}
+          và{' '}
           <Link to="/privacy" className="text-green-600 hover:text-green-500">
-            Privacy Policy
+            Chính sách bảo mật
           </Link>
         </p>
       </div>

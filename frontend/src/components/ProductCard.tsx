@@ -79,7 +79,7 @@ export default function ProductCard({
 
           {/* Price */}
           <div className="text-lg font-bold text-red-600">
-            {typeof price === 'number' ? formatCurrencyVND(price) : 'Contact for price'}
+            {typeof price === 'number' ? formatCurrencyVND(price) : 'Liên hệ để biết giá'}
           </div>
         </div>
       </Link>

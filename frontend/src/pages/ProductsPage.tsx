@@ -212,23 +212,23 @@ export default function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">All Products</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Tất cả sản phẩm</h1>
           <p className="text-gray-600">
-            {loading ? 'Loading products...' : 
-             `Showing ${products.length} of ${totalProducts} premium fashion items`}
+            {loading ? 'Đang tải sản phẩm...' : 
+             `Hiển thị ${products.length} trong ${totalProducts} sản phẩm thời trang cao cấp`}
           </p>
         </div>
 
         {/* Filters */}
         <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-lg font-semibold mb-4">Filters</h3>
+          <h3 className="text-lg font-semibold mb-4">Bộ lọc</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Tìm kiếm sản phẩm..."
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -237,10 +237,10 @@ export default function ProductsPage() {
 
             {/* Brand */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Thương hiệu</label>
               <input
                 type="text"
-                placeholder="Enter brand..."
+                placeholder="Nhập thương hiệu..."
                 value={filters.brand}
                 onChange={(e) => handleFilterChange('brand', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -249,15 +249,15 @@ export default function ProductsPage() {
 
             {/* Gender */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
               <select
                 value={filters.gender}
                 onChange={(e) => handleFilterChange('gender', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">All</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
+                <option value="">Tất cả</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
                 <option value="Unisex">Unisex</option>
               </select>
             </div>
@@ -280,7 +280,7 @@ export default function ProductsPage() {
               onClick={clearFilters}
               className="px-4 py-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
-              Clear all filters
+              Xóa tất cả bộ lọc
             </button>
           </div>
         </div>
