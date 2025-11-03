@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
 import { customerApi, orderApi } from '../utils/apiService'
+import { emitEvent, flushEvents } from '../utils/eventEmitter'
 import { useToast } from '../contexts/ToastContext'
 
 type Address = {
@@ -131,6 +132,15 @@ export default function CartPage() {
       if (!addItemsResponse.success) {
         throw new Error(addItemsResponse.message || 'Failed to add items to order')
       }
+
+      // Emit purchase event (aggregate), then flush before navigating
+      try {
+        emitEvent({
+          type: 'purchase',
+          price: getTotalPrice(),
+        })
+        await flushEvents()
+      } catch {}
 
       // Success - clear cart and show success message
       clearCart()

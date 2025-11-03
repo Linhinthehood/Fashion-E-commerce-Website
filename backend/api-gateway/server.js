@@ -130,6 +130,7 @@ app.use('/api/customers', buildServiceProxy(USER_SERVICE_URL, 'user-service'));
 
 // Order Service routes
 app.use('/api/orders', buildServiceProxy(ORDER_SERVICE_URL, 'order-service'));
+app.use('/api/events', buildServiceProxy(ORDER_SERVICE_URL, 'order-service'));
 
 // Product Service routes
 app.use('/api/products', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));

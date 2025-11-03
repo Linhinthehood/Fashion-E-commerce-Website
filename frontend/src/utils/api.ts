@@ -105,6 +105,11 @@ export const API_ENDPOINTS = {
     stats: () => buildUrl('/recommendations/stats'),
     batch: () => buildUrl('/recommendations/batch'),
   },
+  // Events (via Gateway -> order-service)
+  events: {
+    batch: () => buildUrl('/events/batch'),
+    metrics: () => buildUrl('/events/metrics'),
+  },
 } as const;
 
 // Auth API functions - use apiService.ts instead

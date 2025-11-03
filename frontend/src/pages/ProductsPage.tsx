@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import ProductCard from '../components/ProductCard'
+import { emitEvent } from '../utils/eventEmitter'
 import { productApi } from '../utils/apiService'
 
 type Product = {
@@ -105,6 +106,28 @@ export default function ProductsPage() {
       
       // Log total products count
       console.log(`📊 Products loaded: ${data.products.length} | Total: ${totalProducts}`)
+
+      // Emit search event when any filter is active (text search or brand/gender/color/category)
+      try {
+        const hasActiveFilter = !!(
+          (filters.search && filters.search.trim().length > 0) ||
+          filters.brand || filters.gender || filters.color || filters.categoryId
+        )
+        if (hasActiveFilter) {
+          const q = [
+            filters.search ? `q=${filters.search.trim()}` : '',
+            filters.brand ? `brand=${filters.brand}` : '',
+            filters.gender ? `gender=${filters.gender}` : '',
+            filters.color ? `color=${filters.color}` : '',
+            filters.categoryId ? `categoryId=${filters.categoryId}` : ''
+          ].filter(Boolean).join(';') || 'filters'
+          emitEvent({
+            type: 'search',
+            searchQuery: q,
+            context: { page: '/products' }
+          })
+        }
+      } catch {}
       
       // Fix: Calculate hasMore outside of setProducts
       setTimeout(() => {

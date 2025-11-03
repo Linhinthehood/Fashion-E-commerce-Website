@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { analyticsApi } from '../../utils/apiService'
+import { API_ENDPOINTS } from '../../utils/api'
 import {
   BarChart,
   Bar,
@@ -104,6 +105,10 @@ export default function DashboardAnalytics() {
   const [paymentStatusData, setPaymentStatusData] = useState<Array<{ status: string; count: number }>>([])
   const [shipmentStatusData, setShipmentStatusData] = useState<Array<{ status: string; count: number }>>([])
 
+  // Events metrics state
+  const [eventSeries, setEventSeries] = useState<Array<{ day: string; type: string; count: number }>>([])
+  const [eventTotals, setEventTotals] = useState<Record<string, number>>({})
+
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
   const loadData = async () => {
@@ -143,6 +148,18 @@ export default function DashboardAnalytics() {
         }
       } else {
         throw new Error(response.message || 'Failed to load dashboard data')
+      }
+
+      // Load events metrics (recommendation pipeline)
+      try {
+        const eventsResp = await fetch(`${API_ENDPOINTS.events.metrics()}`)
+        const eventsJson = await eventsResp.json()
+        if (eventsJson?.success && eventsJson?.data) {
+          setEventSeries(eventsJson.data.series || [])
+          setEventTotals(eventsJson.data.totalsByType || {})
+        }
+      } catch (_) {
+        // ignore
       }
     } catch (err: any) {
       console.error('Error loading dashboard data:', err)
@@ -291,6 +308,44 @@ export default function DashboardAnalytics() {
           </div>
         </div>
       )}
+
+      {/* Events Metrics (Recommendation Pipeline) */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 Recommendation Events</h3>
+        {Object.keys(eventTotals).length === 0 && eventSeries.length === 0 ? (
+          <div className="text-gray-500 text-sm">Chưa có dữ liệu sự kiện</div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-3">
+              {Object.entries(eventTotals).map(([type, count]) => (
+                <div key={type} className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">
+                  {type}: {formatNumber(count as number)}
+                </div>
+              ))}
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ngày</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Loại</th>
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Số lượng</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {eventSeries.map((row, idx) => (
+                    <tr key={`${row.day}-${row.type}-${idx}`} className="hover:bg-gray-50">
+                      <td className="px-4 py-2 text-sm text-gray-900">{row.day}</td>
+                      <td className="px-4 py-2 text-sm text-gray-700">{row.type}</td>
+                      <td className="px-4 py-2 text-sm text-gray-900 text-right">{formatNumber(row.count)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

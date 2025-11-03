@@ -4,6 +4,7 @@ import { productApi, variantApi } from '../utils/apiService'
 import { useCart, type CartItem } from '../contexts/CartContext'
 import { useToast } from '../contexts/ToastContext'
 import SimilarProducts from '../components/SimilarProducts'
+import { emitEvent } from '../utils/eventEmitter'
 
 type Product = {
   _id: string
@@ -87,6 +88,10 @@ export default function ProductDetail() {
         // Type assertion for product data
         const productData = productResponse.data as { product: Product }
         setProduct(productData.product)
+        // Emit view event when product is loaded
+        try {
+          emitEvent({ type: 'view', itemId: productData.product._id })
+        } catch {}
 
         // Fetch variants for this product using variantApi
         const variantsResponse = await variantApi.getVariantsByProduct(id)
@@ -149,6 +154,15 @@ export default function ProductDetail() {
     }
     
     addToCart(cartItem)
+    try {
+      emitEvent({
+        type: 'add_to_cart',
+        itemId: product._id,
+        variantId: selectedVariant._id,
+        quantity,
+        price: cartItem.price
+      })
+    } catch {}
     toast.success(`Đã thêm ${quantity} sản phẩm size ${selectedVariant.size} vào giỏ hàng!`)
   }
 
