@@ -657,21 +657,31 @@ const fetchSimilarProducts = async (
   productId: string,
   params?: { limit?: number; sameCategoryOnly?: boolean; minSimilarity?: number }
 ) => {
-  const url = new URL(API_ENDPOINTS.fashion.productRecommendations(productId));
-
+  // Build the base URL string
+  let urlString = API_ENDPOINTS.fashion.productRecommendations(productId);
+  
+  // Add query parameters if provided
+  const queryParams = new URLSearchParams();
+  
   if (params?.limit) {
-    url.searchParams.set('limit', params.limit.toString());
+    queryParams.set('limit', params.limit.toString());
   }
 
   if (params?.sameCategoryOnly !== undefined) {
-    url.searchParams.set('sameCategoryOnly', params.sameCategoryOnly ? 'true' : 'false');
+    queryParams.set('sameCategoryOnly', params.sameCategoryOnly ? 'true' : 'false');
   }
 
   if (params?.minSimilarity !== undefined) {
-    url.searchParams.set('minSimilarity', params.minSimilarity.toString());
+    queryParams.set('minSimilarity', params.minSimilarity.toString());
   }
 
-  const response = await fetch(url.toString(), {
+  // Append query string if there are parameters
+  const queryString = queryParams.toString();
+  if (queryString) {
+    urlString += `?${queryString}`;
+  }
+
+  const response = await fetch(urlString, {
     method: 'GET',
   });
 

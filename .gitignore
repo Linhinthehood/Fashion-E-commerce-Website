@@ -118,3 +118,5 @@ temp/
 package-lock.json
 yarn.lock
 *.pt
+*.pyc
+*.pyc
