@@ -56,10 +56,7 @@ export default function FootwearPage() {
         setError(null)
       }
       
-      const apiParams: any = {
-        page: pageNum,
-        limit: 50
-      }
+      const apiParams: any = { page: pageNum, limit: 12 }
       
       if (filters.brand) apiParams.brand = filters.brand
       if (filters.gender) apiParams.gender = filters.gender

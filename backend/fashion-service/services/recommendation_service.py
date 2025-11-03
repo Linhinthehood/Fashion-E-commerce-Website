@@ -881,3 +881,84 @@ class RecommendationService:
             'device': str(self.device),
             'model_config': self.config
         }
+
+    def retrieve_personalized(
+        self,
+        db,
+        recent_item_ids: Optional[List[str]] = None,
+        limit: int = 50,
+        options: Optional[Dict] = None
+    ) -> Dict:
+        """
+        Retrieve a set of personalized candidate products by aggregating
+        similar items from recent_item_ids and applying simple hybrid scoring.
+
+        Args:
+            db: Mongo connection (unused for now beyond product lookups)
+            recent_item_ids: List of productIds the user viewed/added/purchased recently
+            limit: Max candidates to return
+            options: Future use (category/price constraints)
+        """
+        try:
+            options = options or {}
+            limit = max(1, min(int(limit), 200))
+
+            if not recent_item_ids or len(recent_item_ids) == 0:
+                # Fallback: return popular/safe defaults (reuse similar of a few random or top by index)
+                # Here we return top-N by index order as a simple placeholder
+                k = min(limit, (self.index.ntotal if self.index else 0))
+                if self.index is None or k == 0:
+                    return { 'candidates': [], 'count': 0, 'method': 'empty' }
+                # Map first k indices to products
+                sims = np.linspace(1.0, 0.7, k).astype('float32')
+                idxs = np.arange(k)
+                mapped = self._map_indices_to_products(db, idxs, sims)
+                candidates = [
+                    {
+                        'product': serialize_product(p),
+                        'score': round(float(s), 4)
+                    }
+                    for p, s in mapped
+                ][:limit]
+                return { 'candidates': candidates, 'count': len(candidates), 'method': 'fallback-index' }
+
+            # Aggregate candidates from each recent item using FAISS path
+            aggregate_scores: Dict[str, float] = {}
+            aggregate_products: Dict[str, Dict] = {}
+
+            per_seed_k = 50
+            for seed_id in recent_item_ids[:10]:  # cap seeds for perf
+                try:
+                    seed_res = self.get_similar_products(db, seed_id, limit=per_seed_k, options={ 'same_category_only': False, 'min_similarity': 0.0 })
+                    recs = seed_res.get('recommendations', [])
+                    for rec in recs:
+                        prod = rec.get('product') or {}
+                        pid = str(prod.get('_id', ''))
+                        sim = float(rec.get('similarity', 0.0))
+                        if not pid:
+                            continue
+                        # Aggregate by max similarity for now
+                        if pid not in aggregate_scores or sim > aggregate_scores[pid]:
+                            aggregate_scores[pid] = sim
+                            aggregate_products[pid] = prod
+                except Exception:
+                    continue
+
+            if not aggregate_scores:
+                return { 'candidates': [], 'count': 0, 'method': 'no-seed-results' }
+
+            # Rank by aggregated score and trim to limit
+            ranked = sorted(aggregate_scores.items(), key=lambda kv: -kv[1])[:limit]
+            candidates = [
+                {
+                    'product': aggregate_products[pid],
+                    'score': round(float(score), 4)
+                }
+                for pid, score in ranked
+            ]
+
+            return { 'candidates': candidates, 'count': len(candidates), 'method': 'seeds-faiss-aggregate' }
+
+        except Exception as e:
+            logger.error(f"Error in retrieve_personalized: {e}", exc_info=True)
+            return { 'error': str(e), 'candidates': [], 'count': 0 }

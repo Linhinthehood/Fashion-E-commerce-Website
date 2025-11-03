@@ -57,17 +57,20 @@ export default function AccessoriesPage() {
         setError(null)
       }
       
-      const apiParams: any = {
-        page: pageNum,
-        limit: 50
-      }
+      const apiParams: any = { page: pageNum, limit: 12 }
       
       if (filters.brand) apiParams.brand = filters.brand
       if (filters.gender) apiParams.gender = filters.gender
       if (filters.color) apiParams.color = filters.color
       if (filters.search) apiParams.search = filters.search
       
-      const response = await productApi.getProducts(apiParams)
+      let response
+      if (['hat','watch','wallet'].includes(filters.subcategory)) {
+        const mapName: Record<string, string> = { hat: 'Hat', watch: 'Watch', wallet: 'Wallet' }
+        response = await productApi.getProductsBySubCategory('Accessories', mapName[filters.subcategory], apiParams)
+      } else {
+        response = await productApi.getProducts(apiParams)
+      }
       
       if (!response.success) {
         throw new Error(response.message || 'Failed to load accessories')
@@ -84,28 +87,13 @@ export default function AccessoriesPage() {
         }
       }
       
-      // Filter products for accessories only using category data
-      let filteredProducts = data.products.filter(product => {
-        // Get category info from the populated categoryId field
-        const category = product.categoryId as any
-        
-        // First filter: Only accessories (masterCategory === "Accessories")
-        const isAccessory = category?.masterCategory === 'Accessories'
-        
-        if (!isAccessory) return false
-        
-        // Second filter: Apply subcategory filter based on category subCategory
-        if (filters.subcategory === 'hat') {
-          return category?.subCategory === 'Hat'
-        } else if (filters.subcategory === 'watch') {
-          return category?.subCategory === 'Watch'
-        } else if (filters.subcategory === 'wallet') {
-          return category?.subCategory === 'Wallet'
-        }
-        
-        // If no subcategory, return all accessories
-        return true
-      })
+      let filteredProducts = data.products
+      if (!['hat','watch','wallet'].includes(filters.subcategory)) {
+        filteredProducts = data.products.filter(product => {
+          const category = product.categoryId as any
+          return category?.masterCategory === 'Accessories'
+        })
+      }
       
       if (isLoadMore) {
         setProducts(prev => [...prev, ...filteredProducts])
@@ -113,8 +101,13 @@ export default function AccessoriesPage() {
         setProducts(filteredProducts)
       }
       
-      setTotalProducts(filteredProducts.length)
-      setHasMore(false)
+      if (data.pagination && typeof data.pagination.totalProducts === 'number') {
+        setTotalProducts(data.pagination.totalProducts)
+        setHasMore(!!data.pagination.hasNextPage)
+      } else {
+        setTotalProducts(filteredProducts.length)
+        setHasMore(false)
+      }
       
     } catch (e: any) {
       console.error('Error fetching accessories:', e)

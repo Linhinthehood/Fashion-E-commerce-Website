@@ -57,19 +57,21 @@ export default function ApparelPage() {
         setError(null)
       }
       
-      // Prepare API parameters
-      const apiParams: any = {
-        page: pageNum,
-        limit: 50 // Get more products to filter on frontend
-      }
-      
-      // Add additional filters
+      // If subcategory is selected, use backend sub-category endpoint with proper pagination
+      let response
+      const apiParams: any = { page: pageNum, limit: 12 }
       if (filters.brand) apiParams.brand = filters.brand
       if (filters.gender) apiParams.gender = filters.gender
       if (filters.color) apiParams.color = filters.color
       if (filters.search) apiParams.search = filters.search
-      
-      const response = await productApi.getProducts(apiParams)
+
+      if (filters.subcategory === 'topwear' || filters.subcategory === 'bottomwear') {
+        const subName = filters.subcategory === 'topwear' ? 'Topwear' : 'Bottomwear'
+        response = await productApi.getProductsBySubCategory('Apparel', subName, apiParams)
+      } else {
+        // Fallback: general list then filter on FE (no backend master category filter available)
+        response = await productApi.getProducts(apiParams)
+      }
       
       if (!response.success) {
         throw new Error(response.message || 'Failed to load apparel products')
@@ -86,26 +88,14 @@ export default function ApparelPage() {
         }
       }
       
-      // Filter products on frontend for apparel items only using category data
-      let filteredProducts = data.products.filter(product => {
-        // Get category info from the populated categoryId field
-        const category = product.categoryId as any
-        
-        // First filter: Only apparel items (masterCategory === "Apparel")
-        const isApparel = category?.masterCategory === 'Apparel'
-        
-        if (!isApparel) return false
-        
-        // Second filter: Apply subcategory filter based on category subCategory
-        if (filters.subcategory === 'topwear') {
-          return category?.subCategory === 'Topwear'
-        } else if (filters.subcategory === 'bottomwear') {
-          return category?.subCategory === 'Bottomwear'
-        }
-        
-        // If no subcategory, return all apparel items
-        return true
-      })
+      // If backend handled subcategory, keep products; else filter FE by Apparel
+      let filteredProducts = data.products
+      if (!(filters.subcategory === 'topwear' || filters.subcategory === 'bottomwear')) {
+        filteredProducts = data.products.filter(product => {
+          const category = product.categoryId as any
+          return category?.masterCategory === 'Apparel'
+        })
+      }
       
       if (isLoadMore) {
         setProducts(prev => [...prev, ...filteredProducts])
@@ -113,8 +103,13 @@ export default function ApparelPage() {
         setProducts(filteredProducts)
       }
       
-      setTotalProducts(filteredProducts.length)
-      setHasMore(false) // Disable infinite scroll since we're filtering on frontend
+      if (data.pagination && typeof data.pagination.totalProducts === 'number') {
+        setTotalProducts(data.pagination.totalProducts)
+        setHasMore(!!data.pagination.hasNextPage)
+      } else {
+        setTotalProducts(filteredProducts.length)
+        setHasMore(false)
+      }
       
     } catch (e: any) {
       console.error('Error fetching apparel products:', e)

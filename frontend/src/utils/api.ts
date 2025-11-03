@@ -104,11 +104,15 @@ export const API_ENDPOINTS = {
     searchByImage: () => buildUrl('/recommendations/search-by-image'),
     stats: () => buildUrl('/recommendations/stats'),
     batch: () => buildUrl('/recommendations/batch'),
+    retrievePersonalized: () => buildUrl('/recommendations/retrieve/personalized'),
   },
   // Events (via Gateway -> order-service)
   events: {
     batch: () => buildUrl('/events/batch'),
     metrics: () => buildUrl('/events/metrics'),
+    topViewed: () => buildUrl('/events/aggregates/top-viewed'),
+    popularity: () => buildUrl('/events/aggregates/popularity'),
+    affinity: () => buildUrl('/events/aggregates/affinity'),
   },
 } as const;
 

@@ -85,10 +85,7 @@ export default function CategoryPage() {
       
       // If we have a specific sub-category, get its products
       if (subCategory && masterCategory) {
-        const apiParams: any = {
-          page: pageNum,
-          limit: 50
-        }
+        const apiParams: any = { page: pageNum, limit: 12 }
         
         if (filters.brand) apiParams.brand = filters.brand
         if (filters.gender) apiParams.gender = filters.gender
@@ -122,10 +119,7 @@ export default function CategoryPage() {
         setHasMore(data.pagination.hasNextPage)
       } else {
         // Load all products for master category (filtered by master category)
-        const apiParams: any = {
-          page: pageNum,
-          limit: 50
-        }
+        const apiParams: any = { page: pageNum, limit: 12 }
         
         if (filters.brand) apiParams.brand = filters.brand
         if (filters.gender) apiParams.gender = filters.gender

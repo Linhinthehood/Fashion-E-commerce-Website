@@ -103,6 +103,135 @@ const getCountsByTypePerDay = async (req, res) => {
   }
 };
 
-module.exports = { ingestBatch, getCountsByTypePerDay };
+const getTopViewed = async (req, res) => {
+  try {
+    const { startDate, endDate, limit = 20 } = req.query;
+    const match = { type: 'view' };
+    if (startDate || endDate) {
+      match.occurredAt = {};
+      if (startDate) match.occurredAt.$gte = new Date(startDate);
+      if (endDate) match.occurredAt.$lte = new Date(endDate);
+    }
+
+    const results = await Event.aggregate([
+      { $match: match },
+      { $group: { _id: '$itemId', views: { $sum: 1 } } },
+      { $sort: { views: -1 } },
+      { $limit: Math.max(1, Math.min(parseInt(limit, 10) || 20, 100)) },
+      { $project: { _id: 0, itemId: '$_id', views: 1 } }
+    ]);
+
+    res.json({ success: true, data: results });
+  } catch (error) {
+    console.error('Top viewed error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+const getPopularity = async (req, res) => {
+  try {
+    const { startDate, endDate, limit = 50 } = req.query;
+    const match = {};
+    if (startDate || endDate) {
+      match.occurredAt = {};
+      if (startDate) match.occurredAt.$gte = new Date(startDate);
+      if (endDate) match.occurredAt.$lte = new Date(endDate);
+    }
+
+    const weights = { view: 1, add_to_cart: 3, purchase: 5, wishlist: 2, search: 0 };
+
+    const results = await Event.aggregate([
+      Object.keys(match).length ? { $match: match } : null,
+      { $match: { itemId: { $ne: null } } },
+      {
+        $group: {
+          _id: { itemId: '$itemId', type: '$type' },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: '$_id.itemId',
+          byType: { $push: { k: '$_id.type', v: '$count' } },
+          score: {
+            $sum: {
+              $switch: {
+                branches: [
+                  { case: { $eq: ['$_id.type', 'view'] }, then: { $multiply: ['$count', weights.view] } },
+                  { case: { $eq: ['$_id.type', 'add_to_cart'] }, then: { $multiply: ['$count', weights.add_to_cart] } },
+                  { case: { $eq: ['$_id.type', 'purchase'] }, then: { $multiply: ['$count', weights.purchase] } },
+                  { case: { $eq: ['$_id.type', 'wishlist'] }, then: { $multiply: ['$count', weights.wishlist] } }
+                ],
+                default: 0
+              }
+            }
+          }
+        }
+      },
+      { $addFields: { counts: { $arrayToObject: '$byType' } } },
+      { $project: { _id: 0, itemId: '$_id', score: 1, counts: 1 } },
+      { $sort: { score: -1 } },
+      { $limit: Math.max(1, Math.min(parseInt(limit, 10) || 50, 200)) }
+    ].filter(Boolean));
+
+    res.json({ success: true, data: results });
+  } catch (error) {
+    console.error('Popularity error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+const getUserAffinity = async (req, res) => {
+  try {
+    const { userId, startDate, endDate, limit = 100 } = req.query;
+    if (!userId) {
+      return res.status(400).json({ success: false, message: 'userId is required' });
+    }
+    const match = { userId: String(userId) };
+    if (startDate || endDate) {
+      match.occurredAt = {};
+      if (startDate) match.occurredAt.$gte = new Date(startDate);
+      if (endDate) match.occurredAt.$lte = new Date(endDate);
+    }
+
+    const weights = { view: 1, add_to_cart: 3, purchase: 5, wishlist: 2 };
+
+    const results = await Event.aggregate([
+      { $match: match },
+      { $match: { itemId: { $ne: null } } },
+      { $group: { _id: { itemId: '$itemId', type: '$type' }, count: { $sum: 1 } } },
+      {
+        $group: {
+          _id: '$_id.itemId',
+          byType: { $push: { k: '$_id.type', v: '$count' } },
+          score: {
+            $sum: {
+              $switch: {
+                branches: [
+                  { case: { $eq: ['$_id.type', 'view'] }, then: { $multiply: ['$count', weights.view] } },
+                  { case: { $eq: ['$_id.type', 'add_to_cart'] }, then: { $multiply: ['$count', weights.add_to_cart] } },
+                  { case: { $eq: ['$_id.type', 'purchase'] }, then: { $multiply: ['$count', weights.purchase] } },
+                  { case: { $eq: ['$_id.type', 'wishlist'] }, then: { $multiply: ['$count', weights.wishlist] } }
+                ],
+                default: 0
+              }
+            }
+          }
+        }
+      },
+      { $addFields: { counts: { $arrayToObject: '$byType' } } },
+      { $project: { _id: 0, itemId: '$_id', score: 1, counts: 1 } },
+      { $sort: { score: -1 } },
+      { $limit: Math.max(1, Math.min(parseInt(limit, 10) || 100, 500)) }
+    ]);
+
+    res.json({ success: true, data: results });
+  } catch (error) {
+    console.error('Affinity error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+module.exports = { ingestBatch, getCountsByTypePerDay, getTopViewed, getPopularity, getUserAffinity };
 
 

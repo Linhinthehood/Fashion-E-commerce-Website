@@ -65,6 +65,32 @@ Nếu dùng gọi nội bộ giữa service (order -> user), thiết lập `INTE
   - Query: `page, limit, paymentStatus, shipmentStatus, startDate, endDate, sortBy, sortOrder`
   - Mục đích: (Admin) Liệt kê tất cả đơn với lọc/sắp xếp.
 
+### Order Service - Analytics (`backend/order-service/routes/analytics.js`)
+- GET `/api/orders/analytics/top-products`
+  - Query: `period=day|month|year|all, date, limit, sortBy=quantity|revenue`
+  - Mục đích: Top sản phẩm theo số lượng/ doanh thu.
+
+- GET `/api/orders/analytics/orders-stats`
+  - Query: `period=day|month|year|all, date`
+  - Mục đích: Thống kê đơn hàng theo thời gian, phân bố trạng thái thanh toán/ giao hàng.
+
+- GET `/api/orders/analytics/top-customers`
+  - Query: `period=day|month|year|all, date, limit`
+  - Mục đích: Top khách hàng theo doanh thu/số đơn.
+
+- GET `/api/orders/analytics/overview`
+  - Query: `period=day|month|year|all, date`
+  - Mục đích: Tổng quan dashboard (doanh thu, AOV, paid orders,...).
+
+### Order Service - Events (`backend/order-service/routes/events.js`)
+- POST `/api/events/batch`
+  - Body: `{ events: [ { type: 'view'|'add_to_cart'|'purchase'|'wishlist'|'search', sessionId, userId?, itemId?, variantId?, quantity?, price?, searchQuery?, context?, occurredAt? } ] }`
+  - Mục đích: Nhận batch sự kiện hành vi để phục vụ gợi ý/phân tích.
+
+- GET `/api/events/metrics`
+  - Query: `startDate?, endDate?` (ISO date)
+  - Mục đích: Đếm sự kiện theo ngày và loại (series) và tổng theo loại (totals).
+
 
 ### Product Service
 
@@ -253,6 +279,7 @@ Routes: `customer.js`
 ### `frontend/src/utils/api.ts`
 - Cung cấp `API_ENDPOINTS` cho các đường dẫn qua gateway; nhóm chính:
   - `auth`, `customers`, `products`, `categories`, `variants`, `orders`.
+  - `events`: `batch()` → `/events/batch`, `metrics()` → `/events/metrics` (qua gateway).
 - Nhóm `orders` đã khớp hợp đồng backend:
   - `create, addItems, myOrders, stats, byId, updatePaymentStatus, updateShipmentStatus, applyDiscount, adminAll`.
 
@@ -269,6 +296,9 @@ Routes: `customer.js`
   - `updatePaymentStatus(id, body)`: PUT `/orders/:id/payment-status`
   - `updateShipmentStatus(id, body)`: PUT `/orders/:id/shipment-status`
   - `applyDiscount(id, body)`: PUT `/orders/:id/discount`
+
+Ghi chú:
+- Events hiện được gửi trực tiếp từ FE qua util `eventEmitter.ts` tới `/events/batch` (gateway → order-service). FE cũng có thể đọc metrics qua `API_ENDPOINTS.events.metrics()` để hiển thị ở Admin Dashboard.
 
 ---
 

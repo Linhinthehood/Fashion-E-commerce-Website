@@ -197,6 +197,25 @@ def get_batch_recommendations():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/recommendations/retrieve/personalized', methods=['POST'])
+def retrieve_personalized():
+    try:
+        data = request.get_json() or {}
+        recent_item_ids = data.get('recentItemIds', [])
+        if not isinstance(recent_item_ids, list):
+            return jsonify({'error': 'recentItemIds must be an array'}), 400
+        limit = int(data.get('limit', 50))
+        options = data.get('options', {})
+
+        result = recommendation_service.retrieve_personalized(db=db, recent_item_ids=recent_item_ids, limit=limit, options=options)
+
+        status = 200 if 'error' not in result else 400
+        return jsonify(result), status
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 # =========================================================
 # ERROR HANDLERS
 # =========================================================

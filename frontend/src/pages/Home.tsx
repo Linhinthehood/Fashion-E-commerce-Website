@@ -17,7 +17,7 @@ export default function Home() {
   const loadRecommendations = async () => {
     if (user?._id) {
       try {
-        const response = await fashionApi.getUserRecommendations(user._id, 8)
+        const response = await fashionApi.getPersonalizedRecommendations(user._id, 8)
         if (response.success && Array.isArray(response.data)) {
           setRecommendations(response.data)
         } else {

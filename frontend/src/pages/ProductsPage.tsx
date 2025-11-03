@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import ProductCard from '../components/ProductCard'
+import TopViewedSidebar from '../components/TopViewedSidebar'
 import { emitEvent } from '../utils/eventEmitter'
 import { productApi } from '../utils/apiService'
 
@@ -42,8 +43,8 @@ export default function ProductsPage() {
   const observerRef = useRef<HTMLDivElement>(null)
   const intersectionObserver = useRef<IntersectionObserver | null>(null)
 
-  // Increased limit for better lazy loading performance
-  const ITEMS_PER_PAGE = 24
+  // Page size unified with backend
+  const ITEMS_PER_PAGE = 12
 
   // Updated fetchProducts function with fixed hasMore logic
   const fetchProducts = useCallback(async (pageNum: number, isLoadMore = false) => {
@@ -83,7 +84,6 @@ export default function ProductsPage() {
           hasNextPage: boolean
           hasPrevPage: boolean
         }
-        // Legacy format support
         total?: number
         totalPages?: number
         currentPage?: number
@@ -101,8 +101,8 @@ export default function ProductsPage() {
       }
       
       // Handle both new and legacy pagination formats
-      const totalProducts = data.pagination?.totalProducts || data.total || 0
-      setTotalProducts(totalProducts)
+      const total = data.pagination?.totalProducts || data.total || 0
+      setTotalProducts(total)
       
       // Log total products count
       console.log(`📊 Products loaded: ${data.products.length} | Total: ${totalProducts}`)
@@ -129,12 +129,13 @@ export default function ProductsPage() {
         }
       } catch {}
       
-      // Fix: Calculate hasMore outside of setProducts
-      setTimeout(() => {
-        const currentProductsLength = isLoadMore ? products.length + data.products.length : data.products.length
-        const hasMoreProducts = currentProductsLength < (totalProducts || 0)
-        setHasMore(hasMoreProducts)
-      }, 0)
+      // Trust backend hasNextPage when available to avoid off-by-one
+      if (data.pagination && typeof data.pagination.hasNextPage === 'boolean') {
+        setHasMore(data.pagination.hasNextPage)
+      } else {
+        const currentProductsLength = isLoadMore ? (products.length + data.products.length) : data.products.length
+        setHasMore(currentProductsLength < (total || 0))
+      }
       
     } catch (e: any) {
       console.error('Error fetching products:', e)
@@ -284,94 +285,102 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        {/* Products Grid with improved loading states */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="aspect-square bg-gray-200 rounded-lg" />
-                <div className="mt-3 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4" />
-                  <div className="h-4 bg-gray-200 rounded w-1/2" />
-                </div>
+        {/* Main + Sidebar layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-9">
+            {/* Products Grid with improved loading states */}
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="aspect-square bg-gray-200 rounded-lg" />
+                    <div className="mt-3 space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-3/4" />
+                      <div className="h-4 bg-gray-200 rounded w-1/2" />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : error ? (
-          <div className="text-center py-12">
-            <div className="text-red-600 text-lg font-medium mb-2">Error Loading Products</div>
-            <p className="text-gray-600 mb-4">{error}</p>
-            <button
-              onClick={() => {
-                setPage(1)
-                setProducts([])
-                setHasMore(true)
-                fetchProducts(1, false)
-              }}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Try Again
-            </button>
-          </div>
-        ) : products.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-600 text-lg font-medium mb-2">No Products Found</div>
-            <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
-            <button
-              onClick={clearFilters}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Clear Filters
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-              {products.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  id={product._id}
-                  name={product.name}
-                  brand={product.brand}
-                  imageUrl={product.primaryImage ?? undefined}
-                  price={product.defaultPrice}
-                />
-              ))}
-            </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="text-red-600 text-lg font-medium mb-2">Error Loading Products</div>
+                <p className="text-gray-600 mb-4">{error}</p>
+                <button
+                  onClick={() => {
+                    setPage(1)
+                    setProducts([])
+                    setHasMore(true)
+                    fetchProducts(1, false)
+                  }}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-gray-600 text-lg font-medium mb-2">No Products Found</div>
+                <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
+                <button
+                  onClick={clearFilters}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
+                  {products.map((product) => (
+                    <ProductCard
+                      key={product._id}
+                      id={product._id}
+                      name={product.name}
+                      brand={product.brand}
+                      imageUrl={product.primaryImage ?? undefined}
+                      price={product.defaultPrice}
+                    />
+                  ))}
+                </div>
 
-            {/* Enhanced loading indicator and completion message */}
-            <div ref={observerRef} className="h-16 flex items-center justify-center">
-              {loadingMore && (
-                <div className="flex flex-col items-center space-y-2 text-gray-600">
-                  <div className="flex items-center space-x-2">
-                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span className="text-sm font-medium">Loading more products...</span>
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    {products.length} of {totalProducts} products loaded
-                  </p>
+                {/* Enhanced loading indicator and completion message */}
+                <div ref={observerRef} className="h-16 flex items-center justify-center">
+                  {loadingMore && (
+                    <div className="flex flex-col items-center space-y-2 text-gray-600">
+                      <div className="flex items-center space-x-2">
+                        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span className="text-sm font-medium">Loading more products...</span>
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        {products.length} of {totalProducts} products loaded
+                      </p>
+                    </div>
+                  )}
+                  
+                  {!hasMore && products.length > 0 && (
+                    <div className="text-center py-8 border-t border-gray-200 w-full">
+                      <div className="flex items-center justify-center space-x-2 text-gray-500 mb-2">
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-sm font-medium">All products loaded!</span>
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        Showing all {products.length} products matching your criteria
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-              
-              {!hasMore && products.length > 0 && (
-                <div className="text-center py-8 border-t border-gray-200 w-full">
-                  <div className="flex items-center justify-center space-x-2 text-gray-500 mb-2">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-sm font-medium">All products loaded!</span>
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    Showing all {products.length} products matching your criteria
-                  </p>
-                </div>
-              )}
-            </div>
-          </>
-        )}
+              </>
+            )}
+          </div>
+          <div className="lg:col-span-3">
+            <TopViewedSidebar />
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -710,6 +710,22 @@ const getRecentProductId = (userId: string): string | null => {
   }
 };
 
+const getRecentProductIds = (userId: string, max: number = 10): string[] => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const storageKey = `${FASHION_HISTORY_PREFIX}${userId}`;
+    const rawHistory = window.localStorage.getItem(storageKey);
+    const history: string[] = rawHistory ? JSON.parse(rawHistory) : [];
+    return history.slice(0, Math.max(1, max));
+  } catch (error) {
+    console.warn('[fashionApi] Failed to read interaction history', error);
+    return [];
+  }
+};
+
 const handleJsonResponse = async (response: Response) => {
   const data = await response.json();
   if (!response.ok) {
@@ -824,6 +840,31 @@ export const fashionApi = {
     });
 
     return handleJsonResponse(response);
+  },
+
+  // Personalized retrieval based on recent product interactions
+  getPersonalizedRecommendations: async (userId: string, limit: number = 8) => {
+    const recentIds = getRecentProductIds(userId, 10);
+    if (recentIds.length === 0) {
+      return { success: false, message: 'Chưa có lịch sử sản phẩm để gợi ý' };
+    }
+
+    const response = await fetch(API_ENDPOINTS.fashion.retrievePersonalized(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recentItemIds: recentIds, limit })
+    });
+
+    const data = await response.json();
+    if (!response.ok || data?.error) {
+      return { success: false, message: data?.error || 'Retrieval failed' };
+    }
+
+    const candidates = Array.isArray(data.candidates)
+      ? data.candidates.map((c: any) => ({ ...c.product, retrievalScore: c.score }))
+      : [];
+
+    return { success: true, data: candidates };
   },
 
   // Get user-tailored recommendations based on recent interactions stored locally
