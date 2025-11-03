@@ -230,21 +230,21 @@ export default function ApparelPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {filters.subcategory === 'topwear' ? 'Topwear Collection' :
-             filters.subcategory === 'bottomwear' ? 'Bottomwear Collection' : 
-             'Apparel Collection'}
+            {filters.subcategory === 'topwear' ? 'Bộ sưu tập Áo' :
+             filters.subcategory === 'bottomwear' ? 'Bộ sưu tập Quần' : 
+             'Bộ sưu tập Trang phục'}
           </h1>
           <p className="text-gray-600">
-            {filters.subcategory === 'topwear' ? 'Shirts, T-shirts & Tops' :
-             filters.subcategory === 'bottomwear' ? 'Pants, Jeans & Trousers' :
-             'Premium clothing collection - shirts, pants & more'} - {totalProducts} items available
+            {filters.subcategory === 'topwear' ? 'Áo sơ mi, áo phông & áo trên' :
+             filters.subcategory === 'bottomwear' ? 'Quần, jeans & quần tây' :
+             'Bộ sưu tập thời trang cao cấp - áo, quần & hơn thế nữa'} - {totalProducts} mặt hàng có sẵn
           </p>
           
           {/* Breadcrumb */}
           <nav className="flex items-center space-x-2 text-sm text-gray-500 mt-3">
             <a href="/" className="hover:text-gray-700">Trang chủ</a>
             <span>/</span>
-            <span className="text-gray-900">Apparel</span>
+            <span className="text-gray-900">Trang phục</span>
             {filters.subcategory && (
               <>
                 <span>/</span>
@@ -267,7 +267,7 @@ export default function ApparelPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              All Apparel 
+              Tất cả trang phục
             </button>
             <button
               onClick={() => handleFilterChange('subcategory', 'topwear')}
@@ -277,7 +277,7 @@ export default function ApparelPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              👕 Topwear
+              👕 Áo
             </button>
             <button
               onClick={() => handleFilterChange('subcategory', 'bottomwear')}
@@ -287,7 +287,7 @@ export default function ApparelPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              👖 Bottomwear 
+              👖 Quần 
             </button>
           </div>
 
@@ -295,10 +295,10 @@ export default function ApparelPage() {
           <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-800">
               {filters.subcategory === 'topwear' ? 
-                '👕 Showing shirts, t-shirts, and all upper body clothing items' :
+                '👕 Hiển thị áo sơ mi, áo phông và các loại áo trên' :
                filters.subcategory === 'bottomwear' ? 
-                '👖 Showing pants, jeans, trousers, and all lower body clothing items' :
-                '👔 Showing all clothing items - both topwear and bottomwear (excludes accessories & footwear)'
+                '👖 Hiển thị quần, jeans và quần tây' :
+                '👔 Hiển thị tất cả trang phục - cả áo và quần (không bao gồm phụ kiện & giày)'
               }
             </p>
           </div>
@@ -307,12 +307,12 @@ export default function ApparelPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
               <input
                 type="text"
-                placeholder={filters.subcategory === 'topwear' ? 'Search shirts, áo...' : 
-                           filters.subcategory === 'bottomwear' ? 'Search pants, quần...' : 
-                           'Search apparel...'}
+                placeholder={filters.subcategory === 'topwear' ? 'Tìm áo...' : 
+                           filters.subcategory === 'bottomwear' ? 'Tìm quần...' : 
+                           'Tìm trang phục...'}
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -365,7 +365,7 @@ export default function ApparelPage() {
               onClick={clearFilters}
               className="px-4 py-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
-              Clear all filters
+              Xóa tất cả bộ lọc
             </button>
           </div>
         </div>
@@ -385,7 +385,7 @@ export default function ApparelPage() {
           </div>
         ) : error ? (
           <div className="text-center py-12">
-            <div className="text-red-600 text-lg font-medium mb-2">Error Loading Apparel</div>
+            <div className="text-red-600 text-lg font-medium mb-2">Lỗi tải danh mục</div>
             <p className="text-gray-600 mb-4">{error}</p>
             <button
               onClick={() => {
@@ -396,22 +396,22 @@ export default function ApparelPage() {
               }}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Try Again
+              Thử lại
             </button>
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-600 text-lg font-medium mb-2">No Apparel Items Found</div>
+            <div className="text-gray-600 text-lg font-medium mb-2">Không tìm thấy sản phẩm thời trang</div>
             <p className="text-gray-500 mb-4">
-              {filters.subcategory === 'topwear' ? 'No shirts or topwear found with current filters' :
-               filters.subcategory === 'bottomwear' ? 'No pants or bottomwear found with current filters' :
-               'No clothing items found - try adjusting your filters'}
+              {filters.subcategory === 'topwear' ? 'Không tìm thấy áo phù hợp' :
+               filters.subcategory === 'bottomwear' ? 'Không tìm thấy quần phù hợp' :
+               'Không tìm thấy sản phẩm - thử điều chỉnh bộ lọc'}
             </p>
             <button
               onClick={clearFilters}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Clear Filters
+              Xóa bộ lọc
             </button>
           </div>
         ) : (
@@ -437,7 +437,7 @@ export default function ApparelPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span className="text-sm font-medium">Loading more apparel...</span>
+                  <span className="text-sm font-medium">Đang tải thêm trang phục...</span>
                 </div>
               )}
             </div>

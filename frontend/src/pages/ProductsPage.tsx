@@ -188,23 +188,23 @@ export default function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">All Products</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Tất cả sản phẩm</h1>
           <p className="text-gray-600">
-            {loading ? 'Loading products...' : 
-             `Showing ${products.length} of ${totalProducts} premium fashion items`}
+            {loading ? 'Đang tải sản phẩm...' : 
+             `Hiển thị ${products.length} trong ${totalProducts} sản phẩm thời trang cao cấp`}
           </p>
         </div>
 
         {/* Filters */}
         <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-lg font-semibold mb-4">Filters</h3>
+          <h3 className="text-lg font-semibold mb-4">Bộ lọc</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Tìm kiếm sản phẩm..."
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -213,10 +213,10 @@ export default function ProductsPage() {
 
             {/* Brand */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Thương hiệu</label>
               <input
                 type="text"
-                placeholder="Enter brand..."
+                placeholder="Nhập thương hiệu..."
                 value={filters.brand}
                 onChange={(e) => handleFilterChange('brand', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -225,15 +225,15 @@ export default function ProductsPage() {
 
             {/* Gender */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
               <select
                 value={filters.gender}
                 onChange={(e) => handleFilterChange('gender', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">All</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
+                <option value="">Tất cả</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
                 <option value="Unisex">Unisex</option>
               </select>
             </div>
@@ -256,7 +256,7 @@ export default function ProductsPage() {
               onClick={clearFilters}
               className="px-4 py-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
-              Clear all filters
+              Xóa tất cả bộ lọc
             </button>
           </div>
         </div>
@@ -276,7 +276,7 @@ export default function ProductsPage() {
           </div>
         ) : error ? (
           <div className="text-center py-12">
-            <div className="text-red-600 text-lg font-medium mb-2">Error Loading Products</div>
+            <div className="text-red-600 text-lg font-medium mb-2">Lỗi tải sản phẩm</div>
             <p className="text-gray-600 mb-4">{error}</p>
             <button
               onClick={() => {
@@ -287,18 +287,18 @@ export default function ProductsPage() {
               }}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Try Again
+              Thử lại
             </button>
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-600 text-lg font-medium mb-2">No Products Found</div>
-            <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
+            <div className="text-gray-600 text-lg font-medium mb-2">Không tìm thấy sản phẩm</div>
+              <p className="text-gray-500 mb-4">Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
             <button
               onClick={clearFilters}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Clear Filters
+                Xóa bộ lọc
             </button>
           </div>
         ) : (
@@ -325,7 +325,7 @@ export default function ProductsPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <span className="text-sm font-medium">Loading more products...</span>
+                      <span className="text-sm font-medium">Đang tải thêm sản phẩm...</span>
                   </div>
                   <p className="text-xs text-gray-400">
                     {products.length} of {totalProducts} products loaded
@@ -339,10 +339,10 @@ export default function ProductsPage() {
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-sm font-medium">All products loaded!</span>
+                    <span className="text-sm font-medium">Đã tải tất cả sản phẩm!</span>
                   </div>
                   <p className="text-xs text-gray-400">
-                    Showing all {products.length} products matching your criteria
+                    Hiển thị tất cả {products.length} sản phẩm phù hợp
                   </p>
                 </div>
               )}

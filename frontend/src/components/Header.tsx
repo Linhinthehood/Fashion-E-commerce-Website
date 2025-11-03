@@ -88,7 +88,7 @@ export default function Header() {
         path: `/c/${masterCategory}/${subCategory.name}`,
         categoryId: subCategory.id,
         productCount: subCategory.productCount
-      })) || (isLoading ? [{ label: 'Loading...', path: '#' }] : [])
+  })) || (isLoading ? [{ label: 'Đang tải...', path: '#' }] : [])
     }
   })
 
@@ -106,7 +106,7 @@ export default function Header() {
               <span className="text-white font-bold text-xl">F</span>
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-              Fashion Store
+              Cửa hàng Thời Trang
             </span>
           </Link>
 
@@ -140,7 +140,7 @@ export default function Header() {
                   }
                 `}
               >
-                Admin Dashboard
+                Bảng quản trị
               </NavLink>
             )}
 
@@ -345,7 +345,7 @@ export default function Header() {
                         to="/admin"
                         className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                       >
-                        Admin Dashboard
+                        Bảng quản trị
                       </Link>
                     )}
                     {isStockClerk && (
@@ -374,7 +374,7 @@ export default function Header() {
                       onClick={logout}
                       className="block w-full text-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
                     >
-                      Logout
+                      Đăng xuất
                     </button>
                   </div>
                 </div>
@@ -491,7 +491,7 @@ export default function Header() {
                       className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Admin Dashboard
+                      Bảng quản trị
                     </Link>
                   )}
                   {isStockClerk && (
@@ -508,7 +508,7 @@ export default function Header() {
                     className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Profile
+                    Hồ sơ
                   </Link>
                   {canShop && (
                     <Link
@@ -526,7 +526,7 @@ export default function Header() {
                     }}
                     className="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
                   >
-                    Logout
+                    Đăng xuất
                   </button>
                 </div>
               </div>

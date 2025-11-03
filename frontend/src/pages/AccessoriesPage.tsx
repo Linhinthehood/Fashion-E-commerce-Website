@@ -236,23 +236,23 @@ export default function AccessoriesPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {filters.subcategory === 'hat' ? 'Hat Collection' :
-             filters.subcategory === 'watch' ? 'Watch Collection' :
-             filters.subcategory === 'wallet' ? 'Wallet Collection' : 
-             'Accessories Collection'}
+            {filters.subcategory === 'hat' ? 'Bộ sưu tập Mũ' :
+             filters.subcategory === 'watch' ? 'Bộ sưu tập Đồng hồ' :
+             filters.subcategory === 'wallet' ? 'Bộ sưu tập Ví' : 
+             'Bộ sưu tập Phụ kiện'}
           </h1>
           <p className="text-gray-600">
-            {filters.subcategory === 'hat' ? 'Hats, caps & headwear' :
-             filters.subcategory === 'watch' ? 'Premium watches & timepieces' :
-             filters.subcategory === 'wallet' ? 'Wallets & leather goods' :
-             'Complete your style with our premium accessories'} - {totalProducts} items available
+            {filters.subcategory === 'hat' ? 'Mũ, nón & phụ kiện đội đầu' :
+             filters.subcategory === 'watch' ? 'Đồng hồ cao cấp & phụ kiện' :
+             filters.subcategory === 'wallet' ? 'Ví & sản phẩm da' :
+             'Hoàn thiện phong cách với phụ kiện cao cấp'} - {totalProducts} mặt hàng có sẵn
           </p>
           
           {/* Breadcrumb */}
           <nav className="flex items-center space-x-2 text-sm text-gray-500 mt-3">
             <a href="/" className="hover:text-gray-700">Trang chủ</a>
             <span>/</span>
-            <span className="text-gray-900">Accessories</span>
+            <span className="text-gray-900">Phụ kiện</span>
             {filters.subcategory && (
               <>
                 <span>/</span>
@@ -276,7 +276,7 @@ export default function AccessoriesPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              All Accessories 
+              Tất cả phụ kiện
             </button>
             <button
               onClick={() => handleFilterChange('subcategory', 'hat')}
@@ -286,7 +286,7 @@ export default function AccessoriesPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              🧢 Hat 
+              🧢 Mũ 
             </button>
             <button
               onClick={() => handleFilterChange('subcategory', 'watch')}
@@ -296,7 +296,7 @@ export default function AccessoriesPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              ⌚ Watch 
+              ⌚ Đồng hồ 
             </button>
             <button
               onClick={() => handleFilterChange('subcategory', 'wallet')}
@@ -306,7 +306,7 @@ export default function AccessoriesPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              👛 Wallet 
+              👛 Ví 
             </button>
           </div>
 
@@ -314,12 +314,12 @@ export default function AccessoriesPage() {
           <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
             <p className="text-sm text-purple-800">
               {filters.subcategory === 'hat' ? 
-                '🧢 Showing caps, hats, and all headwear accessories' :
+                '🧢 Hiển thị mũ, nón và phụ kiện đội đầu' :
                filters.subcategory === 'watch' ? 
-                '⌚ Showing watches, timepieces, and wrist accessories' :
+                '⌚ Hiển thị đồng hồ và phụ kiện đeo tay' :
                filters.subcategory === 'wallet' ? 
-                '👛 Showing wallets, leather goods, and carrying accessories' :
-                '✨ Showing all accessories - hats, watches, wallets & more (excludes clothing & shoes)'
+                '👛 Hiển thị ví và sản phẩm da' :
+                '✨ Hiển thị tất cả phụ kiện - mũ, đồng hồ, ví & hơn thế nữa (không bao gồm quần áo & giày)'
               }
             </p>
           </div>
@@ -327,13 +327,13 @@ export default function AccessoriesPage() {
           {/* Additional Filters */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
               <input
                 type="text"
-                placeholder={filters.subcategory === 'hat' ? 'Search hats, mũ...' : 
-                           filters.subcategory === 'watch' ? 'Search watches, đồng hồ...' : 
-                           filters.subcategory === 'wallet' ? 'Search wallets, ví...' :
-                           'Search accessories...'}
+                placeholder={filters.subcategory === 'hat' ? 'Tìm mũ, nón...' : 
+                           filters.subcategory === 'watch' ? 'Tìm đồng hồ...' : 
+                           filters.subcategory === 'wallet' ? 'Tìm ví...' :
+                           'Tìm phụ kiện...'}
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -382,7 +382,7 @@ export default function AccessoriesPage() {
               onClick={clearFilters}
               className="px-4 py-2 text-sm text-purple-600 hover:text-purple-800 font-medium transition-colors"
             >
-              Clear all filters
+              Xóa tất cả bộ lọc
             </button>
           </div>
         </div>
@@ -402,7 +402,7 @@ export default function AccessoriesPage() {
           </div>
         ) : error ? (
           <div className="text-center py-12">
-            <div className="text-red-600 text-lg font-medium mb-2">Error Loading Accessories</div>
+            <div className="text-red-600 text-lg font-medium mb-2">Lỗi tải phụ kiện</div>
             <p className="text-gray-600 mb-4">{error}</p>
             <button
               onClick={() => {
@@ -413,23 +413,23 @@ export default function AccessoriesPage() {
               }}
               className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
-              Try Again
+              Thử lại
             </button>
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-600 text-lg font-medium mb-2">No Accessories Found</div>
+            <div className="text-gray-600 text-lg font-medium mb-2">Không tìm thấy phụ kiện</div>
             <p className="text-gray-500 mb-4">
-              {filters.subcategory === 'hat' ? 'No hats or caps found with current filters' :
-               filters.subcategory === 'watch' ? 'No watches found with current filters' :
-               filters.subcategory === 'wallet' ? 'No wallets found with current filters' :
-               'No accessories found - try adjusting your filters'}
+              {filters.subcategory === 'hat' ? 'Không tìm thấy mũ hoặc nón phù hợp' :
+               filters.subcategory === 'watch' ? 'Không tìm thấy đồng hồ phù hợp' :
+               filters.subcategory === 'wallet' ? 'Không tìm thấy ví phù hợp' :
+               'Không tìm thấy phụ kiện - thử điều chỉnh bộ lọc của bạn'}
             </p>
             <button
               onClick={clearFilters}
               className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
-              Clear Filters
+              Xóa bộ lọc
             </button>
           </div>
         ) : (
@@ -454,7 +454,7 @@ export default function AccessoriesPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span className="text-sm font-medium">Loading more accessories...</span>
+                  <span className="text-sm font-medium">Đang tải thêm phụ kiện...</span>
                 </div>
               )}
               

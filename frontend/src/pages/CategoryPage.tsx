@@ -263,16 +263,16 @@ export default function CategoryPage() {
 
   const getCategoryTitle = () => {
     if (subCategory) {
-      return `${subCategory} Collection`
+      return `${subCategory} - Bộ sưu tập`
     }
-    return `${masterCategory} Collection`
+    return `${masterCategory} - Bộ sưu tập`
   }
 
   const getCategoryDescription = () => {
     if (subCategory) {
-      return `Explore our ${subCategory.toLowerCase()} collection`
+      return `Khám phá bộ sưu tập ${subCategory.toLowerCase()}`
     }
-    return `Discover our premium ${masterCategory?.toLowerCase()} collection`
+    return `Khám phá bộ sưu tập ${masterCategory?.toLowerCase()}`
   }
 
   const getCategoryColor = () => {
@@ -320,7 +320,7 @@ export default function CategoryPage() {
         {/* Sub-categories - Only show when no subCategory is selected */}
         {subCategories.length > 0 && !subCategory && (
           <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Browse by Category</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Duyệt theo danh mục</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {subCategories.map((subCat) => (
                 <button
@@ -335,7 +335,7 @@ export default function CategoryPage() {
                     {subCat.articleTypes.map(at => at.articleType).join(', ')}
                   </p>
                   <p className="text-xs text-blue-600 font-medium">
-                    {subCat.productCount} products
+                    {subCat.productCount} sản phẩm
                   </p>
                 </button>
               ))}
@@ -348,10 +348,10 @@ export default function CategoryPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
               <input
                 type="text"
-                placeholder={`Search ${masterCategory?.toLowerCase()}...`}
+                placeholder={`Tìm kiếm ${masterCategory?.toLowerCase()}...`}
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-${colorClass}-500`}
@@ -360,10 +360,10 @@ export default function CategoryPage() {
 
             {/* Brand */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Thương hiệu</label>
               <input
                 type="text"
-                placeholder="Enter brand..."
+                placeholder="Nhập thương hiệu..."
                 value={filters.brand}
                 onChange={(e) => handleFilterChange('brand', e.target.value)}
                 className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-${colorClass}-500`}
@@ -372,25 +372,25 @@ export default function CategoryPage() {
 
             {/* Gender */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
               <select
                 value={filters.gender}
                 onChange={(e) => handleFilterChange('gender', e.target.value)}
                 className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-${colorClass}-500`}
               >
-                <option value="">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
+                <option value="">Tất cả</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
                 <option value="Unisex">Unisex</option>
               </select>
             </div>
 
             {/* Color */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Màu sắc</label>
               <input
                 type="text"
-                placeholder="Enter color..."
+                placeholder="Nhập màu..."
                 value={filters.color}
                 onChange={(e) => handleFilterChange('color', e.target.value)}
                 className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-${colorClass}-500`}
@@ -404,7 +404,7 @@ export default function CategoryPage() {
               onClick={clearFilters}
               className={`px-4 py-2 text-sm text-${colorClass}-600 hover:text-${colorClass}-800 font-medium transition-colors`}
             >
-              Clear all filters
+              Xóa tất cả bộ lọc
             </button>
           </div>
         </div>
@@ -424,7 +424,7 @@ export default function CategoryPage() {
           </div>
         ) : error ? (
           <div className="text-center py-12">
-            <div className="text-red-600 text-lg font-medium mb-2">Error Loading Products</div>
+            <div className="text-red-600 text-lg font-medium mb-2">Lỗi tải sản phẩm</div>
             <p className="text-gray-600 mb-4">{error}</p>
             <button
               onClick={() => {
@@ -435,18 +435,18 @@ export default function CategoryPage() {
               }}
               className={`px-6 py-2 bg-${colorClass}-600 text-white rounded-lg hover:bg-${colorClass}-700 transition-colors`}
             >
-              Try Again
+              Thử lại
             </button>
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-600 text-lg font-medium mb-2">No Products Found</div>
-            <p className="text-gray-500 mb-4">No products found with current filters</p>
+            <div className="text-gray-600 text-lg font-medium mb-2">Không tìm thấy sản phẩm</div>
+            <p className="text-gray-500 mb-4">Không có sản phẩm phù hợp với bộ lọc hiện tại</p>
             <button
               onClick={clearFilters}
               className={`px-6 py-2 bg-${colorClass}-600 text-white rounded-lg hover:bg-${colorClass}-700 transition-colors`}
             >
-              Clear Filters
+              Xóa bộ lọc
             </button>
           </div>
         ) : (
@@ -472,7 +472,7 @@ export default function CategoryPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span className="text-sm font-medium">Loading more products...</span>
+                  <span className="text-sm font-medium">Đang tải thêm sản phẩm...</span>
                 </div>
               )}
             </div>
