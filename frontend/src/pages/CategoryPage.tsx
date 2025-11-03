@@ -195,6 +195,16 @@ export default function CategoryPage() {
     loadSubCategories()
   }, [loadSubCategories])
 
+  // If master category has no subCategory selected, auto-navigate to first available subcategory
+  useEffect(() => {
+    if (masterCategory && !subCategory && subCategories.length > 0) {
+      const first = subCategories[0]?.name
+      if (first) {
+        navigate(`/c/${masterCategory}/${first}`)
+      }
+    }
+  }, [masterCategory, subCategory, subCategories, navigate])
+
   // Initial load and filter changes
   useEffect(() => {
     setPage(1)

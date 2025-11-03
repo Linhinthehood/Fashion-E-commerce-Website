@@ -377,8 +377,26 @@ export const productApi = {
 
   getProductStats: () => apiClient.get(API_ENDPOINTS.products.stats(), true), // Auth required for stats
 
-  getSubCategoriesByMaster: (masterCategory: string) =>
-    apiClient.get(API_ENDPOINTS.products.subCategoriesByMaster(masterCategory), false), // No auth
+  getSubCategoriesByMaster: async (masterCategory: string) => {
+    // Fetch full categories to get productCount, then aggregate by subCategory
+    const url = `${API_ENDPOINTS.categories.list()}?masterCategory=${encodeURIComponent(masterCategory)}`;
+    const res = await apiClient.get(url, false);
+    if (!res.success || !res.data) return res;
+    const cats = (res.data as any).categories as Array<{ subCategory: string; productCount?: number }>;
+    const map = new Map<string, number>();
+    if (Array.isArray(cats)) {
+      for (const c of cats) {
+        const name = c.subCategory || 'Unknown';
+        const prev = map.get(name) || 0;
+        map.set(name, prev + (Number(c.productCount || 0)));
+      }
+    }
+    const normalized = Array.from(map.entries()).map(([name, count]) => ({ id: name, name, productCount: count, articleTypes: [] }));
+    return {
+      success: true,
+      data: { masterCategory, subCategories: normalized }
+    } as ApiResponse;
+  }, // No auth
 };
 
 // Category API functions (Public - No authentication required)

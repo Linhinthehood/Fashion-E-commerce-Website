@@ -180,16 +180,14 @@ export default function Header() {
                 {/* Category Menus */}
                 {menus.map((menu) => (
                   <div key={menu.label} className="relative group">
-                    <NavLink
-                      to={menu.path}
-                      className={({ isActive }) => `
+                    <div
+                      className={`
                         relative flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
                         hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50
-                        ${isActive 
-                          ? 'text-blue-600 bg-gradient-to-r from-blue-50 to-purple-50' 
-                          : 'text-gray-700 hover:text-gray-900'
-                        }
+                        text-gray-700 hover:text-gray-900 cursor-default
                       `}
+                      role="button"
+                      tabIndex={0}
                     >
                       <span>{menu.label}</span>
                       <svg 
@@ -200,7 +198,7 @@ export default function Header() {
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                    </NavLink>
+                    </div>
                     
                     {/* Dropdown Menu */}
                     <div className="absolute left-0 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible 
@@ -447,13 +445,11 @@ export default function Header() {
                 </NavLink>
                 {menus.map((menu) => (
                   <div key={menu.label}>
-                    <Link
-                      to={menu.path}
+                    <div
                       className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-gray-900 transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
                     >
                       {menu.label}
-                    </Link>
+                    </div>
                     <div className="ml-4 space-y-1">
                       {menu.children.map((child) => (
                         <Link

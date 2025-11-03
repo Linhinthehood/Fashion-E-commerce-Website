@@ -119,10 +119,27 @@ app.use('/api/*', (req, res, next) => {
   next();
 });
 
-// Handle preflight quickly
-app.options('*', (req, res) => {
-  res.sendStatus(204);
-});
+// Handle preflight with CORS headers
+app.options('*', cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    const allowedPatterns = [
+      /^http:\/\/localhost(:\d+)?$/,
+      /^http:\/\/127\.0\.0\.1(:\d+)?$/,
+      /^http:\/\/172\.\d+\.\d+\.\d+(:\d+)?$/,
+      /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/
+    ];
+    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
+    if (isAllowed || origin === FRONTEND_URL) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+}));
 
 // User Service routes
 app.use('/api/auth', buildServiceProxy(USER_SERVICE_URL, 'user-service'));
