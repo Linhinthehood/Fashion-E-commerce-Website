@@ -90,6 +90,13 @@ export const API_ENDPOINTS = {
     applyDiscount: (id: string) => buildUrl(`/orders/${id}/discount`),
     adminAll: () => buildUrl('/orders'), // GET with query params
   },
+  // Analytics endpoints
+  analytics: {
+    topProducts: () => buildUrl('/orders/analytics/top-products'),
+    ordersStats: () => buildUrl('/orders/analytics/orders-stats'),
+    topCustomers: () => buildUrl('/orders/analytics/top-customers'),
+    overview: () => buildUrl('/orders/analytics/overview'),
+  },
   // Fashion Service endpoints (proxied through API Gateway)
   fashion: {
     similar: () => buildUrl('/recommendations/similar'),

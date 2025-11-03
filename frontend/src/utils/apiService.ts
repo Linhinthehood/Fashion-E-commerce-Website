@@ -600,6 +600,80 @@ export const orderApi = {
   applyDiscount: (id: string, body: { discount: number }) =>
     apiClient.put(API_ENDPOINTS.orders.applyDiscount(id), body, true),
 };
+
+// Analytics API functions
+export const analyticsApi = {
+  // Get top products
+  getTopProducts: (params?: {
+    period?: 'day' | 'month' | 'year' | 'all';
+    date?: string; // YYYY-MM-DD for day, YYYY-MM for month, YYYY for year
+    limit?: number;
+    sortBy?: 'quantity' | 'revenue';
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.analytics.topProducts()}?${searchParams.toString()}`
+      : API_ENDPOINTS.analytics.topProducts();
+    return apiClient.get(url, true);
+  },
+
+  // Get orders statistics
+  getOrdersStats: (params?: {
+    period?: 'day' | 'month' | 'year' | 'all';
+    date?: string;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.analytics.ordersStats()}?${searchParams.toString()}`
+      : API_ENDPOINTS.analytics.ordersStats();
+    return apiClient.get(url, true);
+  },
+
+  // Get top customers
+  getTopCustomers: (params?: {
+    period?: 'day' | 'month' | 'year' | 'all';
+    date?: string;
+    limit?: number;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.analytics.topCustomers()}?${searchParams.toString()}`
+      : API_ENDPOINTS.analytics.topCustomers();
+    return apiClient.get(url, true);
+  },
+
+  // Get dashboard overview (all metrics in one call)
+  getOverview: (params?: {
+    period?: 'day' | 'month' | 'year' | 'all';
+    date?: string;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) searchParams.append(key, String(value));
+      });
+    }
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.analytics.overview()}?${searchParams.toString()}`
+      : API_ENDPOINTS.analytics.overview();
+    return apiClient.get(url, true);
+  },
+};
 // Helpers for Fashion API local history
 const FASHION_HISTORY_PREFIX = 'fashion_recent_products_';
 
