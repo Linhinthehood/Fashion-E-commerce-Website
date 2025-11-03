@@ -180,13 +180,13 @@ export default function ProductDetail() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Product</h1>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Lỗi khi tải sản phẩm</h1>
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={() => window.history.back()}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Go Back
+            Quay lại
           </button>
         </div>
       </div>
@@ -257,8 +257,8 @@ export default function ProductDetail() {
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 leading-tight">
                   {product.name}
                 </h1>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded-md font-medium">In Stock</span>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded-md font-medium">Còn hàng</span>
                   <span>•</span>
                   <span>{product.gender}</span>
                 </div>
@@ -268,7 +268,7 @@ export default function ProductDetail() {
               <div className="bg-gradient-to-br from-red-50 to-orange-50 p-6 rounded-2xl shadow-inner border border-red-100">
                 <div className="flex items-baseline gap-2">
                   <div className="text-4xl sm:text-5xl font-extrabold text-red-600">
-                    {displayPrice ? formatCurrencyVND(displayPrice) : 'Contact for price'}
+                    {displayPrice ? formatCurrencyVND(displayPrice) : 'Liên hệ để biết giá'}
                   </div>
                 </div>
                 {selectedVariant && (
