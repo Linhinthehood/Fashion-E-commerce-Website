@@ -23,16 +23,18 @@ export interface PaginatedResponse<T> {
 }
 
 // HTTP client configuration
-const DEFAULT_HEADERS = {
-  'Content-Type': 'application/json',
-};
+// Do NOT set a global Content-Type header; adding it to GET requests
+// triggers a CORS preflight unnecessarily. We'll set it only for
+// requests that send a JSON body (POST/PUT/PATCH, etc.).
+const DEFAULT_HEADERS: HeadersInit = {};
 
 // Get auth token from localStorage
 const getAuthToken = (): string | null => {
   return localStorage.getItem('token');
 };
 
-// Create headers with auth token
+// Create headers with optional auth token. Content-Type will be
+// conditionally added inside request() only when sending JSON bodies.
 const createHeaders = (includeAuth: boolean = true): HeadersInit => {
   const headers: HeadersInit = { ...DEFAULT_HEADERS };
   
@@ -67,7 +69,17 @@ class ApiClient {
         });
       }
 
-      if (options.body instanceof FormData) {
+      // Only set Content-Type for JSON bodies (non-FormData, non-GET)
+      const method = (options.method || 'GET').toUpperCase();
+      const isFormData = options.body instanceof FormData;
+      if (isFormData) {
+        headers.delete('Content-Type');
+      } else if (method !== 'GET' && method !== 'HEAD' && options.body !== undefined) {
+        if (!headers.has('Content-Type')) {
+          headers.set('Content-Type', 'application/json');
+        }
+      } else {
+        // Ensure GET/HEAD requests don't send Content-Type
         headers.delete('Content-Type');
       }
 

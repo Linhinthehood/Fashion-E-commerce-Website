@@ -143,6 +143,8 @@ export default function ProductsPage() {
       if (!isLoadMore) {
         setProducts([])
       }
+      // Stop infinite intersection-triggered retries when an error occurs
+      setHasMore(false)
     } finally {
       setLoading(false)
       setLoadingMore(false)
