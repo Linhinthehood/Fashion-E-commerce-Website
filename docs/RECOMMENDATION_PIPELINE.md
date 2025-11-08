@@ -84,7 +84,8 @@
 - [x] Basic monitoring/metrics for pipeline
 - [x] Wire `search` event (frontend)
 - [x] Wire `purchase` event (backend hook + frontend trigger)
-- [ ] Dashboard: simple event counts for admin
+- [x] Dashboard: simple event counts for admin (integrated in DashboardAnalytics.tsx)
+- [x] Aggregation endpoints: `/api/events/aggregates/popularity`, `/api/events/aggregates/affinity`, `/api/events/aggregates/top-viewed`
 
 ## 9) Next Steps (Execution Order)
 1. Add ingest metrics + simple aggregation endpoint in order-service ✅
@@ -170,13 +171,17 @@
   - `GET /api/events/aggregates/affinity?userId=...`
 
 ## 17) Implementation Checklist (Next)
-- [ ] Retrieval: personalized retrieve endpoint using embeddings + popularity
-- [ ] Aggregation jobs: popularity (view/add_to_cart/purchase weighted), user affinity by category/brand
+- [x] Retrieval: personalized retrieve endpoint using embeddings (✅ `/api/recommendations/retrieve/personalized` exists)
+- [ ] Retrieval: integrate popularity scores from events into hybrid scoring (α·embeddingSim + β·popularity + γ·categoryAffinity)
+- [x] Aggregation endpoints: popularity (view/add_to_cart/purchase weighted) ✅
+- [x] Aggregation endpoints: user affinity by itemId ✅
+- [ ] Aggregation endpoints: user affinity by category/brand (currently only by itemId)
+- [ ] Aggregation jobs: daily/hourly scheduled jobs to pre-compute popularity/affinity (currently on-demand)
 - [ ] Online store (Redis) for popularity/affinity; fallback to DB
-- [ ] Ranking API skeleton with pluggable scorer (start rule‑based, later ML)
-- [ ] Orchestrated `/api/recommendations` in gateway with diversification
+- [ ] Ranking API skeleton with pluggable scorer (start rule‑based, later ML) - `/api/recommendations/rank`
+- [ ] Orchestrated `/api/recommendations` in gateway with diversification (currently only proxy)
 - [ ] A/B flags to toggle models/pipelines
-- [ ] Admin dashboard: add CTR/ATC/Conversion widgets
+- [ ] Admin dashboard: add CTR/ATC/Conversion widgets (currently only event counts)
 - [ ] Privacy: add opt‑out flag and client respect flow
 
 ## 18) Simple “Grade‑5” Explanations — Goals and Outcomes
@@ -203,6 +208,72 @@
 - Phase 7: Privacy (Riêng tư)
   - Mục tiêu: Bảo vệ danh tính, chỉ dùng ID ẩn danh, tôn trọng quyền tắt theo dõi.
   - Kết quả: Người dùng yên tâm, dữ liệu dùng đúng mục đích và có hạn sử dụng.
+
+## 19) Current Status Summary (Updated: 2025-11-03)
+
+### ✅ Phase 0-2: Events Pipeline — HOÀN THÀNH
+- **Events Infrastructure**: ✅ Complete
+  - Event model with validation
+  - Batch ingest endpoint (`POST /api/events/batch`)
+  - Frontend event emitter with batching (20 items or 3s flush)
+  - API Gateway proxy configured
+  
+- **Monitoring & Analytics**: ✅ Complete
+  - Metrics endpoint (`GET /api/events/metrics`)
+  - Aggregation endpoints:
+    - `GET /api/events/aggregates/popularity` (weighted by event type)
+    - `GET /api/events/aggregates/affinity?userId=...` (user-item affinity)
+    - `GET /api/events/aggregates/top-viewed` (top viewed products)
+  - Admin dashboard integration (DashboardAnalytics.tsx)
+
+- **Event Wiring**: ✅ Complete
+  - `view` events in ProductDetail.tsx
+  - `add_to_cart` events in ProductDetail.tsx
+  - `search` events in ProductsPage.tsx
+  - `purchase` events in CartPage.tsx
+
+### ⚠️ Phase 3: Retrieval (Stage 1) — ĐANG THỰC HIỆN (PARTIAL)
+- **Endpoint**: ✅ `/api/recommendations/retrieve/personalized` exists
+- **Current Implementation**:
+  - ✅ Uses FAISS embeddings for similarity search
+  - ✅ Aggregates candidates from multiple seed items
+  - ❌ **NOT YET**: Integrate popularity scores from events
+  - ❌ **NOT YET**: Integrate user affinity by category/brand (only itemId-level)
+  - ❌ **NOT YET**: Hybrid scoring (α·embeddingSim + β·popularity + γ·categoryAffinity)
+
+- **Missing Components**:
+  - Redis cache for popularity/affinity (currently on-demand DB queries)
+  - Scheduled aggregation jobs (daily/hourly) to pre-compute metrics
+  - Category/brand-level user affinity (currently only itemId-level)
+
+### ❌ Phase 4: Ranking (Stage 2) — CHƯA BẮT ĐẦU
+- **Status**: Not implemented
+- **Current**: Only simple similarity-based ranking in `rank_and_limit()` function
+- **Missing**:
+  - `/api/recommendations/rank` endpoint
+  - ML model (XGBoost/LightGBM)
+  - Feature engineering pipeline
+  - Training pipeline from events data
+
+### ❌ Phase 5: Orchestrator + Business Rules — CHƯA BẮT ĐẦU
+- **Status**: API Gateway only proxies `/api/recommendations` → fashion-service
+- **Missing**:
+  - Orchestrated endpoint that combines retrieve + rank + diversify
+  - Diversification logic (MMR/xQuAD)
+  - Business rules (stock filtering, blacklist, brand/category caps)
+  - Redis caching for recommendations
+
+### ❌ Phase 6-7: A/B Testing & Privacy — CHƯA BẮT ĐẦU
+- Not yet implemented
+
+### 📊 Progress Summary
+- **Phase 0-2 (Events)**: 100% ✅
+- **Phase 3 (Retrieval)**: ~40% ⚠️ (endpoint exists, but missing hybrid scoring)
+- **Phase 4 (Ranking)**: 0% ❌
+- **Phase 5 (Orchestrator)**: 0% ❌
+- **Phase 6-7 (A/B & Privacy)**: 0% ❌
+
+**Overall**: Đang ở giai đoạn **Phase 3 (Retrieval)** — đã có endpoint cơ bản nhưng chưa tích hợp đầy đủ popularity và affinity từ events pipeline.
 
 ---
 Owner: AI Pair (assistant)
