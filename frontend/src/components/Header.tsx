@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useCart } from '../contexts/CartContext'
 import { productApi } from '../utils/apiService'
@@ -24,10 +24,29 @@ const masterCategories = ['Apparel', 'Accessories', 'Footwear']
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [masterCategoryData, setMasterCategoryData] = useState<Record<string, MasterCategory>>({})
   const [loadingCategories, setLoadingCategories] = useState<Record<string, boolean>>({})
   const { user, isAuthenticated, logout } = useAuth()
   const { cartItemCount, cartItems, getTotalPrice } = useCart()
+  
+  // Use refs to track loaded categories and errors without causing re-renders
+  const loadedCategoriesRef = useRef<Set<string>>(new Set())
+  const loadingCategoriesRef = useRef<Set<string>>(new Set())
+  const errorCategoriesRef = useRef<Set<string>>(new Set())
+
+  // Toggle category expansion in mobile menu
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(category)) {
+        newSet.delete(category)
+      } else {
+        newSet.add(category)
+      }
+      return newSet
+    })
+  }
 
   const isManager = user?.role === 'Manager'
   const isStockClerk = user?.role === 'Stock Clerk'
@@ -35,11 +54,15 @@ export default function Header() {
   const canShop = !isManagementRole
 
   // Load sub-categories for a master category
+  // Fixed: Remove state dependencies to prevent infinite loop
   const loadSubCategories = useCallback(async (masterCategory: string) => {
-    if (masterCategoryData[masterCategory] || loadingCategories[masterCategory]) {
+    // Check if already loaded or currently loading using refs
+    if (loadedCategoriesRef.current.has(masterCategory) || loadingCategoriesRef.current.has(masterCategory)) {
       return
     }
 
+    // Mark as loading
+    loadingCategoriesRef.current.add(masterCategory)
     setLoadingCategories(prev => ({ ...prev, [masterCategory]: true }))
     
     try {
@@ -56,24 +79,46 @@ export default function Header() {
             subCategories: data.subCategories
           }
         }))
+        // Mark as loaded
+        loadedCategoriesRef.current.add(masterCategory)
+        errorCategoriesRef.current.delete(masterCategory)
+      } else {
+        // Mark error but don't retry automatically
+        errorCategoriesRef.current.add(masterCategory)
       }
     } catch (error) {
       console.error(`Error loading sub-categories for ${masterCategory}:`, error)
+      // Mark error but don't retry automatically
+      errorCategoriesRef.current.add(masterCategory)
     } finally {
-      setLoadingCategories(prev => ({ ...prev, [masterCategory]: false }))
+      loadingCategoriesRef.current.delete(masterCategory)
+      setLoadingCategories(prev => {
+        const updated = { ...prev }
+        delete updated[masterCategory]
+        return updated
+      })
     }
-  }, [masterCategoryData, loadingCategories])
+  }, []) // Empty dependencies - function won't change
 
   // Load sub-categories when needed for shopping navigation
+  // Fixed: Only run once when canShop becomes true, prevent infinite loops
   useEffect(() => {
     if (!canShop) {
       return
     }
 
+    // Load each category only once (skip if already loaded, loading, or errored)
     masterCategories.forEach(category => {
-      loadSubCategories(category)
+      if (
+        !loadedCategoriesRef.current.has(category) && 
+        !loadingCategoriesRef.current.has(category) &&
+        !errorCategoriesRef.current.has(category)
+      ) {
+        loadSubCategories(category)
+      }
     })
-  }, [canShop, loadSubCategories])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canShop]) // Only depend on canShop - load once when user can shop
 
   // Convert master category data to menu format
   const menus = masterCategories.map(masterCategory => {
@@ -394,7 +439,13 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => {
+              setIsMenuOpen(!isMenuOpen)
+              // Reset expanded categories when closing menu
+              if (isMenuOpen) {
+                setExpandedCategories(new Set())
+              }
+            }}
             className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-200"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -406,9 +457,9 @@ export default function Header() {
         {/* Mobile Menu */}
         <div className={`
           lg:hidden transition-all duration-300 ease-in-out overflow-hidden
-          ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+          ${isMenuOpen ? 'max-h-[calc(100vh-5rem)] opacity-100' : 'max-h-0 opacity-0'}
         `}>
-          <div className="py-4 space-y-2 border-t border-gray-200 mt-4">
+          <div className="py-4 space-y-2 border-t border-gray-200 mt-4 overflow-y-auto max-h-[calc(100vh-5rem)]">
             <NavLink
               to="/"
               className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-gray-900 transition-colors duration-200"
@@ -443,27 +494,82 @@ export default function Header() {
                 >
                   Sản phẩm
                 </NavLink>
-                {menus.map((menu) => (
-                  <div key={menu.label}>
-                    <div
-                      className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-gray-900 transition-colors duration-200"
-                    >
-                      {menu.label}
-                    </div>
-                    <div className="ml-4 space-y-1">
-                      {menu.children.map((child) => (
+                {menus.map((menu) => {
+                  const isExpanded = expandedCategories.has(menu.label)
+                  const hasChildren = menu.children && menu.children.length > 0
+                  const isLoading = loadingCategories[menu.label]
+                  
+                  return (
+                    <div key={menu.label}>
+                      {/* Always show button for categories - can expand if has children, or link to category page if no children yet */}
+                      {hasChildren ? (
+                        <>
+                          <button
+                            onClick={() => toggleCategory(menu.label)}
+                            className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-gray-900 transition-colors duration-200"
+                          >
+                            <span>{menu.label}</span>
+                            <svg
+                              className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+                                isExpanded ? 'rotate-180' : ''
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          <div
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                              isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                            }`}
+                          >
+                            <div className="ml-4 space-y-1 py-1">
+                              {menu.children.map((child) => (
+                                <Link
+                                  key={child.path}
+                                  className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                                  to={child.path}
+                                  onClick={() => {
+                                    setIsMenuOpen(false)
+                                    setExpandedCategories(new Set())
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <span>{child.label}</span>
+                                    {child.productCount !== undefined && (
+                                      <span className="text-xs text-gray-400 ml-2">
+                                        ({child.productCount})
+                                      </span>
+                                    )}
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
                         <Link
-                          key={child.path}
-                          className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-                          to={child.path}
-                          onClick={() => setIsMenuOpen(false)}
+                          to={menu.path}
+                          className="flex items-center justify-between px-4 py-3 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-gray-900 transition-colors duration-200"
+                          onClick={() => {
+                            setIsMenuOpen(false)
+                            setExpandedCategories(new Set())
+                          }}
                         >
-                          {child.label}
+                          <span>{menu.label}</span>
+                          {isLoading && (
+                            <svg className="animate-spin h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          )}
                         </Link>
-                      ))}
+                      )}
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
                 <NavLink
                   to="/contact"
                   className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-gray-900 transition-colors duration-200"

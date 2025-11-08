@@ -133,8 +133,9 @@ export default function ProductsPage() {
       if (data.pagination && typeof data.pagination.hasNextPage === 'boolean') {
         setHasMore(data.pagination.hasNextPage)
       } else {
-        const currentProductsLength = isLoadMore ? (products.length + data.products.length) : data.products.length
-        setHasMore(currentProductsLength < (total || 0))
+        // Calculate hasMore: if we got a full page, there might be more
+        // If we got less than a full page, we've reached the end
+        setHasMore(data.products.length === ITEMS_PER_PAGE)
       }
       
     } catch (e: any) {
@@ -149,7 +150,7 @@ export default function ProductsPage() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }, [filters, products.length])
+  }, [filters]) // Removed products.length to prevent infinite loops
 
   // Reset and fetch when filters change
   useEffect(() => {
