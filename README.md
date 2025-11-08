@@ -1,57 +1,59 @@
 # Fashion E-commerce Website
 
-Modern full‑stack fashion e‑commerce built with microservices, React, Node.js and MongoDB. Includes a basic personalized recommendations pipeline (events → retrieval → UI).
+A modern full-stack e-commerce website specializing in clothing products, built with a microservices architecture using React, Node.js, Express, and MongoDB.
 
 ## 🏗️ Architecture
 
-Microservices currently included:
+This project follows a microservices architecture with the following components:
 
-- **Frontend**: React + TypeScript + Tailwind (Dev: http://localhost:5173)
-- **API Gateway**: Node.js/Express (3000) – reverse proxy to services
-- **User Service**: Node.js/Express + MongoDB (3001)
-- **Product Service**: Node.js/Express + MongoDB (3002)
-- **Order Service**: Node.js/Express + MongoDB (3003)
-- **Fashion Service (Recommendations)**: Python/Flask + FAISS/CLIP (3008)
+- **Frontend**: React with TypeScript, Tailwind CSS (Dev server: http://localhost:5173)
+- **API Gateway**: Node.js/Express (Port 3000)
+- **User Service**: Node.js/Express + MongoDB (Port 3001)
+- **Product Service**: Node.js/Express + MongoDB (Port 3002)
+- **Order Service**: Node.js/Express + MongoDB (Port 3003)
 - **Database**: MongoDB
+- **Database Admin**: Mongo Express 
 
 ## 🚀 Features
 
-### Core E‑commerce
-- ✅ User registration/authentication
-- ✅ Product catalog with search & filtering
-- ✅ Shopping cart
-- ✅ Order creation and management
-- ✅ User profile
+### Core E-commerce Features
+- ✅ User registration and authentication
+- ✅ Product catalog with search and filtering
+- ✅ Shopping cart management
+- ✅ Order processing and management
+- ✅ User profile management
 
-### Observability & Infra
-- ✅ Microservices via API Gateway
-- ✅ MongoDB per service
-- ✅ Docker Compose (dev/prod)
+### Technical Features
+- ✅ Microservices architecture
+- ✅ API Gateway with load balancing
+- ✅ JWT-based authentication
+- ✅ MongoDB with separate databases per service
+- ✅ Docker containerization
+- ✅ TypeScript for type safety
+- ✅ Responsive design with Tailwind CSS
+- ✅ State management with Zustand
+- ✅ API integration with React Query
 
-### Recommendations (Phase 0–3 Completed)
-- ✅ Event pipeline (frontend batching → gateway → order‑service → Mongo)
-  - Endpoints: `POST /api/events/batch`, `GET /api/events/metrics`
-- ✅ Aggregations for analytics: `top-viewed`, `popularity`, `affinity`
-- ✅ Admin dashboard widget for recommendation events
-- ✅ Retrieval (Stage 1) – personalized candidates from recent views
-  - Endpoint: `POST /api/recommendations/retrieve/personalized`
-- ✅ Frontend integration: Home shows “Recommended for You” personalized by recent interactions
-
-Note: Ranking (Stage 2), orchestrated flow and A/B flags are planned next.
+### Future Features (Recommendation System)
+- 🔄 Product recommendation engine (Python + FastAPI)
+- 🔄 User behavior tracking
+- 🔄 Collaborative filtering
+- 🔄 Content-based filtering
 
 ## 📁 Project Structure
 
 ```
 Fashion-Ecommerce-website/
-├── backend/
-│   ├── api-gateway/
-│   ├── user-service/
-│   ├── product-service/
-│   ├── order-service/
-│   └── fashion-service/       # Recommendation service (FAISS/CLIP)
-├── frontend/
-├── docker/
-├── docker-compose.yml
+├── services/
+│   ├── user-service/          # User management microservice
+│   ├── product-service/       # Product catalog microservice
+│   ├── order-service/         # Order management microservice
+│   └── api-gateway/           # API Gateway
+├── frontend/                  # React frontend application
+├── shared/                    # Shared utilities and types
+├── docker/                    # Docker configurations
+├── docker-compose.yml         # Production Docker Compose
+├── docker-compose.dev.yml     # Development Docker Compose
 └── README.md
 ```
 
@@ -65,54 +67,41 @@ Before running this project, make sure you have the following installed:
 
 ## 🚀 Quick Start
 
-### Using Docker Compose (Recommended)
+### Option 1: Using Docker Compose (Recommended)
 
-1. Clone the repository
+1. **Clone the repository**
    ```bash
    git clone <repository-url>
    cd Fashion-Ecommerce-website
    ```
 
-2. Copy and update env files (MongoDB Atlas URIs, service URLs)
-   - See `env.example` for sample Atlas credentials
-
-3. Start core services with Docker Compose
+2. **Start all services with Docker Compose**
    ```bash
+   # For development (with hot reload)
+   docker-compose -f docker-compose.dev.yml up --build
+
+   # For production
    docker-compose up --build
    ```
 
-4. Access
+3. **Access the application**
    - Frontend: http://localhost:5173
    - API Gateway: http://localhost:3000/api
 
 
-### Fashion Service (Recommendations) – run separately
+### Option 2: Manual Setup
 
-Due to memory footprint (FAISS + model), run `fashion-service` in its own Docker container (not inside the shared compose group) to avoid OOM on low‑RAM machines.
-
-Example run:
-```bash
-cd backend/fashion-service
-docker build -t fashion-service:latest .
-docker run --rm -p 3008:3008 \
-  -e RECOMMEND_SERVICE_PORT=3008 \
-  -e PRODUCT_SERVICE_URL=http://host.docker.internal:3002 \
-  fashion-service:latest
-```
-
-Make sure the model/index files are present in `backend/fashion-service/models/` or mount them as volumes if customized.
-
-### Manual Setup
-
-1. MongoDB (Atlas)
-   - This project uses MongoDB Atlas (cloud). No local `localhost:27017` is required.
-   - Provide Atlas connection strings in each service `.env`.
+1. **Start MongoDB**
+   ```bash
+   # Using Docker
+   docker run -d --name mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password123 mongo:7.0
+   ```
 
 2. **Install and start services**
 
    **User Service:**
    ```bash
-   cd backend/user-service
+   cd services/user-service
    npm install
    cp env.example .env
    # Edit .env with your MongoDB connection string
@@ -121,7 +110,7 @@ Make sure the model/index files are present in `backend/fashion-service/models/`
 
    **Product Service:**
    ```bash
-   cd backend/product-service
+   cd services/product-service
    npm install
    cp env.example .env
    # Edit .env with your MongoDB connection string
@@ -130,7 +119,7 @@ Make sure the model/index files are present in `backend/fashion-service/models/`
 
    **Order Service:**
    ```bash
-   cd backend/order-service
+   cd services/order-service
    npm install
    cp env.example .env
    # Edit .env with your MongoDB connection string
@@ -139,7 +128,7 @@ Make sure the model/index files are present in `backend/fashion-service/models/`
 
    **API Gateway:**
    ```bash
-   cd backend/api-gateway
+   cd services/api-gateway
    npm install
    cp env.example .env
    # Edit .env with service URLs
@@ -158,7 +147,7 @@ Make sure the model/index files are present in `backend/fashion-service/models/`
 ### User Service (.env)
 ```env
 PORT=3001
-MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/fashion_ecommerce_users?retryWrites=true&w=majority
+MONGODB_URI=mongodb://localhost:27017/fashion_ecommerce_users
 JWT_SECRET=your_jwt_secret_key_here
 JWT_EXPIRE=7d
 NODE_ENV=development
@@ -167,7 +156,7 @@ NODE_ENV=development
 ### Product Service (.env)
 ```env
 PORT=3002
-MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/fashion_ecommerce_products?retryWrites=true&w=majority
+MONGODB_URI=mongodb://localhost:27017/fashion_ecommerce_products
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
 ```
@@ -175,7 +164,7 @@ FRONTEND_URL=http://localhost:3000
 ### Order Service (.env)
 ```env
 PORT=3003
-MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/fashion_ecommerce_orders?retryWrites=true&w=majority
+MONGODB_URI=mongodb://localhost:27017/fashion_ecommerce_orders
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
 USER_SERVICE_URL=http://localhost:3001
@@ -197,12 +186,9 @@ ORDER_SERVICE_URL=http://localhost:3003
 VITE_API_URL=http://localhost:3000/api
 ```
 
-## 📚 Key APIs (Implemented)
+## 📚 API Documentation
 
-- Events Ingest: `POST /api/events/batch`
-- Events Metrics: `GET /api/events/metrics` (and `/aggregates/top-viewed|popularity|affinity`)
-- Recommendations (Retrieval): `POST /api/recommendations/retrieve/personalized`
-- Product listing/search (via Product Service): `/api/products`, `/api/products/:id`
+
 ## 🧪 Testing
 
 ### Run tests for individual services
@@ -234,14 +220,17 @@ npm test
 
 ### Development
 ```bash
-# Start core services
-docker-compose up --build
+# Start all services in development mode
+docker-compose -f docker-compose.dev.yml up --build
+
+# Start specific service
+docker-compose -f docker-compose.dev.yml up user-service
 
 # View logs
-docker-compose logs -f api-gateway
+docker-compose -f docker-compose.dev.yml logs -f user-service
 
-# Stop
-docker-compose down
+# Stop all services
+docker-compose -f docker-compose.dev.yml down
 ```
 
 ### Production
@@ -258,9 +247,9 @@ docker-compose down -v
 
 ## 🔍 Monitoring and Health Checks
 
-- API Gateway Health: `http://localhost:3000/health`
-- Order Service Health: `http://localhost:3003/health`
-- Fashion Service Health/Stats: `http://localhost:3008/health`, `GET /api/recommendations/stats`
+- **API Gateway Health**: http://localhost:3000/health
+- **Service Health**: http://localhost:3000/health/detailed
+- **Database Admin**: http://localhost:8081
 
 ## 📝 License
 

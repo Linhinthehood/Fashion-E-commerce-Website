@@ -117,6 +117,20 @@ temp/
 # Lock files
 package-lock.json
 yarn.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
 *.pt
-*.pyc
-*.pyc
+venv/
+env/
+ENV/
+.env.venv
