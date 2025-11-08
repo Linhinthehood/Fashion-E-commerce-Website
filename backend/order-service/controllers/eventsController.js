@@ -232,6 +232,67 @@ const getUserAffinity = async (req, res) => {
   }
 };
 
-module.exports = { ingestBatch, getCountsByTypePerDay, getTopViewed, getPopularity, getUserAffinity };
+const getRecentItemIds = async (req, res) => {
+  try {
+    const { userId, limit = 10, days = 30 } = req.query;
+    if (!userId) {
+      return res.status(400).json({ success: false, message: 'userId is required' });
+    }
+
+    const daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - parseInt(days, 10));
+
+    const results = await Event.aggregate([
+      {
+        $match: {
+          userId: String(userId),
+          itemId: { $ne: null },
+          occurredAt: { $gte: daysAgo },
+          type: { $in: ['view', 'add_to_cart', 'purchase', 'wishlist'] }
+        }
+      },
+      {
+        $group: {
+          _id: '$itemId',
+          lastViewed: { $max: '$occurredAt' },
+          count: { $sum: 1 },
+          // Weight by event type
+          score: {
+            $sum: {
+              $switch: {
+                branches: [
+                  { case: { $eq: ['$type', 'view'] }, then: 1 },
+                  { case: { $eq: ['$type', 'add_to_cart'] }, then: 3 },
+                  { case: { $eq: ['$type', 'purchase'] }, then: 5 },
+                  { case: { $eq: ['$type', 'wishlist'] }, then: 2 }
+                ],
+                default: 0
+              }
+            }
+          }
+        }
+      },
+      { $sort: { lastViewed: -1, score: -1 } },
+      { $limit: Math.max(1, Math.min(parseInt(limit, 10) || 10, 50)) },
+      { $project: { _id: 0, itemId: '$_id', lastViewed: 1, score: 1 } }
+    ]);
+
+    const itemIds = results.map(r => r.itemId);
+
+    res.json({
+      success: true,
+      data: {
+        itemIds,
+        count: itemIds.length,
+        items: results
+      }
+    });
+  } catch (error) {
+    console.error('Recent itemIds error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+module.exports = { ingestBatch, getCountsByTypePerDay, getTopViewed, getPopularity, getUserAffinity, getRecentItemIds };
 
 

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import ProductCard from '../components/ProductCard'
-import TopViewedSidebar from '../components/TopViewedSidebar'
+import TrendingProductsSidebar from '../components/TrendingProductsSidebar'
+import YourPreferencesSidebar from '../components/YourPreferencesSidebar'
 import { emitEvent } from '../utils/eventEmitter'
 import { productApi } from '../utils/apiService'
 
@@ -380,8 +381,9 @@ export default function ProductsPage() {
               </>
             )}
           </div>
-          <div className="lg:col-span-3">
-            <TopViewedSidebar />
+          <div className="lg:col-span-3 space-y-6">
+            <TrendingProductsSidebar />
+            <YourPreferencesSidebar />
           </div>
         </div>
       </div>

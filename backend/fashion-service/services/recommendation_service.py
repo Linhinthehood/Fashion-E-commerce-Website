@@ -21,6 +21,7 @@ from utils.product_api_client import (
     get_product_by_id,
     get_all_active_products
 )
+from utils.events_api_client import get_client as get_events_client
 from utils.db_helper import (
     get_first_image,
     serialize_product
@@ -890,46 +891,116 @@ class RecommendationService:
         options: Optional[Dict] = None
     ) -> Dict:
         """
-        Retrieve a set of personalized candidate products by aggregating
-        similar items from recent_item_ids and applying simple hybrid scoring.
-
+        Retrieve a set of personalized candidate products using hybrid scoring:
+        score = α·embeddingSim + β·popularity + γ·userAffinity
+        
         Args:
             db: Mongo connection (unused for now beyond product lookups)
             recent_item_ids: List of productIds the user viewed/added/purchased recently
             limit: Max candidates to return
-            options: Future use (category/price constraints)
+            options: Dict with optional fields:
+                - userId: User ID for personalization
+                - alpha: Weight for embedding similarity (default: 0.6)
+                - beta: Weight for popularity (default: 0.3)
+                - gamma: Weight for user affinity (default: 0.1)
+                - category: Optional category filter
+                - priceRange: Optional price range filter
         """
         try:
             options = options or {}
             limit = max(1, min(int(limit), 200))
+            user_id = options.get('userId')
+            
+            # Hybrid scoring weights (normalized to sum to 1.0)
+            alpha = float(options.get('alpha', 0.6))  # embedding similarity
+            beta = float(options.get('beta', 0.3))    # popularity
+            gamma = float(options.get('gamma', 0.1))  # user affinity
+            total_weight = alpha + beta + gamma
+            if total_weight > 0:
+                alpha, beta, gamma = alpha / total_weight, beta / total_weight, gamma / total_weight
+            
+            # Fetch popularity and affinity scores (async-like, but synchronous for now)
+            popularity_scores = {}
+            user_affinity_scores = {}
+            
+            events_client = get_events_client()
+            
+            # Fetch popularity scores (cached/aggregated from events)
+            try:
+                popularity_scores = events_client.get_popularity_scores(limit=500)
+                logger.info(f"Fetched popularity scores for {len(popularity_scores)} items")
+            except Exception as e:
+                logger.warning(f"Failed to fetch popularity scores: {e}")
+            
+            # Fetch user affinity if userId provided
+            if user_id:
+                try:
+                    user_affinity_scores = events_client.get_user_affinity(user_id, limit=500)
+                    logger.info(f"Fetched user affinity for user {user_id}: {len(user_affinity_scores)} items")
+                except Exception as e:
+                    logger.warning(f"Failed to fetch user affinity: {e}")
 
             if not recent_item_ids or len(recent_item_ids) == 0:
-                # Fallback: return popular/safe defaults (reuse similar of a few random or top by index)
-                # Here we return top-N by index order as a simple placeholder
+                # Fallback: use popularity scores if available
+                if popularity_scores:
+                    # Sort by popularity and get top items
+                    sorted_items = sorted(popularity_scores.items(), key=lambda kv: -kv[1])[:limit]
+                    # Fetch product details for top popular items
+                    candidates = []
+                    for item_id, pop_score in sorted_items:
+                        try:
+                            product = get_product_by_id(db, item_id)
+                            if product:
+                                candidates.append({
+                                    'product': serialize_product(product),
+                                    'score': round(float(pop_score), 4),
+                                    'breakdown': {
+                                        'popularity': round(float(pop_score), 4),
+                                        'similarity': 0.0,
+                                        'affinity': 0.0
+                                    }
+                                })
+                        except Exception:
+                            continue
+                    if candidates:
+                        return {
+                            'candidates': candidates[:limit],
+                            'count': len(candidates),
+                            'method': 'popularity-fallback'
+                        }
+                
+                # Ultimate fallback: return top-N by index order
                 k = min(limit, (self.index.ntotal if self.index else 0))
                 if self.index is None or k == 0:
                     return { 'candidates': [], 'count': 0, 'method': 'empty' }
-                # Map first k indices to products
                 sims = np.linspace(1.0, 0.7, k).astype('float32')
                 idxs = np.arange(k)
                 mapped = self._map_indices_to_products(db, idxs, sims)
                 candidates = [
                     {
                         'product': serialize_product(p),
-                        'score': round(float(s), 4)
+                        'score': round(float(s), 4),
+                        'breakdown': {
+                            'similarity': round(float(s), 4),
+                            'popularity': 0.0,
+                            'affinity': 0.0
+                        }
                     }
                     for p, s in mapped
                 ][:limit]
                 return { 'candidates': candidates, 'count': len(candidates), 'method': 'fallback-index' }
 
             # Aggregate candidates from each recent item using FAISS path
-            aggregate_scores: Dict[str, float] = {}
+            embedding_scores: Dict[str, float] = {}
             aggregate_products: Dict[str, Dict] = {}
 
             per_seed_k = 50
             for seed_id in recent_item_ids[:10]:  # cap seeds for perf
                 try:
-                    seed_res = self.get_similar_products(db, seed_id, limit=per_seed_k, options={ 'same_category_only': False, 'min_similarity': 0.0 })
+                    seed_res = self.get_similar_products(
+                        db, seed_id, limit=per_seed_k,
+                        options={'same_category_only': False, 'min_similarity': 0.0}
+                    )
                     recs = seed_res.get('recommendations', [])
                     for rec in recs:
                         prod = rec.get('product') or {}
@@ -937,27 +1008,86 @@ class RecommendationService:
                         sim = float(rec.get('similarity', 0.0))
                         if not pid:
                             continue
-                        # Aggregate by max similarity for now
-                        if pid not in aggregate_scores or sim > aggregate_scores[pid]:
-                            aggregate_scores[pid] = sim
+                        # Aggregate by max similarity
+                        if pid not in embedding_scores or sim > embedding_scores[pid]:
+                            embedding_scores[pid] = sim
                             aggregate_products[pid] = prod
-                except Exception:
+                except Exception as e:
+                    logger.debug(f"Error processing seed {seed_id}: {e}")
                     continue
 
-            if not aggregate_scores:
+            if not embedding_scores:
                 return { 'candidates': [], 'count': 0, 'method': 'no-seed-results' }
 
-            # Rank by aggregated score and trim to limit
-            ranked = sorted(aggregate_scores.items(), key=lambda kv: -kv[1])[:limit]
+            # Normalize scores to [0, 1] range for hybrid scoring
+            def normalize_scores(scores: Dict[str, float]) -> Dict[str, float]:
+                if not scores:
+                    return {}
+                max_score = max(scores.values()) if scores.values() else 1.0
+                min_score = min(scores.values()) if scores.values() else 0.0
+                if max_score == min_score:
+                    return {k: 0.5 for k in scores.keys()}
+                return {k: (v - min_score) / (max_score - min_score) for k, v in scores.items()}
+            
+            normalized_embedding = normalize_scores(embedding_scores)
+            normalized_popularity = normalize_scores(popularity_scores)
+            normalized_affinity = normalize_scores(user_affinity_scores)
+
+            # Compute hybrid scores
+            hybrid_scores: Dict[str, Dict] = {}
+            all_item_ids = set(embedding_scores.keys())
+            
+            for item_id in all_item_ids:
+                emb_score = normalized_embedding.get(item_id, 0.0)
+                pop_score = normalized_popularity.get(item_id, 0.0)
+                aff_score = normalized_affinity.get(item_id, 0.0)
+                
+                hybrid_score = (
+                    alpha * emb_score +
+                    beta * pop_score +
+                    gamma * aff_score
+                )
+                
+                hybrid_scores[item_id] = {
+                    'total': hybrid_score,
+                    'breakdown': {
+                        'similarity': round(embedding_scores.get(item_id, 0.0), 4),
+                        'popularity': round(popularity_scores.get(item_id, 0.0), 4),
+                        'affinity': round(user_affinity_scores.get(item_id, 0.0), 4)
+                    }
+                }
+
+            # Rank by hybrid score and trim to limit
+            ranked = sorted(
+                hybrid_scores.items(),
+                key=lambda kv: -kv[1]['total']
+            )[:limit]
+            
             candidates = [
                 {
                     'product': aggregate_products[pid],
-                    'score': round(float(score), 4)
+                    'score': round(float(info['total']), 4),
+                    'breakdown': info['breakdown']
                 }
-                for pid, score in ranked
+                for pid, info in ranked
             ]
 
-            return { 'candidates': candidates, 'count': len(candidates), 'method': 'seeds-faiss-aggregate' }
+            method = 'hybrid-scoring'
+            if user_id:
+                method += '-personalized'
+            else:
+                method += '-anonymous'
+
+            return {
+                'candidates': candidates,
+                'count': len(candidates),
+                'method': method,
+                'weights': {
+                    'alpha': round(alpha, 2),
+                    'beta': round(beta, 2),
+                    'gamma': round(gamma, 2)
+                }
+            }
 
         except Exception as e:
             logger.error(f"Error in retrieve_personalized: {e}", exc_info=True)

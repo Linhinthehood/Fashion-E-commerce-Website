@@ -1,6 +1,6 @@
 const express = require('express');
 const { body, query } = require('express-validator');
-const { ingestBatch, getCountsByTypePerDay, getTopViewed, getPopularity, getUserAffinity } = require('../controllers/eventsController');
+const { ingestBatch, getCountsByTypePerDay, getTopViewed, getPopularity, getUserAffinity, getRecentItemIds } = require('../controllers/eventsController');
 
 const router = express.Router();
 
@@ -40,6 +40,13 @@ router.get('/aggregates/affinity', [
   query('endDate').optional().isISO8601(),
   query('limit').optional().isInt({ min: 1, max: 500 })
 ], getUserAffinity);
+
+// Get recent item IDs for a user (for personalized recommendations)
+router.get('/recent-items', [
+  query('userId').isString().notEmpty().withMessage('userId is required'),
+  query('limit').optional().isInt({ min: 1, max: 50 }),
+  query('days').optional().isInt({ min: 1, max: 365 })
+], getRecentItemIds);
 
 module.exports = router;
 

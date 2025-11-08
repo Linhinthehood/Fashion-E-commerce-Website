@@ -113,6 +113,12 @@ export const API_ENDPOINTS = {
     topViewed: () => buildUrl('/events/aggregates/top-viewed'),
     popularity: () => buildUrl('/events/aggregates/popularity'),
     affinity: () => buildUrl('/events/aggregates/affinity'),
+    recentItems: (userId: string, limit?: number, days?: number) => {
+      const params = new URLSearchParams({ userId });
+      if (limit) params.append('limit', limit.toString());
+      if (days) params.append('days', days.toString());
+      return buildUrl(`/events/recent-items?${params.toString()}`);
+    },
   },
 } as const;
 

@@ -22,6 +22,26 @@ INDEX_PATH = Path(os.environ.get("FAISS_INDEX_PATH", SERVICE_ROOT / "models" / "
 NPZ_PATH = Path(os.environ.get("NPZ_PATH", SERVICE_ROOT / "models" / "cloud_gallery_embeddings.npz"))
 PORT = int(os.environ.get("RECOMMEND_SERVICE_PORT", 3008))
 PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL', 'http://localhost:3002')
+ORDER_SERVICE_URL = os.environ.get('ORDER_SERVICE_URL', 'http://localhost:3003')
+API_GATEWAY_URL = os.environ.get('API_GATEWAY_URL', 'http://localhost:3000')
+
+# Redis configuration
+REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
+REDIS_DB = int(os.environ.get('REDIS_DB', 0))
+REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD', None)
+REDIS_ENABLED = os.environ.get('REDIS_ENABLED', 'true').lower() == 'true'
+
+# Set environment for events API client
+os.environ.setdefault('ORDER_SERVICE_URL', ORDER_SERVICE_URL)
+os.environ.setdefault('API_GATEWAY_URL', API_GATEWAY_URL)
+os.environ.setdefault('USE_API_GATEWAY', 'true')  # Use API Gateway by default
+os.environ.setdefault('REDIS_HOST', REDIS_HOST)
+os.environ.setdefault('REDIS_PORT', str(REDIS_PORT))
+os.environ.setdefault('REDIS_DB', str(REDIS_DB))
+if REDIS_PASSWORD:
+    os.environ.setdefault('REDIS_PASSWORD', REDIS_PASSWORD)
+os.environ.setdefault('REDIS_ENABLED', 'true' if REDIS_ENABLED else 'false')
 
 if not MODEL_PATH.exists():
     logger.error(f"Model file not found: {MODEL_PATH}")
@@ -32,6 +52,7 @@ CORS(app)
 
 logger.info(f"Initializing Recommend Service on port {PORT}")
 logger.info(f"Product Service URL: {PRODUCT_SERVICE_URL}")
+logger.info(f"Redis: {REDIS_HOST}:{REDIS_PORT} (enabled: {REDIS_ENABLED})")
 
 db = None
 
@@ -205,14 +226,33 @@ def retrieve_personalized():
         if not isinstance(recent_item_ids, list):
             return jsonify({'error': 'recentItemIds must be an array'}), 400
         limit = int(data.get('limit', 50))
+        
+        # Build options dict with userId and hybrid scoring weights
         options = data.get('options', {})
+        if 'userId' in data:
+            options['userId'] = data['userId']
+        
+        # Allow override of hybrid scoring weights
+        if 'alpha' in data:
+            options['alpha'] = float(data['alpha'])
+        if 'beta' in data:
+            options['beta'] = float(data['beta'])
+        if 'gamma' in data:
+            options['gamma'] = float(data['gamma'])
 
-        result = recommendation_service.retrieve_personalized(db=db, recent_item_ids=recent_item_ids, limit=limit, options=options)
+        result = recommendation_service.retrieve_personalized(
+            db=db,
+            recent_item_ids=recent_item_ids,
+            limit=limit,
+            options=options
+        )
 
         status = 200 if 'error' not in result else 400
         return jsonify(result), status
+    except ValueError as e:
+        return jsonify({'error': f'Invalid parameter: {str(e)}'}), 400
     except Exception as e:
-        logger.error(f"Error: {e}")
+        logger.error(f"Error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 
