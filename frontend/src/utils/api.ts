@@ -119,6 +119,14 @@ export const API_ENDPOINTS = {
       if (days) params.append('days', days.toString());
       return buildUrl(`/events/recent-items?${params.toString()}`);
     },
+    abTestMetrics: (startDate?: string, endDate?: string, strategy?: string) => {
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
+      if (strategy) params.append('strategy', strategy);
+      const queryString = params.toString();
+      return buildUrl(`/events/ab-test-metrics${queryString ? `?${queryString}` : ''}`);
+    },
   },
 } as const;
 

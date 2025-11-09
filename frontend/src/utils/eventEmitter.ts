@@ -1,11 +1,16 @@
 import { API_ENDPOINTS } from './api'
-type EventType = 'view' | 'add_to_cart' | 'purchase' | 'wishlist' | 'search'
+import { trackItemStrategy, trackItemsStrategy, getItemStrategy, } from './strategyTracker'
+
+type EventType = 'view' | 'add_to_cart' | 'purchase' | 'wishlist' | 'search' | 'impression'
 
 type EventContext = {
   device?: string
   geo?: string
   page?: string
   referrer?: string
+  source?: string // 'recommendation', 'search', 'browse', 'category', etc.
+  strategy?: string // A/B test strategy identifier
+  position?: string // Position on page (e.g., 'home-recommendations', 'sidebar-trending')
 }
 
 type EventPayload = {
@@ -13,6 +18,7 @@ type EventPayload = {
   userId?: string | null
   sessionId?: string
   itemId?: string | null
+  itemIds?: string[] // Array of item IDs for impression events
   variantId?: string | null
   quantity?: number
   price?: number | null
@@ -27,7 +33,8 @@ let timer: number | undefined
 const BATCH_SIZE = 20
 const FLUSH_INTERVAL_MS = 3000
 
-const getSessionId = (): string => {
+// Export getSessionId for use in other modules
+export const getSessionId = (): string => {
   try {
     const key = 'fe_session_id'
     let sid = localStorage.getItem(key)
@@ -62,17 +69,43 @@ const flush = async () => {
   const batch = QUEUE.splice(0, BATCH_SIZE)
 
   try {
-    await fetch(API_ENDPOINTS.events.batch(), {
+    const eventsToSend = batch.map((e) => ({
+      ...e,
+      sessionId: e.sessionId || getSessionId(),
+      userId: e.userId ?? getUserId(),
+      occurredAt: e.occurredAt || new Date().toISOString()
+    }))
+
+    // Debug logging for events being sent
+    const abTestEvents = eventsToSend.filter(e => 
+      e.type === 'impression' || (e.context && (e.context.source === 'recommendation' || e.context.strategy))
+    )
+    if (abTestEvents.length > 0) {
+      console.log('🚀 Sending A/B Testing Events to backend:', abTestEvents.map(e => ({
+        type: e.type,
+        source: e.context?.source,
+        strategy: e.context?.strategy,
+        position: e.context?.position,
+        itemId: e.itemId,
+        itemIds: e.itemIds?.length
+      })))
+    }
+
+    const response = await fetch(API_ENDPOINTS.events.batch(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ events: batch.map((e) => ({
-        ...e,
-        sessionId: e.sessionId || getSessionId(),
-        userId: e.userId ?? getUserId(),
-        occurredAt: e.occurredAt || new Date().toISOString()
-      })) })
+      body: JSON.stringify({ events: eventsToSend })
     })
-  } catch {
+
+    if (!response.ok) {
+      console.error('Failed to send events:', response.status, response.statusText)
+      // Re-queue on failure (best effort)
+      QUEUE.unshift(...batch)
+    } else {
+      console.log(`✅ Successfully sent ${batch.length} events to backend`)
+    }
+  } catch (error) {
+    console.error('Error sending events:', error)
     // Re-queue on failure (best effort)
     QUEUE.unshift(...batch)
   }
@@ -93,16 +126,72 @@ export const emitEvent = (payload: EventPayload) => {
     const page = typeof window !== 'undefined' ? window.location.pathname : undefined
     const referrer = typeof document !== 'undefined' ? document.referrer : undefined
 
-    QUEUE.push({
+    // Track strategy for impression events
+    if (payload.type === 'impression' && payload.itemIds && payload.context) {
+      if (payload.context.source === 'recommendation' && payload.context.strategy) {
+        trackItemsStrategy(payload.itemIds, {
+          source: payload.context.source,
+          strategy: payload.context.strategy,
+          position: payload.context.position
+        })
+      }
+    }
+
+    // Track strategy for view events from recommendations
+    if (payload.type === 'view' && payload.itemId && payload.context) {
+      if (payload.context.source === 'recommendation' && payload.context.strategy) {
+        trackItemStrategy(payload.itemId, {
+          source: payload.context.source,
+          strategy: payload.context.strategy,
+          position: payload.context.position
+        })
+      }
+    }
+
+    // Lookup strategy for add_to_cart events if not provided
+    let context = payload.context || {}
+    if (payload.type === 'add_to_cart' && payload.itemId && !context.strategy) {
+      const strategyContext = getItemStrategy(payload.itemId)
+      if (strategyContext && strategyContext.source === 'recommendation') {
+        context = {
+          ...context,
+          source: strategyContext.source,
+          strategy: strategyContext.strategy,
+          position: strategyContext.position
+        }
+      }
+    }
+
+    // Lookup strategy for purchase events if not provided
+    // For purchase, we need to check all items in the cart
+    // Since purchase event doesn't have itemId, we'll rely on the cart items
+    // This will be handled in CartPage.tsx where we have access to cart items
+
+    const eventWithContext = {
       ...payload,
       sessionId,
       context: {
         device: 'web',
         page,
         referrer,
-        ...(payload.context || {})
+        ...context
       }
-    })
+    }
+
+    // Debug logging for A/B testing events
+    if (payload.type === 'impression' || (eventWithContext.context && (eventWithContext.context.source === 'recommendation' || eventWithContext.context.strategy))) {
+      console.log('📊 A/B Testing Event:', {
+        type: payload.type,
+        itemId: payload.itemId,
+        itemIds: payload.itemIds,
+        source: eventWithContext.context.source,
+        strategy: eventWithContext.context.strategy,
+        position: eventWithContext.context.position,
+        page: eventWithContext.context.page
+      })
+    }
+
+    QUEUE.push(eventWithContext)
 
     if (QUEUE.length >= BATCH_SIZE) {
       void flush()

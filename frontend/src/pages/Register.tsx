@@ -61,14 +61,30 @@ export default function Register() {
       setSuccess(null)
 
       // Prepare data for API call (matching backend authController exactly)
-      const registerData = {
+      const registerData: {
+        name: string;
+        email: string;
+        password: string;
+        phoneNumber?: string;
+        dob?: string;
+        gender?: 'Male' | 'Female' | 'Others';
+        role?: 'Customer';
+      } = {
         name: formData.name.trim(),
         email: formData.email.toLowerCase().trim(),
         password: formData.password,
-        phoneNumber: formData.phoneNumber || undefined,
-        dob: formData.dob || undefined,
-        gender: (formData.gender as 'Male' | 'Female' | 'Others') || undefined,
         role: 'Customer' as const // Backend expects 'Customer' with capital C
+      }
+      
+      // Only include optional fields if they have values
+      if (formData.phoneNumber && formData.phoneNumber.trim()) {
+        registerData.phoneNumber = formData.phoneNumber.trim()
+      }
+      if (formData.dob && formData.dob.trim()) {
+        registerData.dob = formData.dob.trim()
+      }
+      if (formData.gender && formData.gender.trim()) {
+        registerData.gender = formData.gender as 'Male' | 'Female' | 'Others'
       }
 
       // Call backend register API
@@ -97,25 +113,27 @@ export default function Register() {
             }
           })
         }, 3000)
+      } else {
+        // Handle error response from API
+        let errorMessage = response.message || 'Registration failed. Please try again.'
+        
+        // Check for validation errors
+        if (response.errors && Array.isArray(response.errors) && response.errors.length > 0) {
+          const firstError = response.errors[0]
+          errorMessage = firstError.msg || errorMessage
+        }
+        
+        // Check for specific error messages
+        if (response.message && response.message.includes('email')) {
+          errorMessage = 'This email address is already registered. Please use a different email or try logging in.'
+        }
+        
+        setError(errorMessage)
+        console.error('Registration error:', response)
       }
     } catch (err: any) {
       console.error('Registration error:', err)
-      
-      // Handle specific error cases
-      if (err.response?.status === 400) {
-        const errorMessage = err.response?.data?.message || 'Invalid registration data'
-        if (errorMessage.includes('email')) {
-          setError('This email address is already registered. Please use a different email or try logging in.')
-        } else {
-          setError(errorMessage)
-        }
-      } else if (err.response?.status === 429) {
-        setError('Too many registration attempts. Please try again later.')
-      } else if (err.response?.status >= 500) {
-        setError('Server error. Please try again later.')
-      } else {
-        setError('Registration failed. Please check your internet connection and try again.')
-      }
+      setError('Registration failed. Please check your internet connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -268,7 +286,7 @@ export default function Register() {
                 <option value="">Chọn giới tính</option>
                 <option value="Male">Nam</option>
                 <option value="Female">Nữ</option>
-                <option value="Other">Khác</option>
+                <option value="Others">Khác</option>
               </select>
             </div>
 

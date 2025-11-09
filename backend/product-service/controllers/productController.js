@@ -75,7 +75,9 @@ const getProducts = async (req, res) => {
       sortBy = 'createdAt',
       sortOrder = 'desc',
       search,
-      hasVariants = false
+      hasVariants = false,
+      minPrice,
+      maxPrice
     } = req.query;
 
     const pageNum = parseInt(page);
@@ -89,6 +91,23 @@ const getProducts = async (req, res) => {
     if (brand) filter.brand = new RegExp(brand, 'i');
     if (gender) filter.gender = gender;
     if (color) filter.color = new RegExp(color, 'i');
+    
+    // Add price range filter
+    if (minPrice || maxPrice) {
+      filter.defaultPrice = {};
+      if (minPrice) {
+        const minPriceNum = parseFloat(minPrice);
+        if (!isNaN(minPriceNum) && minPriceNum >= 0) {
+          filter.defaultPrice.$gte = minPriceNum;
+        }
+      }
+      if (maxPrice) {
+        const maxPriceNum = parseFloat(maxPrice);
+        if (!isNaN(maxPriceNum) && maxPriceNum >= 0) {
+          filter.defaultPrice.$lte = maxPriceNum;
+        }
+      }
+    }
 
     // Build sort object
     const sort = {};
@@ -601,7 +620,9 @@ const getProductsBySubCategory = async (req, res) => {
       color,
       sortBy = 'createdAt',
       sortOrder = 'desc',
-      search
+      search,
+      minPrice,
+      maxPrice
     } = req.query;
 
     if (!masterCategory || !subCategory) {
@@ -638,6 +659,23 @@ const getProductsBySubCategory = async (req, res) => {
     if (brand) filter.brand = new RegExp(brand, 'i');
     if (gender) filter.gender = gender;
     if (color) filter.color = new RegExp(color, 'i');
+    
+    // Add price range filter
+    if (minPrice || maxPrice) {
+      filter.defaultPrice = {};
+      if (minPrice) {
+        const minPriceNum = parseFloat(minPrice);
+        if (!isNaN(minPriceNum) && minPriceNum >= 0) {
+          filter.defaultPrice.$gte = minPriceNum;
+        }
+      }
+      if (maxPrice) {
+        const maxPriceNum = parseFloat(maxPrice);
+        if (!isNaN(maxPriceNum) && maxPriceNum >= 0) {
+          filter.defaultPrice.$lte = maxPriceNum;
+        }
+      }
+    }
 
     // Build sort object
     const sort = {};

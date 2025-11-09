@@ -740,6 +740,20 @@ export const eventsApi = {
     const url = `${API_ENDPOINTS.events.affinity()}?${searchParams.toString()}`;
     return apiClient.get(url, false); // No auth required (but needs userId)
   },
+  
+  // Get A/B test metrics
+  getABTestMetrics: (params?: {
+    startDate?: string;
+    endDate?: string;
+    strategy?: string;
+  }) => {
+    const url = API_ENDPOINTS.events.abTestMetrics(
+      params?.startDate,
+      params?.endDate,
+      params?.strategy
+    );
+    return apiClient.get(url, true); // Auth required for admin
+  },
 };
 
 // Helpers for Fashion API local history
@@ -911,7 +925,7 @@ export const fashionApi = {
   },
 
   // Personalized retrieval based on recent product interactions from events DB
-  getPersonalizedRecommendations: async (userId: string, limit: number = 8) => {
+  getPersonalizedRecommendations: async (userId: string, limit: number = 8, strategyConfig?: { alpha: number; beta: number; gamma: number }) => {
     try {
       // First, get recent item IDs from events database (not localStorage)
       const recentItemsResponse = await fetch(API_ENDPOINTS.events.recentItems(userId, 10, 30), {
@@ -937,15 +951,25 @@ export const fashionApi = {
         return { success: false, message: 'Chưa có lịch sử sản phẩm để gợi ý' };
       }
 
+      // Build request body with strategy weights if provided
+      const requestBody: any = {
+        recentItemIds: recentIds,
+        userId: userId,  // IMPORTANT: Send userId for personalization
+        limit
+      };
+
+      // Add strategy weights if provided (for A/B testing)
+      if (strategyConfig) {
+        requestBody.alpha = strategyConfig.alpha;
+        requestBody.beta = strategyConfig.beta;
+        requestBody.gamma = strategyConfig.gamma;
+      }
+
       // Call retrieval API with userId AND recentItemIds
       const response = await fetch(API_ENDPOINTS.fashion.retrievePersonalized(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recentItemIds: recentIds,
-          userId: userId,  // IMPORTANT: Send userId for personalization
-          limit
-        })
+        body: JSON.stringify(requestBody)
       });
 
       const data = await response.json();
@@ -957,7 +981,15 @@ export const fashionApi = {
         ? data.candidates.map((c: any) => ({ ...c.product, retrievalScore: c.score }))
         : [];
 
-      return { success: true, data: candidates };
+      // Return strategy identifier if available
+      const strategyId = data.strategy || (strategyConfig ? `hybrid-alpha${strategyConfig.alpha}-beta${strategyConfig.beta}-gamma${strategyConfig.gamma}` : null);
+
+      return { 
+        success: true, 
+        data: candidates,
+        strategy: strategyId, // Return strategy for tracking
+        weights: data.weights || strategyConfig
+      };
     } catch (error) {
       console.error('getPersonalizedRecommendations error:', error);
       return { success: false, message: 'Failed to load recommendations' };

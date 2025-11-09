@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import ProductCard from '../components/ProductCard'
 import TrendingProductsSidebar from '../components/TrendingProductsSidebar'
 import YourPreferencesSidebar from '../components/YourPreferencesSidebar'
+import ProductFilters, { type FilterState } from '../components/ProductFilters'
 import { emitEvent } from '../utils/eventEmitter'
 import { productApi } from '../utils/apiService'
 
@@ -32,12 +33,14 @@ export default function ProductsPage() {
   const [hasMore, setHasMore] = useState(true)
   
   // Filter states
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<FilterState>({
     brand: '',
     gender: '',
     color: '',
     categoryId: '',
-    search: ''
+    search: '',
+    minPrice: undefined,
+    maxPrice: undefined
   })
 
   // Intersection Observer refs
@@ -69,6 +72,8 @@ export default function ProductsPage() {
       if (filters.color) apiParams.color = filters.color
       if (filters.categoryId) apiParams.categoryId = filters.categoryId
       if (filters.search) apiParams.search = filters.search
+      if (filters.minPrice !== undefined) apiParams.minPrice = filters.minPrice
+      if (filters.maxPrice !== undefined) apiParams.maxPrice = filters.maxPrice
       
       const response = await productApi.getProducts(apiParams)
       
@@ -108,27 +113,8 @@ export default function ProductsPage() {
       // Log total products count
       console.log(`📊 Products loaded: ${data.products.length} | Total: ${totalProducts}`)
 
-      // Emit search event when any filter is active (text search or brand/gender/color/category)
-      try {
-        const hasActiveFilter = !!(
-          (filters.search && filters.search.trim().length > 0) ||
-          filters.brand || filters.gender || filters.color || filters.categoryId
-        )
-        if (hasActiveFilter) {
-          const q = [
-            filters.search ? `q=${filters.search.trim()}` : '',
-            filters.brand ? `brand=${filters.brand}` : '',
-            filters.gender ? `gender=${filters.gender}` : '',
-            filters.color ? `color=${filters.color}` : '',
-            filters.categoryId ? `categoryId=${filters.categoryId}` : ''
-          ].filter(Boolean).join(';') || 'filters'
-          emitEvent({
-            type: 'search',
-            searchQuery: q,
-            context: { page: '/products' }
-          })
-        }
-      } catch {}
+      // Note: Search event is now handled via debounced callback in ProductFilters
+      // This ensures events are only sent after user stops typing (3s delay)
       
       // Trust backend hasNextPage when available to avoid off-by-one
       if (data.pagination && typeof data.pagination.hasNextPage === 'boolean') {
@@ -197,7 +183,7 @@ export default function ProductsPage() {
     }
   }, [hasMore, loading, loadingMore, page])
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string | number | undefined) => {
     setFilters(prev => ({ ...prev, [key]: value }))
   }
 
@@ -207,9 +193,33 @@ export default function ProductsPage() {
       gender: '',
       color: '',
       categoryId: '',
-      search: ''
+      search: '',
+      minPrice: undefined,
+      maxPrice: undefined
     })
   }
+
+  // Handle debounced search for event tracking (called after 3s delay)
+  const handleSearchDebounced = useCallback((searchQuery: string) => {
+    if (searchQuery && searchQuery.trim().length > 0) {
+      try {
+        const q = [
+          `q=${searchQuery.trim()}`,
+          filters.brand ? `brand=${filters.brand}` : '',
+          filters.gender ? `gender=${filters.gender}` : '',
+          filters.color ? `color=${filters.color}` : '',
+          filters.categoryId ? `categoryId=${filters.categoryId}` : ''
+        ].filter(Boolean).join(';')
+        emitEvent({
+          type: 'search',
+          searchQuery: q,
+          context: { page: '/products' }
+        })
+      } catch (error) {
+        console.error('Failed to emit search event:', error)
+      }
+    }
+  }, [filters.brand, filters.gender, filters.color, filters.categoryId])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -224,70 +234,18 @@ export default function ProductsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-lg font-semibold mb-4">Bộ lọc</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Search */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
-              <input
-                type="text"
-                placeholder="Tìm kiếm sản phẩm..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Brand */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Thương hiệu</label>
-              <input
-                type="text"
-                placeholder="Nhập thương hiệu..."
-                value={filters.brand}
-                onChange={(e) => handleFilterChange('brand', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Gender */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
-              <select
-                value={filters.gender}
-                onChange={(e) => handleFilterChange('gender', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Tất cả</option>
-                <option value="Male">Nam</option>
-                <option value="Female">Nữ</option>
-                <option value="Unisex">Unisex</option>
-              </select>
-            </div>
-
-            {/* Color */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
-              <input
-                type="text"
-                placeholder="Enter color..."
-                value={filters.color}
-                onChange={(e) => handleFilterChange('color', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-          
-          <div className="mt-4">
-            <button
-              onClick={clearFilters}
-              className="px-4 py-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
-            >
-              Xóa tất cả bộ lọc
-            </button>
-          </div>
-        </div>
+        <ProductFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={clearFilters}
+          onSearchDebounced={handleSearchDebounced}
+          showCategoryFilter={true}
+          customPlaceholders={{
+            search: "Tìm kiếm sản phẩm, thương hiệu...",
+            brand: "Nhập thương hiệu...",
+            color: "Nhập màu sắc..."
+          }}
+        />
 
         {/* Main + Sidebar layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -343,6 +301,8 @@ export default function ProductsPage() {
                       brand={product.brand}
                       imageUrl={product.primaryImage ?? undefined}
                       price={product.defaultPrice}
+                      source="browse"
+                      position="products-page"
                     />
                   ))}
                 </div>

@@ -4,10 +4,13 @@ import BannerCarousel from '../components/BannerCarousel'
 import ProductCard from '../components/ProductCard'
 import { fashionApi } from '../utils/apiService'
 import { useAuth } from '../contexts/AuthContext'
+import { getStrategyConfig, getStrategyIdentifier, isABTestingEnabled } from '../utils/abTesting'
+import { emitEvent, getSessionId } from '../utils/eventEmitter'
 
 export default function Home() {
   const [recommendations, setRecommendations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [strategy, setStrategy] = useState<string | null>(null)
   const { user } = useAuth()
 
   useEffect(() => {
@@ -17,9 +20,35 @@ export default function Home() {
   const loadRecommendations = async () => {
     if (user?._id) {
       try {
-        const response = await fashionApi.getPersonalizedRecommendations(user._id, 8)
+        // Get A/B test strategy for this user
+        const sessionId = getSessionId()
+        const strategyConfig = getStrategyConfig(user._id, sessionId)
+        const strategyId = getStrategyIdentifier(strategyConfig)
+        setStrategy(strategyId)
+
+        // Get recommendations with strategy weights
+        const response = await fashionApi.getPersonalizedRecommendations(
+          user._id, 
+          8,
+          isABTestingEnabled() ? strategyConfig : undefined
+        )
+        
         if (response.success && Array.isArray(response.data)) {
           setRecommendations(response.data)
+          
+          // Emit impression event for A/B testing
+          if (response.data.length > 0 && isABTestingEnabled()) {
+            emitEvent({
+              type: 'impression',
+              itemIds: response.data.map((p: any) => p._id),
+              context: {
+                source: 'recommendation',
+                strategy: response.strategy || strategyId,
+                position: 'home-recommendations',
+                page: '/'
+              }
+            })
+          }
         } else {
           setRecommendations([])
         }
@@ -65,6 +94,9 @@ export default function Home() {
                     }
                     price={product.defaultPrice ?? product.price}
                     brand={product.brand}
+                    source="recommendation"
+                    strategy={strategy || undefined}
+                    position="home-recommendations"
                   />
                 ))}
               </div>

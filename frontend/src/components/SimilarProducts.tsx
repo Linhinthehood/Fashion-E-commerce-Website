@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import ProductCard from './ProductCard'
 import { fashionApi } from '../utils/apiService'
+import { emitEvent } from '../utils/eventEmitter'
 
 type SimilarProduct = {
   _id: string
@@ -35,7 +36,21 @@ export default function SimilarProducts({ productId, limit = 4 }: SimilarProduct
         
         if (response.success && response.data) {
           const recommendations = response.data.recommendations || []
-          setProducts(recommendations.map((item: any) => item.product))
+          const productsList = recommendations.map((item: any) => item.product)
+          setProducts(productsList)
+          
+          // Emit impression event for similar products
+          if (productsList.length > 0) {
+            emitEvent({
+              type: 'impression',
+              itemIds: productsList.map((p: any) => p._id),
+              context: {
+                source: 'recommendation',
+                position: 'product-detail-similar',
+                page: window.location.pathname
+              }
+            })
+          }
         } else {
           setError(response.message || 'Failed to load similar products')
         }
@@ -106,6 +121,8 @@ export default function SimilarProducts({ productId, limit = 4 }: SimilarProduct
                 brand={product.brand}
                 imageUrl={product.images && product.images.length > 0 ? product.images[0] : null}
                 price={product.defaultPrice}
+                source="recommendation"
+                position="product-detail-similar"
               />
             </div>
           ))}

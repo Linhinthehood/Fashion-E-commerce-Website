@@ -464,6 +464,8 @@ export default function CategoryPage() {
                   brand={product.brand}
                   imageUrl={product.primaryImage ?? undefined}
                   price={product.defaultPrice}
+                  source="category"
+                  position="category-page"
                 />
               ))}
             </div>

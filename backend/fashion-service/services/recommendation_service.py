@@ -963,10 +963,17 @@ class RecommendationService:
                         except Exception:
                             continue
                     if candidates:
+                        strategy_id = f"hybrid-alpha{round(alpha, 2)}-beta{round(beta, 2)}-gamma{round(gamma, 2)}"
                         return {
                             'candidates': candidates[:limit],
                             'count': len(candidates),
-                            'method': 'popularity-fallback'
+                            'method': 'popularity-fallback',
+                            'strategy': strategy_id,
+                            'weights': {
+                                'alpha': round(alpha, 2),
+                                'beta': round(beta, 2),
+                                'gamma': round(gamma, 2)
+                            }
                         }
                 
                 # Ultimate fallback: return top-N by index order
@@ -988,7 +995,18 @@ class RecommendationService:
                     }
                     for p, s in mapped
                 ][:limit]
-                return { 'candidates': candidates, 'count': len(candidates), 'method': 'fallback-index' }
+                strategy_id = f"hybrid-alpha{round(alpha, 2)}-beta{round(beta, 2)}-gamma{round(gamma, 2)}"
+                return { 
+                    'candidates': candidates, 
+                    'count': len(candidates), 
+                    'method': 'fallback-index',
+                    'strategy': strategy_id,
+                    'weights': {
+                        'alpha': round(alpha, 2),
+                        'beta': round(beta, 2),
+                        'gamma': round(gamma, 2)
+                    }
+                }
 
             # Aggregate candidates from each recent item using FAISS path
             embedding_scores: Dict[str, float] = {}
@@ -1078,10 +1096,14 @@ class RecommendationService:
             else:
                 method += '-anonymous'
 
+            # Generate strategy identifier for A/B testing
+            strategy_id = f"hybrid-alpha{round(alpha, 2)}-beta{round(beta, 2)}-gamma{round(gamma, 2)}"
+
             return {
                 'candidates': candidates,
                 'count': len(candidates),
                 'method': method,
+                'strategy': strategy_id,  # A/B test strategy identifier
                 'weights': {
                     'alpha': round(alpha, 2),
                     'beta': round(beta, 2),

@@ -15,18 +15,21 @@ const authValidation = {
       .isLength({ min: 6 })
       .withMessage('Password must be at least 6 characters long'),
     body('dob')
+      .optional()
       .isISO8601()
       .withMessage('Please provide a valid date of birth')
       .custom((value) => {
-        if (new Date(value) >= new Date()) {
+        if (value && new Date(value) >= new Date()) {
           throw new Error('Date of birth must be in the past');
         }
         return true;
       }),
     body('phoneNumber')
+      .optional()
       .matches(/^[\+]?[0-9]{9,12}$/)
       .withMessage('Phone number must be 9 to 12 digits'),
     body('gender')
+      .optional()
       .isIn(['Male', 'Female', 'Others'])
       .withMessage('Gender must be one of: Male, Female, Others'),
     body('role')

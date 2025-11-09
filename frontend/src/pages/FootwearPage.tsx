@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 // import { useNavigate } from 'react-router-dom' // For future use
 import ProductCard from '../components/ProductCard'
+import ProductFilters, { type FilterState } from '../components/ProductFilters'
+import { emitEvent } from '../utils/eventEmitter'
 import { productApi } from '../utils/apiService'
 
 type Product = {
@@ -36,11 +38,14 @@ export default function FootwearPage() {
   // const navigate = useNavigate() // For future use
   
   // Filter states - footwear only has 'shoe' subcategory
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<FilterState>({
     brand: '',
     gender: '',
     color: '',
-    search: ''
+    search: '',
+    categoryId: undefined,
+    minPrice: undefined,
+    maxPrice: undefined
   })
 
   // Intersection Observer refs
@@ -62,6 +67,8 @@ export default function FootwearPage() {
       if (filters.gender) apiParams.gender = filters.gender
       if (filters.color) apiParams.color = filters.color
       if (filters.search) apiParams.search = filters.search
+      if (filters.minPrice !== undefined) apiParams.minPrice = filters.minPrice
+      if (filters.maxPrice !== undefined) apiParams.maxPrice = filters.maxPrice
       
       const response = await productApi.getProducts(apiParams)
       
@@ -150,7 +157,7 @@ export default function FootwearPage() {
     }
   }, [hasMore, loading, loadingMore])
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string | number | undefined) => {
     setFilters(prev => ({ ...prev, [key]: value }))
   }
 
@@ -159,9 +166,33 @@ export default function FootwearPage() {
       brand: '',
       gender: '',
       color: '',
-      search: ''
+      search: '',
+      categoryId: undefined,
+      minPrice: undefined,
+      maxPrice: undefined
     })
   }
+
+  // Handle debounced search for event tracking
+  const handleSearchDebounced = useCallback((searchQuery: string) => {
+    if (searchQuery && searchQuery.trim().length > 0) {
+      try {
+        const q = [
+          `q=${searchQuery.trim()}`,
+          filters.brand ? `brand=${filters.brand}` : '',
+          filters.gender ? `gender=${filters.gender}` : '',
+          filters.color ? `color=${filters.color}` : ''
+        ].filter(Boolean).join(';')
+        emitEvent({
+          type: 'search',
+          searchQuery: q,
+          context: { page: '/c/footwear' }
+        })
+      } catch (error) {
+        console.error('Failed to emit search event:', error)
+      }
+    }
+  }, [filters.brand, filters.gender, filters.color])
 
   // Count different shoe types
   const casualShoeCount = products.filter(p => 
@@ -224,66 +255,20 @@ export default function FootwearPage() {
               👟 Showing all footwear - sneakers, dress shoes, casual shoes & more (excludes clothing & accessories)
             </p>
           </div>
-
-          {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
-              <input
-                type="text"
-                placeholder="Search shoes, giày..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
-              <input
-                type="text"
-                placeholder="Enter brand..."
-                value={filters.brand}
-                onChange={(e) => handleFilterChange('brand', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-              <select
-                value={filters.gender}
-                onChange={(e) => handleFilterChange('gender', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Unisex">Unisex</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
-              <input
-                type="text"
-                placeholder="Enter color..."
-                value={filters.color}
-                onChange={(e) => handleFilterChange('color', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-          </div>
-          
-          <div className="mt-4">
-            <button
-              onClick={clearFilters}
-              className="px-4 py-2 text-sm text-green-600 hover:text-green-800 font-medium transition-colors"
-            >
-              Clear all filters
-            </button>
-          </div>
         </div>
+
+        {/* Filters */}
+        <ProductFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={clearFilters}
+          onSearchDebounced={handleSearchDebounced}
+          customPlaceholders={{
+            search: "Tìm kiếm giày, sneakers...",
+            brand: "Nhập thương hiệu...",
+            color: "Nhập màu sắc..."
+          }}
+        />
 
         {/* Products Grid */}
         {loading ? (
@@ -336,6 +321,8 @@ export default function FootwearPage() {
                   brand={product.brand}
                   imageUrl={product.primaryImage ?? undefined}
                   price={product.defaultPrice}
+                  source="category"
+                  position="footwear"
                 />
               ))}
             </div>

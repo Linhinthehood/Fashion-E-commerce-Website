@@ -4,6 +4,7 @@ import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
 import { customerApi, orderApi } from '../utils/apiService'
 import { emitEvent, flushEvents } from '../utils/eventEmitter'
+import { getItemsStrategy } from '../utils/strategyTracker'
 import { useToast } from '../contexts/ToastContext'
 
 type Address = {
@@ -133,14 +134,27 @@ export default function CartPage() {
         throw new Error(addItemsResponse.message || 'Failed to add items to order')
       }
 
-      // Emit purchase event (aggregate), then flush before navigating
+      // Emit purchase event with strategy context from cart items
       try {
+        // Get strategy context from cart items
+        // If multiple items have different strategies, use the strategy from the highest-value item
+        const itemIds = cartItems.map(item => item.productId)
+        const strategyContext = getItemsStrategy(itemIds)
+        
+        // Emit purchase event with strategy if available
         emitEvent({
           type: 'purchase',
           price: getTotalPrice(),
+          context: strategyContext ? {
+            source: strategyContext.source,
+            strategy: strategyContext.strategy,
+            position: strategyContext.position
+          } : undefined
         })
         await flushEvents()
-      } catch {}
+      } catch (error) {
+        console.error('Error emitting purchase event:', error)
+      }
 
       // Success - clear cart and show success message
       clearCart()

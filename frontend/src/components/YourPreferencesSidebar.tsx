@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { eventsApi, productApi } from '../utils/apiService'
+import { emitEvent, getSessionId } from '../utils/eventEmitter'
+import { getStrategyConfig, getStrategyIdentifier, isABTestingEnabled } from '../utils/abTesting'
+import ProductCard from './ProductCard'
 
 type AffinityItem = {
   itemId: string
@@ -69,6 +71,25 @@ export default function YourPreferencesSidebar() {
         }
         
         setItems(products)
+        
+        // Emit impression event for user preferences
+        if (products.length > 0) {
+          // Get strategy for this user (same as Home page)
+          const sessionId = getSessionId()
+          const strategyConfig = getStrategyConfig(user._id, sessionId)
+          const strategyId = isABTestingEnabled() ? getStrategyIdentifier(strategyConfig) : undefined
+          
+          emitEvent({
+            type: 'impression',
+            itemIds: products.map((p: any) => p._id),
+            context: {
+              source: 'recommendation',
+              strategy: strategyId,
+              position: 'sidebar-preferences',
+              page: window.location.pathname
+            }
+          })
+        }
       } catch (e: any) {
         setError(e?.message || 'Failed to load preferences')
       } finally {
@@ -122,42 +143,27 @@ export default function YourPreferencesSidebar() {
         </div>
       ) : (
         <div className="space-y-4">
-          {items.map((p) => (
-            <Link
-              key={p._id}
-              to={`/products/${p._id}`}
-              className="flex gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
-            >
-              <div className="w-16 h-16 rounded overflow-hidden bg-gray-100 flex-shrink-0">
-                {getProductImage(p) ? (
-                  <img
-                    src={getProductImage(p)}
-                    alt={p.name || p.displayName}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                    No Image
-                  </div>
-                )}
+          {items.map((p) => {
+            // Get strategy for this user (same as Home page)
+            const sessionId = getSessionId()
+            const strategyConfig = getStrategyConfig(user._id, sessionId)
+            const strategyId = isABTestingEnabled() ? getStrategyIdentifier(strategyConfig) : undefined
+            
+            return (
+              <div key={p._id} className="space-y-2">
+                <ProductCard
+                  id={p._id}
+                  name={p.name || p.displayName || 'Product'}
+                  brand={p.brand}
+                  imageUrl={getProductImage(p)}
+                  price={p.defaultPrice}
+                  source="recommendation"
+                  strategy={strategyId}
+                  position="sidebar-preferences"
+                />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-gray-900 line-clamp-2">
-                  {p.name || p.displayName || 'Product'}
-                </div>
-                <div className="text-xs text-gray-500">{p.brand}</div>
-                {p.defaultPrice && (
-                  <div className="text-sm font-medium text-blue-600 mt-1">
-                    {new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND',
-                      maximumFractionDigits: 0
-                    }).format(p.defaultPrice)}
-                  </div>
-                )}
-              </div>
-            </Link>
-          ))}
+            )
+          })}
         </div>
       )}
     </aside>

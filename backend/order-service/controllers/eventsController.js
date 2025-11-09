@@ -5,11 +5,19 @@ const validateAndNormalizeEvent = (evt) => {
   const now = new Date();
   const occurredAt = evt.occurredAt ? new Date(evt.occurredAt) : now;
 
+  // Handle itemIds array for impression events
+  let itemIds = null;
+  if (evt.itemIds && Array.isArray(evt.itemIds)) {
+    itemIds = evt.itemIds.map(id => String(id)).filter(id => id.length > 0);
+    if (itemIds.length === 0) itemIds = null;
+  }
+
   return {
     userId: typeof evt.userId === 'string' && evt.userId.length ? evt.userId : null,
     sessionId: String(evt.sessionId || '').trim(),
     type: String(evt.type || '').trim(),
     itemId: evt.itemId ? String(evt.itemId) : null,
+    itemIds: itemIds, // Array of item IDs for impression events
     variantId: evt.variantId ? String(evt.variantId) : null,
     quantity: Number.isFinite(evt.quantity) && evt.quantity > 0 ? Math.floor(evt.quantity) : 1,
     price: Number.isFinite(evt.price) && evt.price >= 0 ? Number(evt.price) : null,
@@ -18,7 +26,10 @@ const validateAndNormalizeEvent = (evt) => {
       device: evt.context?.device ? String(evt.context.device) : null,
       geo: evt.context?.geo ? String(evt.context.geo) : null,
       page: evt.context?.page ? String(evt.context.page) : null,
-      referrer: evt.context?.referrer ? String(evt.context.referrer) : null
+      referrer: evt.context?.referrer ? String(evt.context.referrer) : null,
+      source: evt.context?.source ? String(evt.context.source) : null,
+      strategy: evt.context?.strategy ? String(evt.context.strategy) : null,
+      position: evt.context?.position ? String(evt.context.position) : null
     },
     occurredAt
   };
@@ -46,7 +57,28 @@ const ingestBatch = async (req, res) => {
       docs.push(normalized);
     }
 
+    // Debug logging for A/B testing events
+    const abTestEvents = docs.filter(doc => 
+      doc.type === 'impression' || 
+      (doc.context && (doc.context.source === 'recommendation' || doc.context.strategy))
+    );
+    if (abTestEvents.length > 0) {
+      console.log('📊 Backend received A/B Testing Events:', abTestEvents.map(e => ({
+        type: e.type,
+        userId: e.userId,
+        sessionId: e.sessionId?.substring(0, 8) + '...',
+        source: e.context?.source,
+        strategy: e.context?.strategy,
+        position: e.context?.position,
+        itemId: e.itemId,
+        itemIds: e.itemIds?.length,
+        page: e.context?.page
+      })));
+    }
+
     await Event.insertMany(docs, { ordered: false });
+
+    console.log(`✅ Successfully saved ${docs.length} events to database (${abTestEvents.length} A/B test events)`);
 
     res.status(201).json({ success: true, ingested: docs.length });
   } catch (error) {
@@ -293,6 +325,230 @@ const getRecentItemIds = async (req, res) => {
   }
 };
 
-module.exports = { ingestBatch, getCountsByTypePerDay, getTopViewed, getPopularity, getUserAffinity, getRecentItemIds };
+const getABTestMetrics = async (req, res) => {
+  try {
+    const { startDate, endDate, strategy } = req.query;
+
+    const match = {
+      $or: [
+        { type: 'impression', 'context.source': 'recommendation' },
+        { type: { $in: ['view', 'add_to_cart', 'purchase'] }, 'context.source': 'recommendation' }
+      ]
+    };
+
+    if (startDate || endDate) {
+      match.occurredAt = {};
+      if (startDate) match.occurredAt.$gte = new Date(startDate);
+      if (endDate) match.occurredAt.$lte = new Date(endDate);
+    }
+
+    if (strategy) {
+      match['context.strategy'] = String(strategy);
+    }
+
+    // Get impressions (recommendations shown)
+    const impressions = await Event.aggregate([
+      { $match: { ...match, type: 'impression' } },
+      {
+        $group: {
+          _id: '$context.strategy',
+          count: { $sum: 1 },
+          uniqueSessions: { $addToSet: '$sessionId' },
+          uniqueUsers: { $addToSet: '$userId' }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          strategy: '$_id',
+          impressions: '$count',
+          uniqueSessions: { $size: '$uniqueSessions' },
+          uniqueUsers: { $size: { $filter: { input: '$uniqueUsers', as: 'u', cond: { $ne: ['$$u', null] } } } }
+        }
+      }
+    ]);
+
+    // Get clicks (views from recommendations)
+    const clicks = await Event.aggregate([
+      { $match: { ...match, type: 'view', 'context.source': 'recommendation' } },
+      {
+        $group: {
+          _id: '$context.strategy',
+          count: { $sum: 1 },
+          uniqueItems: { $addToSet: '$itemId' }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          strategy: '$_id',
+          clicks: '$count',
+          uniqueItemsClicked: { $size: { $filter: { input: '$uniqueItems', as: 'i', cond: { $ne: ['$$i', null] } } } }
+        }
+      }
+    ]);
+
+    // Get add_to_cart from recommendations
+    const addToCarts = await Event.aggregate([
+      { $match: { ...match, type: 'add_to_cart', 'context.source': 'recommendation' } },
+      {
+        $group: {
+          _id: '$context.strategy',
+          count: { $sum: 1 },
+          uniqueItems: { $addToSet: '$itemId' }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          strategy: '$_id',
+          addToCarts: '$count',
+          uniqueItemsAdded: { $size: { $filter: { input: '$uniqueItems', as: 'i', cond: { $ne: ['$$i', null] } } } }
+        }
+      }
+    ]);
+
+    // Get purchases from recommendations
+    const purchases = await Event.aggregate([
+      { $match: { ...match, type: 'purchase', 'context.source': 'recommendation' } },
+      {
+        $group: {
+          _id: '$context.strategy',
+          count: { $sum: 1 },
+          revenue: { $sum: '$price' },
+          uniqueItems: { $addToSet: '$itemId' }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          strategy: '$_id',
+          purchases: '$count',
+          revenue: '$revenue',
+          uniqueItemsPurchased: { $size: { $filter: { input: '$uniqueItems', as: 'i', cond: { $ne: ['$$i', null] } } } }
+        }
+      }
+    ]);
+
+    // Combine metrics by strategy
+    const strategyMap = new Map();
+
+    // Initialize with impressions
+    impressions.forEach(imp => {
+      strategyMap.set(imp.strategy || 'unknown', {
+        strategy: imp.strategy || 'unknown',
+        impressions: imp.impressions || 0,
+        uniqueSessions: imp.uniqueSessions || 0,
+        uniqueUsers: imp.uniqueUsers || 0,
+        clicks: 0,
+        addToCarts: 0,
+        purchases: 0,
+        revenue: 0,
+        uniqueItemsClicked: 0,
+        uniqueItemsAdded: 0,
+        uniqueItemsPurchased: 0
+      });
+    });
+
+    // Add clicks
+    clicks.forEach(click => {
+      const key = click.strategy || 'unknown';
+      if (!strategyMap.has(key)) {
+        strategyMap.set(key, {
+          strategy: key,
+          impressions: 0,
+          uniqueSessions: 0,
+          uniqueUsers: 0,
+          clicks: 0,
+          addToCarts: 0,
+          purchases: 0,
+          revenue: 0,
+          uniqueItemsClicked: 0,
+          uniqueItemsAdded: 0,
+          uniqueItemsPurchased: 0
+        });
+      }
+      const metrics = strategyMap.get(key);
+      metrics.clicks = click.clicks || 0;
+      metrics.uniqueItemsClicked = click.uniqueItemsClicked || 0;
+    });
+
+    // Add add_to_carts
+    addToCarts.forEach(atc => {
+      const key = atc.strategy || 'unknown';
+      if (!strategyMap.has(key)) {
+        strategyMap.set(key, {
+          strategy: key,
+          impressions: 0,
+          uniqueSessions: 0,
+          uniqueUsers: 0,
+          clicks: 0,
+          addToCarts: 0,
+          purchases: 0,
+          revenue: 0,
+          uniqueItemsClicked: 0,
+          uniqueItemsAdded: 0,
+          uniqueItemsPurchased: 0
+        });
+      }
+      const metrics = strategyMap.get(key);
+      metrics.addToCarts = atc.addToCarts || 0;
+      metrics.uniqueItemsAdded = atc.uniqueItemsAdded || 0;
+    });
+
+    // Add purchases
+    purchases.forEach(purchase => {
+      const key = purchase.strategy || 'unknown';
+      if (!strategyMap.has(key)) {
+        strategyMap.set(key, {
+          strategy: key,
+          impressions: 0,
+          uniqueSessions: 0,
+          uniqueUsers: 0,
+          clicks: 0,
+          addToCarts: 0,
+          purchases: 0,
+          revenue: 0,
+          uniqueItemsClicked: 0,
+          uniqueItemsAdded: 0,
+          uniqueItemsPurchased: 0
+        });
+      }
+      const metrics = strategyMap.get(key);
+      metrics.purchases = purchase.purchases || 0;
+      metrics.revenue = purchase.revenue || 0;
+      metrics.uniqueItemsPurchased = purchase.uniqueItemsPurchased || 0;
+    });
+
+    // Calculate rates
+    const results = Array.from(strategyMap.values()).map(metrics => ({
+      ...metrics,
+      ctr: metrics.impressions > 0 ? (metrics.clicks / metrics.impressions) : 0,
+      atcRate: metrics.impressions > 0 ? (metrics.addToCarts / metrics.impressions) : 0,
+      conversionRate: metrics.impressions > 0 ? (metrics.purchases / metrics.impressions) : 0,
+      revenuePerImpression: metrics.impressions > 0 ? (metrics.revenue / metrics.impressions) : 0
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        strategies: results,
+        summary: {
+          totalStrategies: results.length,
+          totalImpressions: results.reduce((sum, m) => sum + m.impressions, 0),
+          totalClicks: results.reduce((sum, m) => sum + m.clicks, 0),
+          totalAddToCarts: results.reduce((sum, m) => sum + m.addToCarts, 0),
+          totalPurchases: results.reduce((sum, m) => sum + m.purchases, 0),
+          totalRevenue: results.reduce((sum, m) => sum + m.revenue, 0)
+        }
+      }
+    });
+  } catch (error) {
+    console.error('AB test metrics error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+module.exports = { ingestBatch, getCountsByTypePerDay, getTopViewed, getPopularity, getUserAffinity, getRecentItemIds, getABTestMetrics };
 
 

@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
+import ProductFilters, { type FilterState } from '../components/ProductFilters'
+import { emitEvent } from '../utils/eventEmitter'
 import { productApi } from '../utils/apiService'
 
 type Product = {
@@ -36,13 +38,16 @@ export default function AccessoriesPage() {
   const navigate = useNavigate()
   
   // Filter states
-  const [filters, setFilters] = useState({
-    subcategory: '', // hat, watch, wallet
+  const [filters, setFilters] = useState<FilterState>({
     brand: '',
     gender: '',
     color: '',
-    search: ''
+    search: '',
+    categoryId: undefined,
+    minPrice: undefined,
+    maxPrice: undefined
   })
+  const [subcategory, setSubcategory] = useState('') // hat, watch, wallet
 
   // Intersection Observer refs
   const observerRef = useRef<HTMLDivElement>(null)
@@ -63,11 +68,13 @@ export default function AccessoriesPage() {
       if (filters.gender) apiParams.gender = filters.gender
       if (filters.color) apiParams.color = filters.color
       if (filters.search) apiParams.search = filters.search
+      if (filters.minPrice !== undefined) apiParams.minPrice = filters.minPrice
+      if (filters.maxPrice !== undefined) apiParams.maxPrice = filters.maxPrice
       
       let response
-      if (['hat','watch','wallet'].includes(filters.subcategory)) {
+      if (['hat','watch','wallet'].includes(subcategory)) {
         const mapName: Record<string, string> = { hat: 'Hat', watch: 'Watch', wallet: 'Wallet' }
-        response = await productApi.getProductsBySubCategory('Accessories', mapName[filters.subcategory], apiParams)
+        response = await productApi.getProductsBySubCategory('Accessories', mapName[subcategory], apiParams)
       } else {
         response = await productApi.getProducts(apiParams)
       }
@@ -88,7 +95,7 @@ export default function AccessoriesPage() {
       }
       
       let filteredProducts = data.products
-      if (!['hat','watch','wallet'].includes(filters.subcategory)) {
+      if (!['hat','watch','wallet'].includes(subcategory)) {
         filteredProducts = data.products.filter(product => {
           const category = product.categoryId as any
           return category?.masterCategory === 'Accessories'
@@ -119,14 +126,14 @@ export default function AccessoriesPage() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }, [filters])
+  }, [filters, subcategory])
 
   useEffect(() => {
     setPage(1)
     setProducts([])
     setHasMore(true)
     fetchProducts(1, false)
-  }, [filters])
+  }, [filters, subcategory])
 
   useEffect(() => {
     if (page > 1) {
@@ -147,10 +154,10 @@ export default function AccessoriesPage() {
       subcategoryFromPath = 'wallet'
     }
     
-    if (subcategoryFromPath !== filters.subcategory) {
-      setFilters(prev => ({ ...prev, subcategory: subcategoryFromPath }))
+    if (subcategoryFromPath !== subcategory) {
+      setSubcategory(subcategoryFromPath)
     }
-  }, [window.location.pathname])
+  }, [window.location.pathname, subcategory])
 
   useEffect(() => {
     const currentObserver = observerRef.current
@@ -179,32 +186,58 @@ export default function AccessoriesPage() {
     }
   }, [hasMore, loading, loadingMore])
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string | number | undefined) => {
     setFilters(prev => ({ ...prev, [key]: value }))
-    
-    if (key === 'subcategory') {
-      if (value === 'hat') {
-        navigate('/c/accessories/hat')
-      } else if (value === 'watch') {
-        navigate('/c/accessories/watch')
-      } else if (value === 'wallet') {
-        navigate('/c/accessories/wallet')
-      } else {
-        navigate('/c/accessories')
-      }
+  }
+
+  const handleSubcategoryChange = (value: string) => {
+    setSubcategory(value)
+    if (value === 'hat') {
+      navigate('/c/accessories/hat')
+    } else if (value === 'watch') {
+      navigate('/c/accessories/watch')
+    } else if (value === 'wallet') {
+      navigate('/c/accessories/wallet')
+    } else {
+      navigate('/c/accessories')
     }
   }
 
   const clearFilters = () => {
     setFilters({
-      subcategory: '',
       brand: '',
       gender: '',
       color: '',
-      search: ''
+      search: '',
+      categoryId: undefined,
+      minPrice: undefined,
+      maxPrice: undefined
     })
+    setSubcategory('')
     navigate('/c/accessories')
   }
+
+  // Handle debounced search for event tracking
+  const handleSearchDebounced = useCallback((searchQuery: string) => {
+    if (searchQuery && searchQuery.trim().length > 0) {
+      try {
+        const q = [
+          `q=${searchQuery.trim()}`,
+          filters.brand ? `brand=${filters.brand}` : '',
+          filters.gender ? `gender=${filters.gender}` : '',
+          filters.color ? `color=${filters.color}` : '',
+          subcategory ? `subcategory=${subcategory}` : ''
+        ].filter(Boolean).join(';')
+        emitEvent({
+          type: 'search',
+          searchQuery: q,
+          context: { page: '/c/accessories' }
+        })
+      } catch (error) {
+        console.error('Failed to emit search event:', error)
+      }
+    }
+  }, [filters.brand, filters.gender, filters.color, subcategory])
 
   // Count products by type (for future use)
   // const hatCount = products.filter(p => 
@@ -229,15 +262,15 @@ export default function AccessoriesPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {filters.subcategory === 'hat' ? 'Bộ sưu tập Mũ' :
-             filters.subcategory === 'watch' ? 'Bộ sưu tập Đồng hồ' :
-             filters.subcategory === 'wallet' ? 'Bộ sưu tập Ví' : 
+            {subcategory === 'hat' ? 'Bộ sưu tập Mũ' :
+             subcategory === 'watch' ? 'Bộ sưu tập Đồng hồ' :
+             subcategory === 'wallet' ? 'Bộ sưu tập Ví' : 
              'Bộ sưu tập Phụ kiện'}
           </h1>
           <p className="text-gray-600">
-            {filters.subcategory === 'hat' ? 'Mũ, nón & phụ kiện đội đầu' :
-             filters.subcategory === 'watch' ? 'Đồng hồ cao cấp & phụ kiện' :
-             filters.subcategory === 'wallet' ? 'Ví & sản phẩm da' :
+            {subcategory === 'hat' ? 'Mũ, nón & phụ kiện đội đầu' :
+             subcategory === 'watch' ? 'Đồng hồ cao cấp & phụ kiện' :
+             subcategory === 'wallet' ? 'Ví & sản phẩm da' :
              'Hoàn thiện phong cách với phụ kiện cao cấp'} - {totalProducts} mặt hàng có sẵn
           </p>
           
@@ -246,139 +279,42 @@ export default function AccessoriesPage() {
             <a href="/" className="hover:text-gray-700">Trang chủ</a>
             <span>/</span>
             <span className="text-gray-900">Phụ kiện</span>
-            {filters.subcategory && (
+            {subcategory && (
               <>
                 <span>/</span>
                 <span className="text-gray-900 capitalize">
-                  {filters.subcategory === 'hat' ? 'Hat' : 
-                   filters.subcategory === 'watch' ? 'Watch' : 'Wallet'}
+                  {subcategory === 'hat' ? 'Hat' : 
+                   subcategory === 'watch' ? 'Watch' : 'Wallet'}
                 </span>
               </>
             )}
           </nav>
         </div>
 
-        {/* Category Quick Filter Tabs */}
-        <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-          <div className="flex flex-wrap gap-2 mb-6">
-            <button
-              onClick={() => handleFilterChange('subcategory', '')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                !filters.subcategory
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Tất cả phụ kiện
-            </button>
-            <button
-              onClick={() => handleFilterChange('subcategory', 'hat')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                filters.subcategory === 'hat'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              🧢 Mũ 
-            </button>
-            <button
-              onClick={() => handleFilterChange('subcategory', 'watch')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                filters.subcategory === 'watch'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              ⌚ Đồng hồ 
-            </button>
-            <button
-              onClick={() => handleFilterChange('subcategory', 'wallet')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                filters.subcategory === 'wallet'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              👛 Ví 
-            </button>
-          </div>
-
-          {/* Description */}
-          <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
-            <p className="text-sm text-purple-800">
-              {filters.subcategory === 'hat' ? 
-                '🧢 Hiển thị mũ, nón và phụ kiện đội đầu' :
-               filters.subcategory === 'watch' ? 
-                '⌚ Hiển thị đồng hồ và phụ kiện đeo tay' :
-               filters.subcategory === 'wallet' ? 
-                '👛 Hiển thị ví và sản phẩm da' :
-                '✨ Hiển thị tất cả phụ kiện - mũ, đồng hồ, ví & hơn thế nữa (không bao gồm quần áo & giày)'
-              }
-            </p>
-          </div>
-
-          {/* Additional Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
-              <input
-                type="text"
-                placeholder={filters.subcategory === 'hat' ? 'Tìm mũ, nón...' : 
-                           filters.subcategory === 'watch' ? 'Tìm đồng hồ...' : 
-                           filters.subcategory === 'wallet' ? 'Tìm ví...' :
-                           'Tìm phụ kiện...'}
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
-              <input
-                type="text"
-                placeholder="Enter brand..."
-                value={filters.brand}
-                onChange={(e) => handleFilterChange('brand', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-              <select
-                value={filters.gender}
-                onChange={(e) => handleFilterChange('gender', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              >
-                <option value="">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Unisex">Unisex</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
-              <input
-                type="text"
-                placeholder="Enter color..."
-                value={filters.color}
-                onChange={(e) => handleFilterChange('color', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-          </div>
-          
-          <div className="mt-4">
-            <button
-              onClick={clearFilters}
-              className="px-4 py-2 text-sm text-purple-600 hover:text-purple-800 font-medium transition-colors"
-            >
-              Xóa tất cả bộ lọc
-            </button>
-          </div>
-        </div>
+        {/* Filters */}
+        <ProductFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={clearFilters}
+          onSearchDebounced={handleSearchDebounced}
+          showSubcategoryFilter={true}
+          subcategoryOptions={[
+            { value: '', label: 'Tất cả phụ kiện' },
+            { value: 'hat', label: '🧢 Mũ' },
+            { value: 'watch', label: '⌚ Đồng hồ' },
+            { value: 'wallet', label: '👛 Ví' }
+          ]}
+          onSubcategoryChange={handleSubcategoryChange}
+          currentSubcategory={subcategory}
+          customPlaceholders={{
+            search: subcategory === 'hat' ? 'Tìm mũ, nón...' : 
+                   subcategory === 'watch' ? 'Tìm đồng hồ...' : 
+                   subcategory === 'wallet' ? 'Tìm ví...' :
+                   'Tìm phụ kiện...',
+            brand: 'Nhập thương hiệu...',
+            color: 'Nhập màu sắc...'
+          }}
+        />
 
         {/* Products Grid */}
         {loading ? (
@@ -413,9 +349,9 @@ export default function AccessoriesPage() {
           <div className="text-center py-12">
             <div className="text-gray-600 text-lg font-medium mb-2">Không tìm thấy phụ kiện</div>
             <p className="text-gray-500 mb-4">
-              {filters.subcategory === 'hat' ? 'Không tìm thấy mũ hoặc nón phù hợp' :
-               filters.subcategory === 'watch' ? 'Không tìm thấy đồng hồ phù hợp' :
-               filters.subcategory === 'wallet' ? 'Không tìm thấy ví phù hợp' :
+              {subcategory === 'hat' ? 'Không tìm thấy mũ hoặc nón phù hợp' :
+               subcategory === 'watch' ? 'Không tìm thấy đồng hồ phù hợp' :
+               subcategory === 'wallet' ? 'Không tìm thấy ví phù hợp' :
                'Không tìm thấy phụ kiện - thử điều chỉnh bộ lọc của bạn'}
             </p>
             <button
@@ -436,6 +372,8 @@ export default function AccessoriesPage() {
                   brand={product.brand}
                   imageUrl={product.primaryImage ?? undefined}
                   price={product.defaultPrice}
+                  source="category"
+                  position={`accessories-${subcategory || 'all'}`}
                 />
               ))}
             </div>

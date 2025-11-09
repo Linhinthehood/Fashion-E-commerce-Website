@@ -38,7 +38,9 @@ const getProductsValidation = [
   query('gender').optional().isIn(['Male', 'Female', 'Unisex']).withMessage('Invalid gender'),
   query('color').optional().isLength({ max: 50 }).withMessage('Color cannot exceed 50 characters'),
   query('sortBy').optional().isIn(['createdAt', 'name', 'brand']).withMessage('Invalid sort field'),
-  query('sortOrder').optional().isIn(['asc', 'desc']).withMessage('Sort order must be asc or desc')
+  query('sortOrder').optional().isIn(['asc', 'desc']).withMessage('Sort order must be asc or desc'),
+  query('minPrice').optional().isFloat({ min: 0 }).withMessage('Min price must be a non-negative number'),
+  query('maxPrice').optional().isFloat({ min: 0 }).withMessage('Max price must be a non-negative number')
 ];
 
 const getProductByIdValidation = [

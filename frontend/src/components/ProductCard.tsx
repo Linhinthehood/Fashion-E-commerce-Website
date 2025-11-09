@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useEffect } from 'react'
-import { fashionApi } from '../utils/apiService'
-import { useAuth } from '../contexts/AuthContext'
+import { emitEvent } from '../utils/eventEmitter'
 
 type ProductCardProps = {
   id: string
@@ -9,6 +7,9 @@ type ProductCardProps = {
   imageUrl?: string | null
   price?: number
   brand?: string
+  source?: string // 'recommendation', 'search', 'browse', etc.
+  strategy?: string // A/B test strategy identifier
+  position?: string // Position on page
 }
 
 function formatCurrencyVND(amount: number): string {
@@ -24,28 +25,28 @@ export default function ProductCard({
   name, 
   imageUrl, 
   price, 
-  brand
+  brand,
+  source,
+  strategy,
+  position
 }: ProductCardProps) {
-  const { user } = useAuth()
-
-  // Track product view for AI learning
-  useEffect(() => {
-    const trackProductView = async () => {
-      if (user?._id) {
-        try {
-          await fashionApi.trackInteraction(user._id, id, 'view')
-        } catch (error) {
-          console.error('Failed to track product view:', error)
-        }
+  const handleClick = () => {
+    // Track view event with source and strategy for A/B testing
+    emitEvent({
+      type: 'view',
+      itemId: id,
+      context: {
+        source: source || 'browse',
+        strategy: strategy,
+        position: position,
+        page: window.location.pathname
       }
-    }
-    
-    trackProductView()
-  }, [id, user?._id])
+    })
+  }
 
   return (
     <div className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200">
-      <Link to={`/product/${id}`} className="block">
+      <Link to={`/products/${id}`} onClick={handleClick} className="block">
         {/* Image Container */}
         <div className="aspect-square bg-gray-100 relative overflow-hidden">
           {imageUrl ? (

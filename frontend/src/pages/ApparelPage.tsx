@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
+import ProductFilters, { type FilterState } from '../components/ProductFilters'
+import { emitEvent } from '../utils/eventEmitter'
 import { productApi } from '../utils/apiService'
 
 type Product = {
@@ -36,13 +38,16 @@ export default function ApparelPage() {
   const navigate = useNavigate()
   
   // Filter states
-  const [filters, setFilters] = useState({
-    subcategory: '', // topwear or bottomwear
+  const [filters, setFilters] = useState<FilterState>({
     brand: '',
     gender: '',
     color: '',
-    search: ''
+    search: '',
+    categoryId: undefined,
+    minPrice: undefined,
+    maxPrice: undefined
   })
+  const [subcategory, setSubcategory] = useState('') // topwear or bottomwear
 
   // Intersection Observer refs
   const observerRef = useRef<HTMLDivElement>(null)
@@ -64,9 +69,11 @@ export default function ApparelPage() {
       if (filters.gender) apiParams.gender = filters.gender
       if (filters.color) apiParams.color = filters.color
       if (filters.search) apiParams.search = filters.search
+      if (filters.minPrice !== undefined) apiParams.minPrice = filters.minPrice
+      if (filters.maxPrice !== undefined) apiParams.maxPrice = filters.maxPrice
 
-      if (filters.subcategory === 'topwear' || filters.subcategory === 'bottomwear') {
-        const subName = filters.subcategory === 'topwear' ? 'Topwear' : 'Bottomwear'
+      if (subcategory === 'topwear' || subcategory === 'bottomwear') {
+        const subName = subcategory === 'topwear' ? 'Topwear' : 'Bottomwear'
         response = await productApi.getProductsBySubCategory('Apparel', subName, apiParams)
       } else {
         // Fallback: general list then filter on FE (no backend master category filter available)
@@ -90,7 +97,7 @@ export default function ApparelPage() {
       
       // If backend handled subcategory, keep products; else filter FE by Apparel
       let filteredProducts = data.products
-      if (!(filters.subcategory === 'topwear' || filters.subcategory === 'bottomwear')) {
+      if (!(subcategory === 'topwear' || subcategory === 'bottomwear')) {
         filteredProducts = data.products.filter(product => {
           const category = product.categoryId as any
           return category?.masterCategory === 'Apparel'
@@ -121,7 +128,7 @@ export default function ApparelPage() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }, [filters]) // Remove products.length dependency
+  }, [filters, subcategory]) // Include subcategory in dependencies
 
   // Initial load and filter changes
   useEffect(() => {
@@ -129,7 +136,7 @@ export default function ApparelPage() {
     setProducts([])
     setHasMore(true)
     fetchProducts(1, false)
-  }, [filters])
+  }, [filters, subcategory])
 
   // Load more when page changes
   useEffect(() => {
@@ -177,36 +184,62 @@ export default function ApparelPage() {
       subcategoryFromPath = 'bottomwear'
     }
     
-    if (subcategoryFromPath !== filters.subcategory) {
-      setFilters(prev => ({ ...prev, subcategory: subcategoryFromPath }))
+    if (subcategoryFromPath !== subcategory) {
+      setSubcategory(subcategoryFromPath)
     }
-  }, [window.location.pathname])
+  }, [window.location.pathname, subcategory])
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string | number | undefined) => {
     setFilters(prev => ({ ...prev, [key]: value }))
-    
+  }
+
+  const handleSubcategoryChange = (value: string) => {
+    setSubcategory(value)
     // Navigate to proper URL for subcategory changes
-    if (key === 'subcategory') {
-      if (value === 'topwear') {
-        navigate('/c/apparel/topwear')
-      } else if (value === 'bottomwear') {
-        navigate('/c/apparel/bottomwear')
-      } else {
-        navigate('/c/apparel')
-      }
+    if (value === 'topwear') {
+      navigate('/c/apparel/topwear')
+    } else if (value === 'bottomwear') {
+      navigate('/c/apparel/bottomwear')
+    } else {
+      navigate('/c/apparel')
     }
   }
 
   const clearFilters = () => {
     setFilters({
-      subcategory: '',
       brand: '',
       gender: '',
       color: '',
-      search: ''
+      search: '',
+      categoryId: undefined,
+      minPrice: undefined,
+      maxPrice: undefined
     })
+    setSubcategory('')
     navigate('/c/apparel') // Navigate to base apparel page
   }
+
+  // Handle debounced search for event tracking
+  const handleSearchDebounced = useCallback((searchQuery: string) => {
+    if (searchQuery && searchQuery.trim().length > 0) {
+      try {
+        const q = [
+          `q=${searchQuery.trim()}`,
+          filters.brand ? `brand=${filters.brand}` : '',
+          filters.gender ? `gender=${filters.gender}` : '',
+          filters.color ? `color=${filters.color}` : '',
+          subcategory ? `subcategory=${subcategory}` : ''
+        ].filter(Boolean).join(';')
+        emitEvent({
+          type: 'search',
+          searchQuery: q,
+          context: { page: '/c/apparel' }
+        })
+      } catch (error) {
+        console.error('Failed to emit search event:', error)
+      }
+    }
+  }, [filters.brand, filters.gender, filters.color, subcategory])
 
   // Count products by type for display (for future use)
   // const topwearCount = products.filter(p => 
@@ -225,13 +258,13 @@ export default function ApparelPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {filters.subcategory === 'topwear' ? 'Bộ sưu tập Áo' :
-             filters.subcategory === 'bottomwear' ? 'Bộ sưu tập Quần' : 
+            {subcategory === 'topwear' ? 'Bộ sưu tập Áo' :
+             subcategory === 'bottomwear' ? 'Bộ sưu tập Quần' : 
              'Bộ sưu tập Trang phục'}
           </h1>
           <p className="text-gray-600">
-            {filters.subcategory === 'topwear' ? 'Áo sơ mi, áo phông & áo trên' :
-             filters.subcategory === 'bottomwear' ? 'Quần, jeans & quần tây' :
+            {subcategory === 'topwear' ? 'Áo sơ mi, áo phông & áo trên' :
+             subcategory === 'bottomwear' ? 'Quần, jeans & quần tây' :
              'Bộ sưu tập thời trang cao cấp - áo, quần & hơn thế nữa'} - {totalProducts} mặt hàng có sẵn
           </p>
           
@@ -240,130 +273,39 @@ export default function ApparelPage() {
             <a href="/" className="hover:text-gray-700">Trang chủ</a>
             <span>/</span>
             <span className="text-gray-900">Trang phục</span>
-            {filters.subcategory && (
+            {subcategory && (
               <>
                 <span>/</span>
                 <span className="text-gray-900 capitalize">
-                  {filters.subcategory === 'topwear' ? 'Topwear' : 'Bottomwear'}
+                  {subcategory === 'topwear' ? 'Topwear' : 'Bottomwear'}
                 </span>
               </>
             )}
           </nav>
         </div>
 
-        {/* Category Quick Filter Tabs */}
-        <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-          <div className="flex flex-wrap gap-2 mb-6">
-            <button
-              onClick={() => handleFilterChange('subcategory', '')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                !filters.subcategory
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Tất cả trang phục
-            </button>
-            <button
-              onClick={() => handleFilterChange('subcategory', 'topwear')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                filters.subcategory === 'topwear'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              👕 Áo
-            </button>
-            <button
-              onClick={() => handleFilterChange('subcategory', 'bottomwear')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                filters.subcategory === 'bottomwear'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              👖 Quần 
-            </button>
-          </div>
-
-          {/* Description for current selection */}
-          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-800">
-              {filters.subcategory === 'topwear' ? 
-                '👕 Hiển thị áo sơ mi, áo phông và các loại áo trên' :
-               filters.subcategory === 'bottomwear' ? 
-                '👖 Hiển thị quần, jeans và quần tây' :
-                '👔 Hiển thị tất cả trang phục - cả áo và quần (không bao gồm phụ kiện & giày)'
-              }
-            </p>
-          </div>
-
-          {/* Additional Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Search */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
-              <input
-                type="text"
-                placeholder={filters.subcategory === 'topwear' ? 'Tìm áo...' : 
-                           filters.subcategory === 'bottomwear' ? 'Tìm quần...' : 
-                           'Tìm trang phục...'}
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Brand */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
-              <input
-                type="text"
-                placeholder="Enter brand..."
-                value={filters.brand}
-                onChange={(e) => handleFilterChange('brand', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Gender */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-              <select
-                value={filters.gender}
-                onChange={(e) => handleFilterChange('gender', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Unisex">Unisex</option>
-              </select>
-            </div>
-
-            {/* Color */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
-              <input
-                type="text"
-                placeholder="Enter color..."
-                value={filters.color}
-                onChange={(e) => handleFilterChange('color', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-          
-          {/* Clear Filters Button */}
-          <div className="mt-4">
-            <button
-              onClick={clearFilters}
-              className="px-4 py-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
-            >
-              Xóa tất cả bộ lọc
-            </button>
-          </div>
-        </div>
+        {/* Filters */}
+        <ProductFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={clearFilters}
+          onSearchDebounced={handleSearchDebounced}
+          showSubcategoryFilter={true}
+          subcategoryOptions={[
+            { value: '', label: 'Tất cả trang phục' },
+            { value: 'topwear', label: '👕 Áo' },
+            { value: 'bottomwear', label: '👖 Quần' }
+          ]}
+          onSubcategoryChange={handleSubcategoryChange}
+          currentSubcategory={subcategory}
+          customPlaceholders={{
+            search: subcategory === 'topwear' ? 'Tìm áo...' : 
+                   subcategory === 'bottomwear' ? 'Tìm quần...' : 
+                   'Tìm trang phục...',
+            brand: 'Nhập thương hiệu...',
+            color: 'Nhập màu sắc...'
+          }}
+        />
 
         {/* Products Grid */}
         {loading ? (
@@ -420,6 +362,8 @@ export default function ApparelPage() {
                   brand={product.brand}
                   imageUrl={product.primaryImage ?? undefined}
                   price={product.defaultPrice}
+                  source="category"
+                  position={`apparel-${subcategory || 'all'}`}
                 />
               ))}
             </div>

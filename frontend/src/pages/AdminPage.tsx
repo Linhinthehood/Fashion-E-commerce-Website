@@ -6,11 +6,12 @@ import UserManagement from '../components/admin/UserManagement'
 import ProductManagement from '../components/admin/ProductManagement'
 import OrderManagement from '../components/admin/OrderManagement'
 import AddProduct from '../components/admin/AddProduct'
+import ABTestDashboard from '../components/admin/ABTestDashboard'
 
-type TabType = 'dashboard' | 'users' | 'products' | 'create-product' | 'orders'
+type TabType = 'dashboard' | 'users' | 'products' | 'create-product' | 'orders' | 'ab-test'
 
 const resolveTabParam = (value: string | null): TabType => {
-  if (value === 'products' || value === 'orders' || value === 'create-product' || value === 'dashboard') {
+  if (value === 'products' || value === 'orders' || value === 'create-product' || value === 'dashboard' || value === 'ab-test') {
     return value
   }
   return 'dashboard' // Default to dashboard
@@ -59,7 +60,8 @@ export default function AdminPage() {
     { id: 'users' as TabType, label: 'User Management', icon: '👥' },
     { id: 'products' as TabType, label: 'Product Management', icon: '🛍️' },
     { id: 'create-product' as TabType, label: 'Add New Product', icon: '➕' },
-    { id: 'orders' as TabType, label: 'Order Management', icon: '📦' }
+    { id: 'orders' as TabType, label: 'Order Management', icon: '📦' },
+    { id: 'ab-test' as TabType, label: 'A/B Testing', icon: '🧪' }
   ]
 
   const renderTabContent = () => {
@@ -74,6 +76,8 @@ export default function AdminPage() {
         return <AddProduct />
       case 'orders':
         return <OrderManagement />
+      case 'ab-test':
+        return <ABTestDashboard />
       default:
         return <DashboardAnalytics />
     }
