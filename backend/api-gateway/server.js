@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:3002';
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:3001';
 const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || 'http://localhost:3003';
+const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || 'http://localhost:3004';
 const FASHION_SERVICE_URL = process.env.FASHION_SERVICE_URL || 'http://localhost:3008';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
@@ -62,6 +63,7 @@ app.get('/health', (req, res) => {
       user: USER_SERVICE_URL,
       product: PRODUCT_SERVICE_URL,
       order: ORDER_SERVICE_URL,
+      payment: PAYMENT_SERVICE_URL,
       fashion: FASHION_SERVICE_URL
     }
   });
@@ -91,6 +93,7 @@ const buildServiceProxy = (targetUrl, serviceName) => {
         'http://localhost:3001',
         'http://localhost:3002',
         'http://localhost:3003',
+        'http://localhost:3004',
         FRONTEND_URL
       ].includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
@@ -149,6 +152,9 @@ app.use('/api/customers', buildServiceProxy(USER_SERVICE_URL, 'user-service'));
 app.use('/api/orders', buildServiceProxy(ORDER_SERVICE_URL, 'order-service'));
 app.use('/api/events', buildServiceProxy(ORDER_SERVICE_URL, 'order-service'));
 
+// Payment Service routes
+app.use('/api/payments', buildServiceProxy(PAYMENT_SERVICE_URL, 'payment-service'));
+
 // Product Service routes
 app.use('/api/products', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
 app.use('/api/categories', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service'));
@@ -168,4 +174,5 @@ app.listen(PORT, () => {
   console.log(`   🔐 User Service: ${USER_SERVICE_URL}`);
   console.log(`   📦 Product Service: ${PRODUCT_SERVICE_URL}`);
   console.log(`   🛒 Order Service: ${ORDER_SERVICE_URL}`);
+  console.log(`   💳 Payment Service: ${PAYMENT_SERVICE_URL}`);
 });

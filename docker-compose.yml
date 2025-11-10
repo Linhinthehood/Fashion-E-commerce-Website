@@ -70,6 +70,34 @@ services:
     networks:
       - fashion_network
 
+  # Payment Service
+  payment-service:
+    build:
+      context: ./backend/payment-service
+      dockerfile: Dockerfile
+    container_name: fashion_ecommerce_payment_service
+    restart: unless-stopped
+    ports:
+      - "3004:3004"
+    env_file:
+      - .env
+    environment:
+      - PORT=3004
+      - MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/payments?retryWrites=true&w=majority&appName=Cluster0
+      - NODE_ENV=${NODE_ENV}
+      - FRONTEND_URL=http://localhost:5173
+      - ORDER_SERVICE_URL=http://order-service:3003
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
+      - VNPAY_TMN_CODE=${VNPAY_TMN_CODE}
+      - VNPAY_HASH_SECRET=${VNPAY_HASH_SECRET}
+      - VNPAY_URL=${VNPAY_URL}
+      - VNPAY_RETURN_URL=${VNPAY_RETURN_URL}
+      - VNPAY_IPN_URL=${VNPAY_IPN_URL}
+    depends_on:
+      - order-service
+    networks:
+      - fashion_network
+
   # API Gateway
   api-gateway:
     build:
@@ -87,6 +115,7 @@ services:
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
+      - PAYMENT_SERVICE_URL=http://payment-service:3004
       - FASHION_SERVICE_URL=http://host.docker.internal:3008
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
@@ -96,6 +125,7 @@ services:
       - user-service
       - product-service
       - order-service
+      - payment-service
     networks:
       - fashion_network
 
