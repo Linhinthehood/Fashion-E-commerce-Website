@@ -1,14 +1,58 @@
 # Chatbot Service - Google Gemini AI
 
-AI-powered chatbot service for fashion e-commerce using Google Gemini API.
+AI-powered chatbot service for fashion e-commerce using Google Gemini AI with conversation memory.
 
 ## Features
 
 - 🤖 Natural language conversation with Gemini AI
+- 💬 **Conversation Memory** - Remembers context across multiple messages
+- 🌐 **Bilingual Support** - Vietnamese and English
 - 🔍 Product search via chat
 - 💡 Personalized recommendations with AI explanations
 - 📦 Product-specific Q&A
 - 🎯 Intent extraction (search, recommendation, general)
+- 🧹 Automatic cache cleanup (30-minute expiry)
+
+## Conversation Memory System
+
+The chatbot now remembers previous messages in a conversation, enabling natural multi-turn dialogues:
+
+### How It Works
+
+- Each user gets a unique conversation history stored in memory
+- Last 10 messages per user are kept
+- Conversations expire after 30 minutes of inactivity
+- Automatic cleanup runs every 5 minutes
+
+### Example Multi-Turn Conversation
+
+```
+User: "Cho tôi xem áo sơ mi"
+Bot: [Shows shirts]
+
+User: "Có màu xanh không?"  ← Bot remembers we're talking about shirts
+Bot: [Shows blue shirts]
+
+User: "Nike có không?"  ← Bot still remembers the context
+Bot: [Shows Nike blue shirts]
+```
+
+### Managing Conversation History
+
+**Clear history for a user:**
+```bash
+DELETE /api/chat/history/:userId
+```
+
+**Get conversation history:**
+```bash
+GET /api/chat/history/:userId
+```
+
+**Get cache statistics:**
+```bash
+GET /api/chat/stats
+```
 
 ## Setup
 
@@ -46,6 +90,42 @@ npm run dev
 npm start
 ```
 
+## Testing
+
+### Interactive Chat Mode
+
+Start chatting directly with the chatbot to test conversation memory:
+
+```bash
+# Start chatbot service first
+npm run dev
+
+# In another terminal, start interactive chat
+npm run chat
+```
+
+You'll be able to:
+- Type messages like a real customer
+- Use commands: `/history`, `/clear`, `/exit`
+- Test Vietnamese: "Cho tôi xem áo sơ mi"
+- Test English: "Show me some shoes"
+- Watch the bot remember your conversation context
+
+### Quick Test Mode
+
+Run an automated 3-message conversation test:
+
+```bash
+npm run test:quick
+```
+
+This will automatically test:
+1. "Cho tôi xem áo sơ mi" (Show me shirts)
+2. "Có màu xanh không?" (Do you have blue?) ← Remembers shirts
+3. "Nike có không?" (Do you have Nike?) ← Remembers blue shirts
+
+**Note:** Service must be running before testing.
+
 ## API Endpoints
 
 ### 1. Send Chat Message
@@ -56,13 +136,11 @@ Content-Type: application/json
 
 {
   "message": "Show me red Nike shoes",
-  "conversationHistory": [
-    {"role": "user", "content": "Hello"},
-    {"role": "model", "content": "Hi! How can I help?"}
-  ],
-  "userId": "optional-user-id"
+  "userId": "user-123"  // Optional, defaults to "anonymous"
 }
 ```
+
+**Note:** `conversationHistory` is now managed automatically by the server. Just provide `userId` to maintain conversation context.
 
 **Response:**
 ```json
@@ -74,6 +152,14 @@ Content-Type: application/json
     "products": [...],
     "timestamp": "2025-11-09T..."
   }
+}
+```
+
+**Vietnamese Example:**
+```json
+{
+  "message": "Cho tôi xem áo sơ mi màu xanh",
+  "userId": "user-vn-456"
 }
 ```
 

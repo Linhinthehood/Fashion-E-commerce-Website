@@ -1,5 +1,7 @@
 // API Configuration
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+export const CHATBOT_BASE_URL = import.meta.env.VITE_CHATBOT_URL || 'http://localhost:3009/api/chat';
+
 /**
  * Build API URL with proper path handling
  * @param path - API path (with or without leading slash)
@@ -12,10 +14,20 @@ export function buildUrl(path: string, useGateway: boolean = true): string {
   
   // For gateway usage, remove /api prefix if present to avoid double /api
   if (useGateway && trimmed.startsWith('/api/')) {
-    return `${baseUrl}${trimmed.slice(4)}`;
+    return `${baseUrl}${trimmed.substring(4)}`;
   }
   
   return `${baseUrl}${trimmed}`;
+}
+
+/**
+ * Build chatbot API URL directly to chatbot service
+ * @param path - API path (with or without leading slash)
+ * @returns Complete chatbot API URL
+ */
+export function buildChatbotUrl(path: string): string {
+  const trimmed = path.startsWith('/') ? path : `/${path}`;
+  return `${CHATBOT_BASE_URL}${trimmed}`;
 }
 
 /**
@@ -127,6 +139,14 @@ export const API_ENDPOINTS = {
       const queryString = params.toString();
       return buildUrl(`/events/ab-test-metrics${queryString ? `?${queryString}` : ''}`);
     },
+  },
+  // Chatbot Service (direct connection)
+  chatbot: {
+    sendMessage: () => buildChatbotUrl('/message'),
+    productQuery: () => buildChatbotUrl('/product-query'),
+    recommendations: () => buildChatbotUrl('/recommendations'),
+    history: (userId: string) => buildChatbotUrl(`/history/${userId}`),
+    stats: () => buildChatbotUrl('/stats'),
   },
 } as const;
 

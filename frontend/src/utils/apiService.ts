@@ -1040,6 +1040,98 @@ export const fashionApi = {
   },
 };
 
+// ===========================
+// Chatbot Service API
+// ===========================
+
+export const chatbotApi = {
+  /**
+   * Send a message to the chatbot
+   */
+  sendMessage: async (message: string, userId: string) => {
+    return apiClient.post<{
+      message: string;
+      intent: string;
+      productsFound: number;
+      products: any[];
+      timestamp: string;
+    }>(API_ENDPOINTS.chatbot.sendMessage(), {
+      message,
+      userId,
+    });
+  },
+
+  /**
+   * Ask a question about a specific product
+   */
+  productQuery: async (productId: string, question: string) => {
+    return apiClient.post<{
+      message: string;
+      product: {
+        id: string;
+        name: string;
+        brand: string;
+        price: number;
+      };
+      timestamp: string;
+    }>(API_ENDPOINTS.chatbot.productQuery(), {
+      productId,
+      question,
+    });
+  },
+
+  /**
+   * Get AI-powered product recommendations
+   */
+  getRecommendations: async (userId: string, preferences?: string, limit: number = 8) => {
+    return apiClient.post<{
+      message: string;
+      products: any[];
+      timestamp: string;
+    }>(API_ENDPOINTS.chatbot.recommendations(), {
+      userId,
+      preferences,
+      limit,
+    });
+  },
+
+  /**
+   * Get conversation history for a user
+   */
+  getHistory: async (userId: string) => {
+    return apiClient.get<{
+      userId: string;
+      messageCount: number;
+      history: Array<{
+        role: 'user' | 'model';
+        content: string;
+        timestamp: string;
+      }>;
+    }>(API_ENDPOINTS.chatbot.history(userId));
+  },
+
+  /**
+   * Clear conversation history for a user
+   */
+  clearHistory: async (userId: string) => {
+    return apiClient.delete<{ message: string }>(
+      API_ENDPOINTS.chatbot.history(userId)
+    );
+  },
+
+  /**
+   * Get chatbot cache statistics
+   */
+  getStats: async () => {
+    return apiClient.get<{
+      activeUsers: number;
+      totalMessages: number;
+      averageMessagesPerUser: number;
+      cacheHitRate: number;
+    }>(API_ENDPOINTS.chatbot.stats());
+  },
+};
+
 // Health check function
 export const healthCheck = () => apiClient.get('/health', false);
 
@@ -1053,5 +1145,6 @@ export default {
   analyticsApi,
   eventsApi,
   fashionApi,
+  chatbotApi,
   healthCheck,
 };

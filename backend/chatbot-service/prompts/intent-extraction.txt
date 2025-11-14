@@ -1,0 +1,55 @@
+Extract search parameters from this user message: "{userMessage}"
+
+Return ONLY a JSON object with these fields:
+{
+  "intent": "search|recommendation|question|general|out-of-topic",
+  "category": "Apparel|Footwear|Accessories|null",
+  "articleType": "Shirt|Pants|Watch|Casual shoes|Sandals|Wallet|Baseball cap|null",
+  "brand": "brand name|null",
+  "color": "color name|null",
+  "gender": "Men|Women|Boys|Girls|Male|Female|Unisex|null",
+  "priceRange": "budget|affordable|mid-range|premium|null"
+}
+
+INTENT CLASSIFICATION:
+- "search" → Looking for specific products ("show me shirts", "do you have watches", "red dresses")
+- "recommendation" → Asking for suggestions ("what should I wear", "what is suitable for", "which item", "suggest something", "what goes well with", "what matches")
+- "question" → Fashion-related questions ("how to care for leather", "what size should I get")
+- "general" → General fashion chat ("hello", "thanks")
+- "out-of-topic" → Non-fashion questions ("weather", "cooking", "sports", "politics", "technology", "math problems")
+
+RECOMMENDATION KEYWORDS TO DETECT:
+- "suggest", "recommend", "which item", "what should I", "what is suitable", "what goes with"
+- "what matches", "what fits", "what works with", "suitable for", "good for"
+- "best for", "perfect for", "ideal for", "right for"
+- "can you recommend", "can u recommend", "go with", "pair with", "match with"
+- "what pants", "what shoes", "what to wear with", "coordinate with"
+
+OUT-OF-TOPIC EXAMPLES:
+- Weather: "What's the weather?", "Is it raining?"
+- Food: "How to cook pasta?", "Best restaurants?"
+- Technology: "How to code?", "Fix my computer?"
+- Sports: "Football scores?", "Who won the game?"
+- General knowledge: "What is the capital of France?", "How old is the earth?"
+- Personal advice (non-fashion): "Should I quit my job?", "How to study better?"
+
+FASHION-RELATED EXAMPLES:
+- "show me shirts" → {"intent":"search","category":"Apparel","articleType":"Shirt"}
+- "do you have pants" → {"intent":"search","category":"Apparel","articleType":"Pants"}
+- "which item is suitable for this" → {"intent":"recommendation","category":null}
+- "what should I wear to office" → {"intent":"recommendation","category":null}
+- "suggest something for party" → {"intent":"recommendation","category":null}
+- "what goes well with black pants" → {"intent":"recommendation","category":null}
+- "can you recommend some pants that go with this shirt" → {"intent":"recommendation","category":"Apparel","articleType":"Pants"}
+- "recommend shoes for running" → {"intent":"recommendation","category":"Footwear"}
+- "what pants can I pair with this" → {"intent":"recommendation","category":"Apparel","articleType":"Pants"}
+- "do you have red watches" → {"intent":"search","category":"Accessories","articleType":"Watch","color":"red"}
+- "how to care for leather shoes" → {"intent":"question","category":"Footwear"}
+- "hello" → {"intent":"general"}
+
+GENDER DETECTION RULES:
+- "for women", "women's", "female", "for her", "ladies" → "Female"
+- "for men", "men's", "male", "for him", "gentleman" → "Male"  
+- "unisex", "for everyone", "anyone" → "Unisex"
+
+Return ONLY valid JSON, no explanations.
