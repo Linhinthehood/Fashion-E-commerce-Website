@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   PaperAirplaneIcon, 
   XMarkIcon, 
@@ -8,13 +9,25 @@ import {
 } from '@heroicons/react/24/outline';
 import { chatbotApi } from '../utils/apiService';
 
+interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  price: number;
+  gender: string;
+  color: string;
+  image: string;
+}
+
 interface Message {
   role: 'user' | 'model';
   content: string;
   timestamp: Date;
+  products?: Product[];
 }
 
 const Chatbot = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -78,10 +91,14 @@ const Chatbot = () => {
 
       console.log('Bot response:', response.data);
       
+      // Limit products to 5
+      const products = response.data?.products?.slice(0, 5) || [];
+      
       const botMessage: Message = {
         role: 'model',
         content: response.data?.message || 'Sorry, I could not process your request.',
-        timestamp: new Date()
+        timestamp: new Date(),
+        products: products.length > 0 ? products : undefined
       };
 
       setMessages(prev => [...prev, botMessage]);
@@ -185,18 +202,69 @@ const Chatbot = () => {
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                    msg.role === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-sm'
-                      : 'bg-white text-gray-800 shadow-sm rounded-bl-sm'
+                  className={`max-w-[85%] ${
+                    msg.role === 'user' ? '' : 'w-full'
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
-                  <p className={`text-xs mt-1 ${
-                    msg.role === 'user' ? 'text-blue-100' : 'text-gray-400'
-                  }`}>
-                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
+                  <div
+                    className={`rounded-2xl px-4 py-2 ${
+                      msg.role === 'user'
+                        ? 'bg-blue-600 text-white rounded-br-sm'
+                        : 'bg-white text-gray-800 shadow-sm rounded-bl-sm'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
+                    <p className={`text-xs mt-1 ${
+                      msg.role === 'user' ? 'text-blue-100' : 'text-gray-400'
+                    }`}>
+                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                  
+                  {/* Product Cards */}
+                  {msg.products && msg.products.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {msg.products.map((product) => (
+                        <div
+                          key={product.id}
+                          onClick={() => navigate(`/products/${product.id}`)}
+                          className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer p-2 flex space-x-3 border border-gray-100"
+                        >
+                          <div className="flex-shrink-0 w-20 h-20 bg-gray-100 rounded-md overflow-hidden">
+                            <img
+                              src={product.image || '/placeholder-image.jpg'}
+                              alt={product.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/placeholder-image.jpg';
+                              }}
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-semibold text-gray-900 truncate">
+                              {product.name}
+                            </h4>
+                            <p className="text-xs text-gray-500">{product.brand}</p>
+                            <p className="text-sm font-bold text-blue-600 mt-1">
+                              ₫{product.price?.toLocaleString()}
+                            </p>
+                            <div className="flex space-x-2 mt-1">
+                              {product.color && (
+                                <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                                  {product.color}
+                                </span>
+                              )}
+                              {product.gender && (
+                                <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
+                                  {product.gender}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

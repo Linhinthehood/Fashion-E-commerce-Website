@@ -1,3 +1,5 @@
+
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -5,7 +7,6 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const session = require('express-session');
 const passport = require('./config/passport');
-require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');

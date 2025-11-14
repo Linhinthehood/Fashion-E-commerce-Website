@@ -4,6 +4,14 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Accept build arguments for environment variables
+ARG VITE_API_URL
+ARG VITE_CHATBOT_URL
+
+# Set environment variables for Vite build
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_CHATBOT_URL=$VITE_CHATBOT_URL
+
 # Copy package files first for better caching
 COPY package*.json ./
 

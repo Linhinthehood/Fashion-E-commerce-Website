@@ -9,8 +9,10 @@ AI-powered chatbot service for fashion e-commerce using Google Gemini AI with co
 - 🌐 **Bilingual Support** - Vietnamese and English
 - 🔍 Product search via chat
 - 💡 Personalized recommendations with AI explanations
-- 📦 Product-specific Q&A
-- 🎯 Intent extraction (search, recommendation, general)
+- 📦 **Order Tracking** - Check order status and history with authentication
+- 🔒 **User Authentication** - Validates credentials with user-service
+- 🛍️ Product-specific Q&A
+- 🎯 Intent extraction (search, recommendation, order, general)
 - 🧹 Automatic cache cleanup (30-minute expiry)
 
 ## Conversation Memory System
@@ -185,6 +187,91 @@ Content-Type: application/json
   "userId": "68e4058c...",
   "preferences": "casual style",
   "limit": 8
+}
+```
+
+### 4. Get User Orders
+
+```http
+POST /api/chat/orders
+Content-Type: application/json
+
+{
+  "userId": "user-123",
+  "question": "Show me my orders"  // Optional, defaults to "Show me my orders"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "You have 3 orders with us! Here's what's happening: ...",
+    "orders": [
+      {
+        "id": "6547abc123...",
+        "orderNumber": "ORD-1699876543-abc123",
+        "totalPrice": 850000,
+        "finalPrice": 850000,
+        "itemCount": 2,
+        "paymentStatus": "Paid",
+        "shipmentStatus": "Delivered",
+        "paymentMethod": "Momo",
+        "createdAt": "2025-11-01T..."
+      }
+    ],
+    "timestamp": "2025-11-14T..."
+  }
+}
+```
+
+**Notes:**
+- Requires `userId` (not "anonymous")
+- Returns last 10 orders
+- AI provides friendly summary with status icons (✅📦⏳)
+
+### 5. Get Specific Order Details
+
+```http
+POST /api/chat/order/:orderId
+Content-Type: application/json
+
+{
+  "userId": "user-123",
+  "question": "Tell me about this order"  // Optional
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "This order contains 2 items totaling ₫850,000...",
+    "order": {
+      "id": "6547abc123...",
+      "orderNumber": "ORD-1699876543-abc123",
+      "totalPrice": 850000,
+      "finalPrice": 850000,
+      "itemCount": 2,
+      "paymentStatus": "Paid",
+      "shipmentStatus": "Delivered"
+    },
+    "orderItems": [
+      {
+        "productName": "SWE RING BOXY TEE",
+        "brand": "SWE",
+        "color": "Black",
+        "size": "M",
+        "quantity": 1,
+        "price": 650000,
+        "subPrice": 650000,
+        "image": "https://..."
+      }
+    ],
+    "timestamp": "2025-11-14T..."
+  }
 }
 ```
 

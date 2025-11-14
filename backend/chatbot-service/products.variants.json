@@ -1,0 +1,4640 @@
+[{
+  "_id": {
+    "$oid": "68dfd04f84cd07dea32e23e8"
+  },
+  "productId": {
+    "$oid": "68dfce0884cd07dea32e23c5"
+  },
+  "size": "ONESIZE",
+  "stock": 39,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-03T13:31:59.530Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T08:05:21.988Z"
+  },
+  "sku": "2E23C5-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0852e356d2e1cbe1ebc57"
+  },
+  "productId": {
+    "$oid": "68dfcc7484cd07dea32e23b6"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-04T02:23:42.181Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T02:23:42.181Z"
+  },
+  "sku": "2E23B6-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e08537356d2e1cbe1ebc5b"
+  },
+  "productId": {
+    "$oid": "68dfcc7484cd07dea32e23b6"
+  },
+  "size": "M",
+  "stock": 49,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-04T02:23:51.085Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:00:23.460Z"
+  },
+  "sku": "2E23B6-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0853a356d2e1cbe1ebc5f"
+  },
+  "productId": {
+    "$oid": "68dfcc7484cd07dea32e23b6"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-04T02:23:54.690Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T02:23:54.690Z"
+  },
+  "sku": "2E23B6-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0853e356d2e1cbe1ebc63"
+  },
+  "productId": {
+    "$oid": "68dfcc7484cd07dea32e23b6"
+  },
+  "size": "XL",
+  "stock": 49,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-04T02:23:58.175Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T22:13:11.824Z"
+  },
+  "sku": "2E23B6-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35eeb3ed889daec216b"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b82"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:34.526Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:34.526Z"
+  },
+  "sku": "455B82-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35eeb3ed889daec2170"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b82"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:34.629Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:34.629Z"
+  },
+  "sku": "455B82-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35eeb3ed889daec2174"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b82"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:34.714Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:34.714Z"
+  },
+  "sku": "455B82-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35eeb3ed889daec2179"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b82"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:34.800Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:34.800Z"
+  },
+  "sku": "455B82-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35eeb3ed889daec217c"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b82"
+  },
+  "size": "XXL",
+  "stock": 30,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:34.883Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:34.883Z"
+  },
+  "sku": "455B82-XXL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec2180"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b86"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.009Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.009Z"
+  },
+  "sku": "455B86-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec2183"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b86"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.093Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.093Z"
+  },
+  "sku": "455B86-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec2186"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b86"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.177Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.177Z"
+  },
+  "sku": "455B86-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec2189"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b86"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.264Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.264Z"
+  },
+  "sku": "455B86-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec218c"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b86"
+  },
+  "size": "XXL",
+  "stock": 30,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.350Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.350Z"
+  },
+  "sku": "455B86-XXL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec2190"
+  },
+  "productId": {
+    "$oid": "68e0081a3cd27cf69de61cce"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.476Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.476Z"
+  },
+  "sku": "E61CCE-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec2193"
+  },
+  "productId": {
+    "$oid": "68e0081a3cd27cf69de61cce"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.556Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.556Z"
+  },
+  "sku": "E61CCE-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec2196"
+  },
+  "productId": {
+    "$oid": "68e0081a3cd27cf69de61cce"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.640Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.640Z"
+  },
+  "sku": "E61CCE-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec2199"
+  },
+  "productId": {
+    "$oid": "68e0081a3cd27cf69de61cce"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.725Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.725Z"
+  },
+  "sku": "E61CCE-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec219c"
+  },
+  "productId": {
+    "$oid": "68e0081a3cd27cf69de61cce"
+  },
+  "size": "XXL",
+  "stock": 30,
+  "status": "Active",
+  "price": 250000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.811Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.811Z"
+  },
+  "sku": "E61CCE-XXL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e35feb3ed889daec21a0"
+  },
+  "productId": {
+    "$oid": "68dfcd3984cd07dea32e23bb"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:35.938Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:35.938Z"
+  },
+  "sku": "2E23BB-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21a3"
+  },
+  "productId": {
+    "$oid": "68dfcd3984cd07dea32e23bb"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.022Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.022Z"
+  },
+  "sku": "2E23BB-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21a6"
+  },
+  "productId": {
+    "$oid": "68dfcd3984cd07dea32e23bb"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.105Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.105Z"
+  },
+  "sku": "2E23BB-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21a9"
+  },
+  "productId": {
+    "$oid": "68dfcd3984cd07dea32e23bb"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.191Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.191Z"
+  },
+  "sku": "2E23BB-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21ad"
+  },
+  "productId": {
+    "$oid": "68dfcdb384cd07dea32e23c0"
+  },
+  "size": "S",
+  "stock": 49,
+  "status": "Active",
+  "price": 400000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.314Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:48:36.399Z"
+  },
+  "sku": "2E23C0-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21b0"
+  },
+  "productId": {
+    "$oid": "68dfcdb384cd07dea32e23c0"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 400000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.396Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.396Z"
+  },
+  "sku": "2E23C0-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21b3"
+  },
+  "productId": {
+    "$oid": "68dfcdb384cd07dea32e23c0"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 400000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.479Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.479Z"
+  },
+  "sku": "2E23C0-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21b6"
+  },
+  "productId": {
+    "$oid": "68dfcdb384cd07dea32e23c0"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 400000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.561Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.561Z"
+  },
+  "sku": "2E23C0-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21ba"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8d"
+  },
+  "size": "28",
+  "stock": 30,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.685Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.685Z"
+  },
+  "sku": "455B8D-28",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21bd"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8d"
+  },
+  "size": "29",
+  "stock": 40,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.767Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.767Z"
+  },
+  "sku": "455B8D-29",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21c0"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8d"
+  },
+  "size": "30",
+  "stock": 50,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.850Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.850Z"
+  },
+  "sku": "455B8D-30",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e360eb3ed889daec21c3"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8d"
+  },
+  "size": "31",
+  "stock": 50,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:36.937Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:36.937Z"
+  },
+  "sku": "455B8D-31",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21c6"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8d"
+  },
+  "size": "32",
+  "stock": 50,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.021Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.021Z"
+  },
+  "sku": "455B8D-32",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21c9"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8d"
+  },
+  "size": "33",
+  "stock": 40,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.105Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.105Z"
+  },
+  "sku": "455B8D-33",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21cc"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8d"
+  },
+  "size": "34",
+  "stock": 30,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.192Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.192Z"
+  },
+  "sku": "455B8D-34",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21d0"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8a"
+  },
+  "size": "28",
+  "stock": 30,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.318Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.318Z"
+  },
+  "sku": "455B8A-28",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21d3"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8a"
+  },
+  "size": "29",
+  "stock": 40,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.401Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.401Z"
+  },
+  "sku": "455B8A-29",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21d6"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8a"
+  },
+  "size": "30",
+  "stock": 50,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.491Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.491Z"
+  },
+  "sku": "455B8A-30",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21d9"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8a"
+  },
+  "size": "31",
+  "stock": 50,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.576Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.576Z"
+  },
+  "sku": "455B8A-31",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21dc"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8a"
+  },
+  "size": "32",
+  "stock": 50,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.661Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.661Z"
+  },
+  "sku": "455B8A-32",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21df"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8a"
+  },
+  "size": "33",
+  "stock": 40,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.745Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.745Z"
+  },
+  "sku": "455B8A-33",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21e2"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8a"
+  },
+  "size": "34",
+  "stock": 30,
+  "status": "Active",
+  "price": 550000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.832Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.832Z"
+  },
+  "sku": "455B8A-34",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e361eb3ed889daec21e6"
+  },
+  "productId": {
+    "$oid": "68e005f17d3c1abe691f508f"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 800000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:37.959Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:37.959Z"
+  },
+  "sku": "1F508F-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec21e9"
+  },
+  "productId": {
+    "$oid": "68e005f17d3c1abe691f508f"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 800000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.043Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:38.043Z"
+  },
+  "sku": "1F508F-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec21ec"
+  },
+  "productId": {
+    "$oid": "68e005f17d3c1abe691f508f"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 800000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.127Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:38.127Z"
+  },
+  "sku": "1F508F-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec21ef"
+  },
+  "productId": {
+    "$oid": "68e005f17d3c1abe691f508f"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 800000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.208Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:38.208Z"
+  },
+  "sku": "1F508F-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec21f3"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b8f"
+  },
+  "size": "ONESIZE",
+  "stock": 100,
+  "status": "Active",
+  "price": 180000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.334Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:38.334Z"
+  },
+  "sku": "455B8F-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec21f7"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b91"
+  },
+  "size": "ONESIZE",
+  "stock": 100,
+  "status": "Active",
+  "price": 150000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.459Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:38.459Z"
+  },
+  "sku": "455B91-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec21fb"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b93"
+  },
+  "size": "ONESIZE",
+  "stock": 20,
+  "status": "Active",
+  "price": 5500000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.587Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:38.587Z"
+  },
+  "sku": "455B93-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec21ff"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b95"
+  },
+  "size": "ONESIZE",
+  "stock": 24,
+  "status": "Active",
+  "price": 3200000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.714Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T11:17:06.582Z"
+  },
+  "sku": "455B95-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec2203"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "size": "38",
+  "stock": 20,
+  "status": "Active",
+  "price": 2500000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.837Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:38.837Z"
+  },
+  "sku": "7C5519-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e362eb3ed889daec2206"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "size": "39",
+  "stock": 30,
+  "status": "Active",
+  "price": 2500000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:38.922Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:38.922Z"
+  },
+  "sku": "7C5519-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec2209"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "size": "40",
+  "stock": 39,
+  "status": "Active",
+  "price": 2500000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.005Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:19.591Z"
+  },
+  "sku": "7C5519-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec220c"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "size": "41",
+  "stock": 40,
+  "status": "Active",
+  "price": 2500000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.090Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.090Z"
+  },
+  "sku": "7C5519-41",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec220f"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "size": "42",
+  "stock": 40,
+  "status": "Active",
+  "price": 2500000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.173Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.173Z"
+  },
+  "sku": "7C5519-42",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec2212"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "size": "43",
+  "stock": 30,
+  "status": "Active",
+  "price": 2500000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.255Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.255Z"
+  },
+  "sku": "7C5519-43",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec2215"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "size": "44",
+  "stock": 20,
+  "status": "Active",
+  "price": 2500000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.338Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.338Z"
+  },
+  "sku": "7C5519-44",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec2219"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c551b"
+  },
+  "size": "38",
+  "stock": 20,
+  "status": "Active",
+  "price": 850000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.463Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.463Z"
+  },
+  "sku": "7C551B-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec221c"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c551b"
+  },
+  "size": "39",
+  "stock": 30,
+  "status": "Active",
+  "price": 850000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.544Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.544Z"
+  },
+  "sku": "7C551B-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec221f"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c551b"
+  },
+  "size": "40",
+  "stock": 40,
+  "status": "Active",
+  "price": 850000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.627Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.627Z"
+  },
+  "sku": "7C551B-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec2222"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c551b"
+  },
+  "size": "41",
+  "stock": 40,
+  "status": "Active",
+  "price": 850000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.712Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.712Z"
+  },
+  "sku": "7C551B-41",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec2225"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c551b"
+  },
+  "size": "42",
+  "stock": 40,
+  "status": "Active",
+  "price": 850000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.793Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.793Z"
+  },
+  "sku": "7C551B-42",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec2228"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c551b"
+  },
+  "size": "43",
+  "stock": 30,
+  "status": "Active",
+  "price": 850000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.878Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.878Z"
+  },
+  "sku": "7C551B-43",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e363eb3ed889daec222b"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c551b"
+  },
+  "size": "44",
+  "stock": 20,
+  "status": "Active",
+  "price": 850000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:39.962Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:39.962Z"
+  },
+  "sku": "7C551B-44",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e364eb3ed889daec222f"
+  },
+  "productId": {
+    "$oid": "68e0d6d833514af994350abf"
+  },
+  "size": "ONESIZE",
+  "stock": 47,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:40.084Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-05T11:30:47.523Z"
+  },
+  "sku": "350ABF-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0e364eb3ed889daec2233"
+  },
+  "productId": {
+    "$oid": "68e0d6d833514af994350ac2"
+  },
+  "size": "ONESIZE",
+  "stock": 50,
+  "status": "Active",
+  "price": 380000,
+  "createdAt": {
+    "$date": "2025-10-04T09:05:40.206Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-04T09:05:40.206Z"
+  },
+  "sku": "350AC2-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fc085e4dda8283eb7a"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035432"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 380000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:24.942Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:24.942Z"
+  },
+  "sku": "035432-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb7d"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035432"
+  },
+  "size": "M",
+  "stock": 49,
+  "status": "Active",
+  "price": 380000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.073Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-01T07:35:53.517Z"
+  },
+  "sku": "035432-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb80"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035432"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 380000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.155Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:25.155Z"
+  },
+  "sku": "035432-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb83"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035432"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 380000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.252Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:25.252Z"
+  },
+  "sku": "035432-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb86"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035432"
+  },
+  "size": "XXL",
+  "stock": 30,
+  "status": "Active",
+  "price": 380000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.367Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:25.367Z"
+  },
+  "sku": "035432-XXL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb8a"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035435"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 280000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.517Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:25.517Z"
+  },
+  "sku": "035435-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb8d"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035435"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 280000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.612Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:25.612Z"
+  },
+  "sku": "035435-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb90"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035435"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 280000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.700Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:25.700Z"
+  },
+  "sku": "035435-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb93"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035435"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 280000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.785Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:25.785Z"
+  },
+  "sku": "035435-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fd085e4dda8283eb96"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035435"
+  },
+  "size": "XXL",
+  "stock": 30,
+  "status": "Active",
+  "price": 280000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:25.867Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:25.867Z"
+  },
+  "sku": "035435-XXL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283eb9a"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "size": "25",
+  "stock": 25,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.004Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.004Z"
+  },
+  "sku": "035438-25",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283eb9d"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "size": "26",
+  "stock": 35,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.095Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.095Z"
+  },
+  "sku": "035438-26",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283eba0"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "size": "27",
+  "stock": 45,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.178Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.178Z"
+  },
+  "sku": "035438-27",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283eba3"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "size": "28",
+  "stock": 50,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.265Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.265Z"
+  },
+  "sku": "035438-28",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283eba6"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "size": "29",
+  "stock": 50,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.351Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.351Z"
+  },
+  "sku": "035438-29",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283eba9"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "size": "30",
+  "stock": 45,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.431Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.431Z"
+  },
+  "sku": "035438-30",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283ebac"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "size": "31",
+  "stock": 35,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.518Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.518Z"
+  },
+  "sku": "035438-31",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283ebaf"
+  },
+  "productId": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "size": "32",
+  "stock": 25,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.603Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.603Z"
+  },
+  "sku": "035438-32",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283ebb3"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "size": "25",
+  "stock": 25,
+  "status": "Active",
+  "price": 480000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.735Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.735Z"
+  },
+  "sku": "03543B-25",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283ebb6"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "size": "26",
+  "stock": 35,
+  "status": "Active",
+  "price": 480000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.825Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.825Z"
+  },
+  "sku": "03543B-26",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283ebb9"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "size": "27",
+  "stock": 45,
+  "status": "Active",
+  "price": 480000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.910Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.910Z"
+  },
+  "sku": "03543B-27",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7fe085e4dda8283ebbc"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "size": "28",
+  "stock": 50,
+  "status": "Active",
+  "price": 480000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:26.998Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:26.998Z"
+  },
+  "sku": "03543B-28",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebbf"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "size": "29",
+  "stock": 50,
+  "status": "Active",
+  "price": 480000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.094Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:27.094Z"
+  },
+  "sku": "03543B-29",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebc2"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "size": "30",
+  "stock": 45,
+  "status": "Active",
+  "price": 480000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.177Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:27.177Z"
+  },
+  "sku": "03543B-30",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebc5"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "size": "31",
+  "stock": 35,
+  "status": "Active",
+  "price": 480000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.263Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:27.263Z"
+  },
+  "sku": "03543B-31",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebc8"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "size": "32",
+  "stock": 25,
+  "status": "Active",
+  "price": 480000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.346Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:27.346Z"
+  },
+  "sku": "03543B-32",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebcc"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03543e"
+  },
+  "size": "ONESIZE",
+  "stock": 100,
+  "status": "Active",
+  "price": 165000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.471Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:27.471Z"
+  },
+  "sku": "03543E-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebd0"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e035444"
+  },
+  "size": "ONESIZE",
+  "stock": 15,
+  "status": "Active",
+  "price": 4800000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.603Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:27.603Z"
+  },
+  "sku": "035444-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebd4"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e035447"
+  },
+  "size": "ONESIZE",
+  "stock": 19,
+  "status": "Active",
+  "price": 2800000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.728Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:04:04.890Z"
+  },
+  "sku": "035447-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebd8"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03544a"
+  },
+  "size": "35",
+  "stock": 15,
+  "status": "Active",
+  "price": 2200000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.853Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:27.853Z"
+  },
+  "sku": "03544A-35",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e7ff085e4dda8283ebdb"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03544a"
+  },
+  "size": "36",
+  "stock": 25,
+  "status": "Active",
+  "price": 2200000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:27.946Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:27.946Z"
+  },
+  "sku": "03544A-36",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e800085e4dda8283ebde"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03544a"
+  },
+  "size": "37",
+  "stock": 35,
+  "status": "Active",
+  "price": 2200000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:28.031Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:28.031Z"
+  },
+  "sku": "03544A-37",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e800085e4dda8283ebe1"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03544a"
+  },
+  "size": "38",
+  "stock": 40,
+  "status": "Active",
+  "price": 2200000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:28.115Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:28.115Z"
+  },
+  "sku": "03544A-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e800085e4dda8283ebe4"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03544a"
+  },
+  "size": "39",
+  "stock": 40,
+  "status": "Active",
+  "price": 2200000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:28.201Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:28.201Z"
+  },
+  "sku": "03544A-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e800085e4dda8283ebe7"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03544a"
+  },
+  "size": "40",
+  "stock": 30,
+  "status": "Active",
+  "price": 2200000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:28.284Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:28.284Z"
+  },
+  "sku": "03544A-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e800085e4dda8283ebea"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03544a"
+  },
+  "size": "41",
+  "stock": 15,
+  "status": "Active",
+  "price": 2200000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:28.369Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:28.369Z"
+  },
+  "sku": "03544A-41",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8e800085e4dda8283ebee"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e03544d"
+  },
+  "size": "ONESIZE",
+  "stock": 75,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-10-10T11:03:28.496Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-10T11:03:28.496Z"
+  },
+  "sku": "03544D-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f0840402ab12381df0"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d9647769686"
+  },
+  "size": "S",
+  "stock": 25,
+  "status": "Active",
+  "price": 890000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:44.373Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:44.373Z"
+  },
+  "sku": "769686-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f0840402ab12381df3"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d9647769686"
+  },
+  "size": "M",
+  "stock": 35,
+  "status": "Active",
+  "price": 890000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:44.540Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:44.540Z"
+  },
+  "sku": "769686-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f0840402ab12381df6"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d9647769686"
+  },
+  "size": "L",
+  "stock": 40,
+  "status": "Active",
+  "price": 890000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:44.652Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:44.652Z"
+  },
+  "sku": "769686-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f0840402ab12381df9"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d9647769686"
+  },
+  "size": "XL",
+  "stock": 30,
+  "status": "Active",
+  "price": 890000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:44.761Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:44.761Z"
+  },
+  "sku": "769686-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f0840402ab12381dfc"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d9647769686"
+  },
+  "size": "XXL",
+  "stock": 20,
+  "status": "Active",
+  "price": 890000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:44.866Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:44.866Z"
+  },
+  "sku": "769686-XXL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f1840402ab12381e00"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d964776968c"
+  },
+  "size": "39",
+  "stock": 5,
+  "status": "Active",
+  "price": 18500000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:45.022Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:45.022Z"
+  },
+  "sku": "76968C-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f1840402ab12381e03"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d964776968c"
+  },
+  "size": "40",
+  "stock": 8,
+  "status": "Active",
+  "price": 18500000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:45.126Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:45.126Z"
+  },
+  "sku": "76968C-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f1840402ab12381e06"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d964776968c"
+  },
+  "size": "41",
+  "stock": 9,
+  "status": "Active",
+  "price": 18500000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:45.230Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:53:41.012Z"
+  },
+  "sku": "76968C-41",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f1840402ab12381e09"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d964776968c"
+  },
+  "size": "42",
+  "stock": 10,
+  "status": "Active",
+  "price": 18500000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:45.332Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:45.332Z"
+  },
+  "sku": "76968C-42",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f1840402ab12381e0c"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d964776968c"
+  },
+  "size": "43",
+  "stock": 8,
+  "status": "Active",
+  "price": 18500000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:45.436Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:45.436Z"
+  },
+  "sku": "76968C-43",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f1840402ab12381e0f"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d964776968c"
+  },
+  "size": "44",
+  "stock": 5,
+  "status": "Active",
+  "price": 18500000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:45.541Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:45.541Z"
+  },
+  "sku": "76968C-44",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f1840402ab12381e13"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d667885"
+  },
+  "size": "ONESIZE",
+  "stock": 50,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:45.705Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:45.705Z"
+  },
+  "sku": "667885-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f1840402ab12381e17"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d667888"
+  },
+  "size": "ONESIZE",
+  "stock": 3,
+  "status": "Active",
+  "price": 285000000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:45.871Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:45.871Z"
+  },
+  "sku": "667888-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f2840402ab12381e1b"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d66788b"
+  },
+  "size": "28",
+  "stock": 15,
+  "status": "Active",
+  "price": 1250000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:46.034Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:46.034Z"
+  },
+  "sku": "66788B-28",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f2840402ab12381e1e"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d66788b"
+  },
+  "size": "29",
+  "stock": 20,
+  "status": "Active",
+  "price": 1250000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:46.173Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:46.173Z"
+  },
+  "sku": "66788B-29",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f2840402ab12381e21"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d66788b"
+  },
+  "size": "30",
+  "stock": 25,
+  "status": "Active",
+  "price": 1250000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:46.279Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:46.279Z"
+  },
+  "sku": "66788B-30",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f2840402ab12381e24"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d66788b"
+  },
+  "size": "31",
+  "stock": 25,
+  "status": "Active",
+  "price": 1250000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:46.386Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:46.386Z"
+  },
+  "sku": "66788B-31",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f2840402ab12381e27"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d66788b"
+  },
+  "size": "32",
+  "stock": 25,
+  "status": "Active",
+  "price": 1250000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:46.492Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:46.492Z"
+  },
+  "sku": "66788B-32",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f2840402ab12381e2a"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d66788b"
+  },
+  "size": "33",
+  "stock": 20,
+  "status": "Active",
+  "price": 1250000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:46.603Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:46.603Z"
+  },
+  "sku": "66788B-33",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f2840402ab12381e2d"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d66788b"
+  },
+  "size": "34",
+  "stock": 15,
+  "status": "Active",
+  "price": 1250000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:46.720Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:46.720Z"
+  },
+  "sku": "66788B-34",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ea24f2840402ab12381e31"
+  },
+  "productId": {
+    "$oid": "68e9727b5e6976da1d66788e"
+  },
+  "size": "ONESIZE",
+  "stock": 10,
+  "status": "Active",
+  "price": 12500000,
+  "createdAt": {
+    "$date": "2025-10-11T09:35:46.887Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-11T09:35:46.887Z"
+  },
+  "sku": "66788E-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c59b428092632fa9d61"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6740"
+  },
+  "size": "S",
+  "stock": 59,
+  "status": "Active",
+  "price": 300000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:05.779Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-01T18:11:35.666Z"
+  },
+  "sku": "AA6740-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c59b428092632fa9d66"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6740"
+  },
+  "size": "M",
+  "stock": 78,
+  "status": "Active",
+  "price": 300000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:05.913Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-02T13:47:42.248Z"
+  },
+  "sku": "AA6740-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d6b"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6740"
+  },
+  "size": "L",
+  "stock": 70,
+  "status": "Active",
+  "price": 300000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.017Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.017Z"
+  },
+  "sku": "AA6740-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d6f"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6740"
+  },
+  "size": "XL",
+  "stock": 50,
+  "status": "Active",
+  "price": 300000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.122Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.122Z"
+  },
+  "sku": "AA6740-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d73"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6743"
+  },
+  "size": "28",
+  "stock": 30,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.275Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.275Z"
+  },
+  "sku": "AA6743-28",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d76"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6743"
+  },
+  "size": "29",
+  "stock": 35,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.381Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.381Z"
+  },
+  "sku": "AA6743-29",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d79"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6743"
+  },
+  "size": "30",
+  "stock": 40,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.498Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.498Z"
+  },
+  "sku": "AA6743-30",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d7c"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6743"
+  },
+  "size": "31",
+  "stock": 40,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.604Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.604Z"
+  },
+  "sku": "AA6743-31",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d7f"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6743"
+  },
+  "size": "32",
+  "stock": 35,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.709Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.709Z"
+  },
+  "sku": "AA6743-32",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d82"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6743"
+  },
+  "size": "33",
+  "stock": 25,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.821Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.821Z"
+  },
+  "sku": "AA6743-33",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5ab428092632fa9d85"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6743"
+  },
+  "size": "34",
+  "stock": 15,
+  "status": "Active",
+  "price": 350000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:06.927Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:06.927Z"
+  },
+  "sku": "AA6743-34",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5bb428092632fa9d89"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6749"
+  },
+  "size": "ONESIZE",
+  "stock": 24,
+  "status": "Active",
+  "price": 2400000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:07.084Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-01T19:14:40.446Z"
+  },
+  "sku": "AA6749-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5bb428092632fa9d8d"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "size": "36",
+  "stock": 19,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:07.251Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:19.111Z"
+  },
+  "sku": "AA674C-36",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5bb428092632fa9d90"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "size": "37",
+  "stock": 25,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:07.357Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:07.357Z"
+  },
+  "sku": "AA674C-37",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5bb428092632fa9d93"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "size": "38",
+  "stock": 30,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:07.462Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:07.462Z"
+  },
+  "sku": "AA674C-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5bb428092632fa9d96"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "size": "39",
+  "stock": 30,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:07.581Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:07.581Z"
+  },
+  "sku": "AA674C-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5bb428092632fa9d99"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "size": "40",
+  "stock": 25,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:07.701Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:07.701Z"
+  },
+  "sku": "AA674C-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5bb428092632fa9d9c"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "size": "41",
+  "stock": 15,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:07.803Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:07.803Z"
+  },
+  "sku": "AA674C-41",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5bb428092632fa9d9f"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "size": "42",
+  "stock": 10,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:07.918Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:07.918Z"
+  },
+  "sku": "AA674C-42",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5cb428092632fa9da3"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674f"
+  },
+  "size": "ONESIZE",
+  "stock": 70,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:08.072Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:08.072Z"
+  },
+  "sku": "AA674F-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5cb428092632fa9da7"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6758"
+  },
+  "size": "36",
+  "stock": 18,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:08.224Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-06T07:19:46.403Z"
+  },
+  "sku": "AA6758-36",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5cb428092632fa9daa"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6758"
+  },
+  "size": "37",
+  "stock": 25,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:08.328Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:08.328Z"
+  },
+  "sku": "AA6758-37",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5cb428092632fa9dad"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6758"
+  },
+  "size": "38",
+  "stock": 30,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:08.435Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:08.435Z"
+  },
+  "sku": "AA6758-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5cb428092632fa9db0"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6758"
+  },
+  "size": "39",
+  "stock": 20,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:08.544Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:08.544Z"
+  },
+  "sku": "AA6758-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5cb428092632fa9db3"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6758"
+  },
+  "size": "40",
+  "stock": 15,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:08.657Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:43:08.657Z"
+  },
+  "sku": "AA6758-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69027c5cb428092632fa9db7"
+  },
+  "productId": {
+    "$oid": "69026e5034fe8e3ddfaa675b"
+  },
+  "size": "ONESIZE",
+  "stock": 70,
+  "status": "Active",
+  "price": 780000,
+  "createdAt": {
+    "$date": "2025-10-29T20:43:08.812Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-01T06:47:05.629Z"
+  },
+  "sku": "AA675B-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6905bc8f9d677bcb1fdf2c34"
+  },
+  "productId": {
+    "$oid": "6905bc8e9d677bcb1fdf2c2e"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-11-01T07:53:51.423Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-01T07:53:51.423Z"
+  },
+  "sku": "DF2C2E-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6905bc8f9d677bcb1fdf2c38"
+  },
+  "productId": {
+    "$oid": "6905bc8e9d677bcb1fdf2c2e"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 650000,
+  "createdAt": {
+    "$date": "2025-11-01T07:53:51.689Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-01T07:53:51.689Z"
+  },
+  "sku": "DF2C2E-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f1dd4c542604481586"
+  },
+  "productId": {
+    "$oid": "69081ce1879f6ee47dffddee"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:37.014Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:37.014Z"
+  },
+  "sku": "FFDDEE-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f1dd4c54260448158b"
+  },
+  "productId": {
+    "$oid": "69081ce1879f6ee47dffddee"
+  },
+  "size": "M",
+  "stock": 60,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:37.191Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:37.191Z"
+  },
+  "sku": "FFDDEE-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f1dd4c542604481590"
+  },
+  "productId": {
+    "$oid": "69081ce1879f6ee47dffddee"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:37.330Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:37.330Z"
+  },
+  "sku": "FFDDEE-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f1dd4c542604481595"
+  },
+  "productId": {
+    "$oid": "69081ce1879f6ee47dffddee"
+  },
+  "size": "XL",
+  "stock": 40,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:37.733Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:37.733Z"
+  },
+  "sku": "FFDDEE-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f1dd4c542604481599"
+  },
+  "productId": {
+    "$oid": "69081ce1879f6ee47dffddf3"
+  },
+  "size": "S",
+  "stock": 30,
+  "status": "Active",
+  "price": 470000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:37.929Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:37.929Z"
+  },
+  "sku": "FFDDF3-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f2dd4c54260448159c"
+  },
+  "productId": {
+    "$oid": "69081ce1879f6ee47dffddf3"
+  },
+  "size": "M",
+  "stock": 30,
+  "status": "Active",
+  "price": 470000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:38.062Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:38.062Z"
+  },
+  "sku": "FFDDF3-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f2dd4c54260448159f"
+  },
+  "productId": {
+    "$oid": "69081ce1879f6ee47dffddf3"
+  },
+  "size": "L",
+  "stock": 20,
+  "status": "Active",
+  "price": 470000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:38.194Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:38.194Z"
+  },
+  "sku": "FFDDF3-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f2dd4c5426044815a3"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddf9"
+  },
+  "size": "29",
+  "stock": 30,
+  "status": "Active",
+  "price": 530000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:38.391Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:38.391Z"
+  },
+  "sku": "FFDDF9-29",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f2dd4c5426044815a6"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddf9"
+  },
+  "size": "30",
+  "stock": 40,
+  "status": "Active",
+  "price": 530000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:38.523Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:38.523Z"
+  },
+  "sku": "FFDDF9-30",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f2dd4c5426044815a9"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddf9"
+  },
+  "size": "31",
+  "stock": 40,
+  "status": "Active",
+  "price": 530000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:38.661Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:38.661Z"
+  },
+  "sku": "FFDDF9-31",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f2dd4c5426044815ac"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddf9"
+  },
+  "size": "32",
+  "stock": 40,
+  "status": "Active",
+  "price": 530000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:38.793Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:38.793Z"
+  },
+  "sku": "FFDDF9-32",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f2dd4c5426044815af"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddf9"
+  },
+  "size": "33",
+  "stock": 30,
+  "status": "Active",
+  "price": 530000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:38.927Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:38.927Z"
+  },
+  "sku": "FFDDF9-33",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f3dd4c5426044815b2"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddf9"
+  },
+  "size": "34",
+  "stock": 20,
+  "status": "Active",
+  "price": 530000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:39.061Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:39.061Z"
+  },
+  "sku": "FFDDF9-34",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f3dd4c5426044815b6"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddfc"
+  },
+  "size": "S",
+  "stock": 24,
+  "status": "Active",
+  "price": 560000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:39.261Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T22:19:21.658Z"
+  },
+  "sku": "FFDDFC-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f3dd4c5426044815b9"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddfc"
+  },
+  "size": "M",
+  "stock": 30,
+  "status": "Active",
+  "price": 560000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:39.393Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:39.393Z"
+  },
+  "sku": "FFDDFC-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f3dd4c5426044815bc"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddfc"
+  },
+  "size": "L",
+  "stock": 20,
+  "status": "Active",
+  "price": 560000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:39.525Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:39.525Z"
+  },
+  "sku": "FFDDFC-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f3dd4c5426044815c0"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddff"
+  },
+  "size": "S",
+  "stock": 40,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:39.717Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:39.717Z"
+  },
+  "sku": "FFDDFF-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f3dd4c5426044815c3"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddff"
+  },
+  "size": "M",
+  "stock": 50,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:39.849Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:39.849Z"
+  },
+  "sku": "FFDDFF-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f3dd4c5426044815c6"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddff"
+  },
+  "size": "L",
+  "stock": 40,
+  "status": "Active",
+  "price": 420000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:39.983Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:39.983Z"
+  },
+  "sku": "FFDDFF-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f4dd4c5426044815ca"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffde05"
+  },
+  "size": "ONESIZE",
+  "stock": 118,
+  "status": "Active",
+  "price": 150000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:40.178Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:02:17.284Z"
+  },
+  "sku": "FFDE05-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f4dd4c5426044815ce"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffde08"
+  },
+  "size": "ONESIZE",
+  "stock": 199,
+  "status": "Active",
+  "price": 90000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:40.370Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:02:16.839Z"
+  },
+  "sku": "FFDE08-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f4dd4c5426044815d2"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffde0e"
+  },
+  "size": "ONESIZE",
+  "stock": 39,
+  "status": "Active",
+  "price": 860000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:40.574Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-06T06:01:03.117Z"
+  },
+  "sku": "FFDE0E-ONESIZE",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f4dd4c5426044815d6"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde17"
+  },
+  "size": "36",
+  "stock": 10,
+  "status": "Active",
+  "price": 980000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:40.779Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:40.779Z"
+  },
+  "sku": "FFDE17-36",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f4dd4c5426044815d9"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde17"
+  },
+  "size": "37",
+  "stock": 15,
+  "status": "Active",
+  "price": 980000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:40.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:40.911Z"
+  },
+  "sku": "FFDE17-37",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f5dd4c5426044815dc"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde17"
+  },
+  "size": "38",
+  "stock": 20,
+  "status": "Active",
+  "price": 980000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:41.041Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:41.041Z"
+  },
+  "sku": "FFDE17-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f5dd4c5426044815df"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde17"
+  },
+  "size": "39",
+  "stock": 20,
+  "status": "Active",
+  "price": 980000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:41.171Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:41.171Z"
+  },
+  "sku": "FFDE17-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f5dd4c5426044815e2"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde17"
+  },
+  "size": "40",
+  "stock": 15,
+  "status": "Active",
+  "price": 980000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:41.305Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:41.305Z"
+  },
+  "sku": "FFDE17-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f5dd4c5426044815e5"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde17"
+  },
+  "size": "41",
+  "stock": 10,
+  "status": "Active",
+  "price": 980000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:41.438Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:41.438Z"
+  },
+  "sku": "FFDE17-41",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f5dd4c5426044815e9"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde1a"
+  },
+  "size": "36",
+  "stock": 15,
+  "status": "Active",
+  "price": 590000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:41.636Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:41.636Z"
+  },
+  "sku": "FFDE1A-36",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f5dd4c5426044815ec"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde1a"
+  },
+  "size": "37",
+  "stock": 20,
+  "status": "Active",
+  "price": 590000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:41.770Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:41.770Z"
+  },
+  "sku": "FFDE1A-37",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f5dd4c5426044815ef"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde1a"
+  },
+  "size": "38",
+  "stock": 20,
+  "status": "Active",
+  "price": 590000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:41.905Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:41.905Z"
+  },
+  "sku": "FFDE1A-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f6dd4c5426044815f2"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde1a"
+  },
+  "size": "39",
+  "stock": 15,
+  "status": "Active",
+  "price": 590000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:42.042Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:42.042Z"
+  },
+  "sku": "FFDE1A-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f6dd4c5426044815f5"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde1a"
+  },
+  "size": "40",
+  "stock": 10,
+  "status": "Active",
+  "price": 590000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:42.176Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:42.176Z"
+  },
+  "sku": "FFDE1A-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f6dd4c5426044815f9"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde23"
+  },
+  "size": "36",
+  "stock": 10,
+  "status": "Active",
+  "price": 790000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:42.375Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:42.375Z"
+  },
+  "sku": "FFDE23-36",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f6dd4c5426044815fc"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde23"
+  },
+  "size": "37",
+  "stock": 15,
+  "status": "Active",
+  "price": 790000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:42.505Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:42.505Z"
+  },
+  "sku": "FFDE23-37",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f6dd4c5426044815ff"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde23"
+  },
+  "size": "38",
+  "stock": 20,
+  "status": "Active",
+  "price": 790000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:42.638Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:42.638Z"
+  },
+  "sku": "FFDE23-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f6dd4c542604481602"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde23"
+  },
+  "size": "39",
+  "stock": 15,
+  "status": "Active",
+  "price": 790000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:42.767Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:42.767Z"
+  },
+  "sku": "FFDE23-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f6dd4c542604481606"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde26"
+  },
+  "size": "38",
+  "stock": 30,
+  "status": "Active",
+  "price": 210000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:42.965Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:42.965Z"
+  },
+  "sku": "FFDE26-38",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f7dd4c542604481609"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde26"
+  },
+  "size": "39",
+  "stock": 35,
+  "status": "Active",
+  "price": 210000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:43.096Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:43.096Z"
+  },
+  "sku": "FFDE26-39",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f7dd4c54260448160c"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde26"
+  },
+  "size": "40",
+  "stock": 40,
+  "status": "Active",
+  "price": 210000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:43.232Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:43.232Z"
+  },
+  "sku": "FFDE26-40",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690849f7dd4c54260448160f"
+  },
+  "productId": {
+    "$oid": "69081ce3879f6ee47dffde26"
+  },
+  "size": "41",
+  "stock": 40,
+  "status": "Active",
+  "price": 210000,
+  "createdAt": {
+    "$date": "2025-11-03T06:21:43.369Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T06:21:43.369Z"
+  },
+  "sku": "FFDE26-41",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fcc324524497675be0"
+  },
+  "productId": {
+    "$oid": "69087cc19498c31f42599ea6"
+  },
+  "size": "S",
+  "stock": 30,
+  "status": "Active",
+  "price": 190000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:32.749Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:32.749Z"
+  },
+  "sku": "599EA6-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fcc324524497675be3"
+  },
+  "productId": {
+    "$oid": "69087cc19498c31f42599ea6"
+  },
+  "size": "M",
+  "stock": 40,
+  "status": "Active",
+  "price": 190000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:32.899Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:32.899Z"
+  },
+  "sku": "599EA6-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fdc324524497675be6"
+  },
+  "productId": {
+    "$oid": "69087cc19498c31f42599ea6"
+  },
+  "size": "L",
+  "stock": 30,
+  "status": "Active",
+  "price": 190000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:33.022Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:33.022Z"
+  },
+  "sku": "599EA6-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fdc324524497675be9"
+  },
+  "productId": {
+    "$oid": "69087cc19498c31f42599ea6"
+  },
+  "size": "XL",
+  "stock": 20,
+  "status": "Active",
+  "price": 190000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:33.143Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:33.143Z"
+  },
+  "sku": "599EA6-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fdc324524497675bed"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eab"
+  },
+  "size": "S",
+  "stock": 20,
+  "status": "Active",
+  "price": 720000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:33.325Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:33.325Z"
+  },
+  "sku": "599EAB-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fdc324524497675bf0"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eab"
+  },
+  "size": "M",
+  "stock": 25,
+  "status": "Active",
+  "price": 720000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:33.449Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:33.449Z"
+  },
+  "sku": "599EAB-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fdc324524497675bf3"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eab"
+  },
+  "size": "L",
+  "stock": 15,
+  "status": "Active",
+  "price": 720000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:33.578Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:33.578Z"
+  },
+  "sku": "599EAB-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fdc324524497675bf7"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb2"
+  },
+  "size": "S",
+  "stock": 50,
+  "status": "Active",
+  "price": 600000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:33.773Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:33.773Z"
+  },
+  "sku": "599EB2-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fdc324524497675bfa"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb2"
+  },
+  "size": "M",
+  "stock": 60,
+  "status": "Active",
+  "price": 600000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:33.894Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:33.894Z"
+  },
+  "sku": "599EB2-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fec324524497675bfd"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb2"
+  },
+  "size": "L",
+  "stock": 40,
+  "status": "Active",
+  "price": 600000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:34.018Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:34.018Z"
+  },
+  "sku": "599EB2-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fec324524497675c00"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb2"
+  },
+  "size": "XL",
+  "stock": 29,
+  "status": "Active",
+  "price": 600000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:34.203Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:48:36.813Z"
+  },
+  "sku": "599EB2-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fec324524497675c04"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb5"
+  },
+  "size": "S",
+  "stock": 30,
+  "status": "Active",
+  "price": 670000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:34.399Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:34.399Z"
+  },
+  "sku": "599EB5-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fec324524497675c07"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb5"
+  },
+  "size": "M",
+  "stock": 40,
+  "status": "Active",
+  "price": 670000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:34.521Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:34.521Z"
+  },
+  "sku": "599EB5-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fec324524497675c0a"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb5"
+  },
+  "size": "L",
+  "stock": 25,
+  "status": "Active",
+  "price": 670000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:34.641Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:34.641Z"
+  },
+  "sku": "599EB5-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fec324524497675c0d"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb5"
+  },
+  "size": "XL",
+  "stock": 20,
+  "status": "Active",
+  "price": 670000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:34.769Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:34.769Z"
+  },
+  "sku": "599EB5-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2fec324524497675c11"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb8"
+  },
+  "size": "S",
+  "stock": 20,
+  "status": "Active",
+  "price": 360000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:34.950Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:34.950Z"
+  },
+  "sku": "599EB8-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2ffc324524497675c14"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb8"
+  },
+  "size": "M",
+  "stock": 25,
+  "status": "Active",
+  "price": 360000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:35.072Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:35.072Z"
+  },
+  "sku": "599EB8-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2ffc324524497675c17"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb8"
+  },
+  "size": "L",
+  "stock": 15,
+  "status": "Active",
+  "price": 360000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:35.196Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:35.196Z"
+  },
+  "sku": "599EB8-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2ffc324524497675c1b"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebb"
+  },
+  "size": "S",
+  "stock": 40,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:35.380Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:35.380Z"
+  },
+  "sku": "599EBB-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2ffc324524497675c1e"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebb"
+  },
+  "size": "M",
+  "stock": 49,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:35.501Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T11:17:06.071Z"
+  },
+  "sku": "599EBB-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2ffc324524497675c21"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebb"
+  },
+  "size": "L",
+  "stock": 40,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:35.624Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:35.624Z"
+  },
+  "sku": "599EBB-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2ffc324524497675c24"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebb"
+  },
+  "size": "XL",
+  "stock": 30,
+  "status": "Active",
+  "price": 520000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:35.745Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:35.745Z"
+  },
+  "sku": "599EBB-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a2ffc324524497675c28"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebe"
+  },
+  "size": "S",
+  "stock": 30,
+  "status": "Active",
+  "price": 580000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:35.987Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:35.987Z"
+  },
+  "sku": "599EBE-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a300c324524497675c2b"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebe"
+  },
+  "size": "M",
+  "stock": 40,
+  "status": "Active",
+  "price": 580000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:36.191Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:36.191Z"
+  },
+  "sku": "599EBE-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a300c324524497675c2e"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebe"
+  },
+  "size": "L",
+  "stock": 30,
+  "status": "Active",
+  "price": 580000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:36.373Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:36.373Z"
+  },
+  "sku": "599EBE-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a300c324524497675c31"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebe"
+  },
+  "size": "XL",
+  "stock": 20,
+  "status": "Active",
+  "price": 580000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:36.548Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:36.548Z"
+  },
+  "sku": "599EBE-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a300c324524497675c35"
+  },
+  "productId": {
+    "$oid": "69087cc39498c31f42599ec1"
+  },
+  "size": "S",
+  "stock": 35,
+  "status": "Active",
+  "price": 640000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:36.797Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:36.797Z"
+  },
+  "sku": "599EC1-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a300c324524497675c38"
+  },
+  "productId": {
+    "$oid": "69087cc39498c31f42599ec1"
+  },
+  "size": "M",
+  "stock": 45,
+  "status": "Active",
+  "price": 640000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:36.944Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:36.944Z"
+  },
+  "sku": "599EC1-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a301c324524497675c3b"
+  },
+  "productId": {
+    "$oid": "69087cc39498c31f42599ec1"
+  },
+  "size": "L",
+  "stock": 35,
+  "status": "Active",
+  "price": 640000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:37.069Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:37.069Z"
+  },
+  "sku": "599EC1-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a301c324524497675c3e"
+  },
+  "productId": {
+    "$oid": "69087cc39498c31f42599ec1"
+  },
+  "size": "XL",
+  "stock": 25,
+  "status": "Active",
+  "price": 640000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:37.291Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:37.291Z"
+  },
+  "sku": "599EC1-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a301c324524497675c42"
+  },
+  "productId": {
+    "$oid": "69087cc39498c31f42599ec4"
+  },
+  "size": "S",
+  "stock": 20,
+  "status": "Active",
+  "price": 760000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:37.632Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:37.632Z"
+  },
+  "sku": "599EC4-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a301c324524497675c45"
+  },
+  "productId": {
+    "$oid": "69087cc39498c31f42599ec4"
+  },
+  "size": "M",
+  "stock": 30,
+  "status": "Active",
+  "price": 760000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:37.843Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:37.843Z"
+  },
+  "sku": "599EC4-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a301c324524497675c48"
+  },
+  "productId": {
+    "$oid": "69087cc39498c31f42599ec4"
+  },
+  "size": "L",
+  "stock": 25,
+  "status": "Active",
+  "price": 760000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:37.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:37.969Z"
+  },
+  "sku": "599EC4-L",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6908a302c324524497675c4b"
+  },
+  "productId": {
+    "$oid": "69087cc39498c31f42599ec4"
+  },
+  "size": "XL",
+  "stock": 15,
+  "status": "Active",
+  "price": 760000,
+  "createdAt": {
+    "$date": "2025-11-03T12:41:38.247Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T12:41:38.247Z"
+  },
+  "sku": "599EC4-XL",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6909e6835ffbf7bef7affc99"
+  },
+  "productId": {
+    "$oid": "6909e6835ffbf7bef7affc93"
+  },
+  "size": "S",
+  "stock": 9,
+  "status": "Active",
+  "price": 280000,
+  "createdAt": {
+    "$date": "2025-11-04T11:41:55.540Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T22:17:24.320Z"
+  },
+  "sku": "AFFC93-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6909e6835ffbf7bef7affc9d"
+  },
+  "productId": {
+    "$oid": "6909e6835ffbf7bef7affc93"
+  },
+  "size": "M",
+  "stock": 11,
+  "status": "Active",
+  "price": 280000,
+  "createdAt": {
+    "$date": "2025-11-04T11:41:55.918Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-04T11:41:55.918Z"
+  },
+  "sku": "AFFC93-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690fbc14ef07fd66293bebea"
+  },
+  "productId": {
+    "$oid": "690fbc13ef07fd66293bebe4"
+  },
+  "size": "S",
+  "stock": 20,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-11-08T21:54:28.587Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T21:54:28.587Z"
+  },
+  "sku": "3BEBE4-S",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690fbc15ef07fd66293bebee"
+  },
+  "productId": {
+    "$oid": "690fbc13ef07fd66293bebe4"
+  },
+  "size": "M",
+  "stock": 22,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-11-08T21:54:29.101Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-13T07:27:12.112Z"
+  },
+  "sku": "3BEBE4-M",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690fbc15ef07fd66293bebf2"
+  },
+  "productId": {
+    "$oid": "690fbc13ef07fd66293bebe4"
+  },
+  "size": "L",
+  "stock": 50,
+  "status": "Active",
+  "price": 450000,
+  "createdAt": {
+    "$date": "2025-11-08T21:54:29.608Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T21:54:29.608Z"
+  },
+  "sku": "3BEBE4-L",
+  "__v": 0
+}]

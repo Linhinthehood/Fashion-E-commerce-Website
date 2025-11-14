@@ -1,0 +1,851 @@
+[{
+  "_id": {
+    "$oid": "690760fefde7bb8203e157b6"
+  },
+  "orderId": {
+    "$oid": "690760fdfde7bb8203e157b3"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6740"
+  },
+  "variantId": {
+    "$oid": "69027c59b428092632fa9d66"
+  },
+  "productName": "Áo Thun Unisex Summer Breeze",
+  "brand": "LocalBrand",
+  "color": "Light Blue",
+  "size": "M",
+  "sku": "AA6740-M",
+  "variantStatus": "Active",
+  "price": 300000,
+  "quantity": 2,
+  "subPrice": 600000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761767387/fashion-ecommerce/products/-o-thun-unisex-summer-breeze-1.webp",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-02T13:47:42.341Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-02T13:47:42.341Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69081ac779a7c13ee2bbe0c8"
+  },
+  "orderId": {
+    "$oid": "69081ac679a7c13ee2bbe0c5"
+  },
+  "productId": {
+    "$oid": "68dfcc7484cd07dea32e23b6"
+  },
+  "variantId": {
+    "$oid": "68e08537356d2e1cbe1ebc5b"
+  },
+  "productName": "SWE RING BOXY TEE - BLACK",
+  "brand": "SWE",
+  "color": "Black",
+  "size": "M",
+  "sku": "2E23B6-M",
+  "variantStatus": "Active",
+  "price": 650000,
+  "quantity": 1,
+  "subPrice": 650000,
+  "image": "https://res.cloudinary.com/du391fsvp/image/upload/v1759497331/fashion-ecommerce/products/s3bm1wikvt6ukvxjchbp.jpg",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-03T03:00:23.587Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:00:23.587Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6908236fe5a8cd9f6b36c9c8"
+  },
+  "orderId": {
+    "$oid": "6908236ee5a8cd9f6b36c9c5"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "variantId": {
+    "$oid": "69027c5bb428092632fa9d8d"
+  },
+  "productName": "Giày Slip-on Canvas Unisex",
+  "brand": "CanvasCo",
+  "color": "Navy",
+  "size": "36",
+  "sku": "AA674C-36",
+  "variantStatus": "Active",
+  "price": 650000,
+  "quantity": 1,
+  "subPrice": 650000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769469/fashion-ecommerce/products/gi-y-slip-on-canvas-unisex-1.webp",
+  "categoryInfo": {
+    "masterCategory": "Footwear",
+    "subCategory": "Shoes",
+    "articleType": "Casual shoes"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-03T03:37:19.696Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:19.696Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6908236fe5a8cd9f6b36c9c9"
+  },
+  "orderId": {
+    "$oid": "6908236ee5a8cd9f6b36c9c5"
+  },
+  "productId": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "variantId": {
+    "$oid": "68e0e363eb3ed889daec2209"
+  },
+  "productName": "Giày Sneaker Nam Trắng Basic",
+  "brand": "Nike",
+  "color": "White",
+  "size": "40",
+  "sku": "7C5519-40",
+  "variantStatus": "Active",
+  "price": 2500000,
+  "quantity": 1,
+  "subPrice": 2500000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563791/fashion-ecommerce/products/gi-y-sneaker-nam-tr-ng-basic-1.jpg",
+  "categoryInfo": {
+    "masterCategory": "Footwear",
+    "subCategory": "Shoes",
+    "articleType": "Casual shoes"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-03T03:37:19.698Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:19.698Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69086241686b1ed35c9f20c9"
+  },
+  "orderId": {
+    "$oid": "69086240686b1ed35c9f20c6"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffde05"
+  },
+  "variantId": {
+    "$oid": "690849f4dd4c5426044815ca"
+  },
+  "productName": "Snapback Urban",
+  "brand": "UrbanMove",
+  "color": "Black",
+  "size": "ONESIZE",
+  "sku": "FFDE05-ONESIZE",
+  "variantStatus": "Active",
+  "price": 150000,
+  "quantity": 1,
+  "subPrice": 150000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141048/fashion-ecommerce/products/snapback-urban-1.avif",
+  "categoryInfo": {
+    "masterCategory": "Accessories",
+    "subCategory": "Hat",
+    "articleType": "Baseball cap"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-03T08:05:22.070Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T08:05:22.070Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69086242686b1ed35c9f20ca"
+  },
+  "orderId": {
+    "$oid": "69086240686b1ed35c9f20c6"
+  },
+  "productId": {
+    "$oid": "68dfce0884cd07dea32e23c5"
+  },
+  "variantId": {
+    "$oid": "68dfd04f84cd07dea32e23e8"
+  },
+  "productName": "SWE STARCHECK SNAPBACK - BLACK",
+  "brand": "SWE",
+  "color": "Black",
+  "size": "ONESIZE",
+  "sku": "2E23C5-ONESIZE",
+  "variantStatus": "Active",
+  "price": 350000,
+  "quantity": 1,
+  "subPrice": 350000,
+  "image": "https://res.cloudinary.com/du391fsvp/image/upload/v1759497735/fashion-ecommerce/products/rs5rhpplbtvj7melb0yv.jpg",
+  "categoryInfo": {
+    "masterCategory": "Accessories",
+    "subCategory": "Hat",
+    "articleType": "Baseball cap"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-03T08:05:22.070Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T08:05:22.070Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690b3567150a90c63e6acae8"
+  },
+  "orderId": {
+    "$oid": "690b3566150a90c63e6acae5"
+  },
+  "productId": {
+    "$oid": "68e0d6d833514af994350abf"
+  },
+  "variantId": {
+    "$oid": "68e0e364eb3ed889daec222f"
+  },
+  "productName": "Ví Da Nam Ngang Đen",
+  "brand": "Yame",
+  "color": "Black",
+  "size": "ONESIZE",
+  "sku": "350ABF-ONESIZE",
+  "variantStatus": "Active",
+  "price": 450000,
+  "quantity": 3,
+  "subPrice": 1350000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564088/fashion-ecommerce/products/v--da-nam-ngang--en-1.webp",
+  "categoryInfo": {
+    "masterCategory": "Accessories",
+    "subCategory": "Wallet",
+    "articleType": "Wallet"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-05T11:30:47.644Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-05T11:30:47.644Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690c399f10b69419de19ab14"
+  },
+  "orderId": {
+    "$oid": "690c399e10b69419de19ab11"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffde0e"
+  },
+  "variantId": {
+    "$oid": "690849f4dd4c5426044815d2"
+  },
+  "productName": "Đồng Hồ Thể Thao Multi",
+  "brand": "AeroFit",
+  "color": "Black",
+  "size": "ONESIZE",
+  "sku": "FFDE0E-ONESIZE",
+  "variantStatus": "Active",
+  "price": 860000,
+  "quantity": 1,
+  "subPrice": 860000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141056/fashion-ecommerce/products/--ng-h--th--thao-multi-1.avif",
+  "categoryInfo": {
+    "masterCategory": "Accessories",
+    "subCategory": "Watch",
+    "articleType": "Watch"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-06T06:01:03.199Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-06T06:01:03.199Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690c39f010b69419de19ab54"
+  },
+  "orderId": {
+    "$oid": "690c39f010b69419de19ab51"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6758"
+  },
+  "variantId": {
+    "$oid": "69027c5cb428092632fa9da7"
+  },
+  "productName": "Sandal Nữ Flat",
+  "brand": "SandalWorks",
+  "color": "Beige",
+  "size": "36",
+  "sku": "AA6758-36",
+  "variantStatus": "Active",
+  "price": 420000,
+  "quantity": 1,
+  "subPrice": 420000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769480/fashion-ecommerce/products/sandal-n--flat-1.webp",
+  "categoryInfo": {
+    "masterCategory": "Footwear",
+    "subCategory": "Sandal",
+    "articleType": "Sandals"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-06T06:02:24.907Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-06T06:02:24.907Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690c4c1210b69419de19ac18"
+  },
+  "orderId": {
+    "$oid": "690c4c1110b69419de19ac15"
+  },
+  "productId": {
+    "$oid": "69026e4f34fe8e3ddfaa6758"
+  },
+  "variantId": {
+    "$oid": "69027c5cb428092632fa9da7"
+  },
+  "productName": "Sandal Nữ Flat",
+  "brand": "SandalWorks",
+  "color": "Beige",
+  "size": "36",
+  "sku": "AA6758-36",
+  "variantStatus": "Active",
+  "price": 420000,
+  "quantity": 1,
+  "subPrice": 420000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769480/fashion-ecommerce/products/sandal-n--flat-1.webp",
+  "categoryInfo": {
+    "masterCategory": "Footwear",
+    "subCategory": "Sandal",
+    "articleType": "Sandals"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-06T07:19:46.474Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-06T07:19:46.474Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690f26b27653f55814cdfc6a"
+  },
+  "orderId": {
+    "$oid": "690f26b17653f55814cdfc67"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599ebb"
+  },
+  "variantId": {
+    "$oid": "6908a2ffc324524497675c1e"
+  },
+  "productName": "Hoodie Core Đen",
+  "brand": "UrbanMove",
+  "color": "Đen",
+  "size": "M",
+  "sku": "599EBB-M",
+  "variantStatus": "Active",
+  "price": 520000,
+  "quantity": 1,
+  "subPrice": 520000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762163279/fashion-ecommerce/products/hoodie-core--en-1.webp",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T11:17:06.673Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T11:17:06.673Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690f26b27653f55814cdfc6b"
+  },
+  "orderId": {
+    "$oid": "690f26b17653f55814cdfc67"
+  },
+  "productId": {
+    "$oid": "68e0cee62ca76bf7ae455b95"
+  },
+  "variantId": {
+    "$oid": "68e0e362eb3ed889daec21ff"
+  },
+  "productName": "Đồng Hồ Thể Thao Nam",
+  "brand": "G-shock",
+  "color": "Black",
+  "size": "ONESIZE",
+  "sku": "455B95-ONESIZE",
+  "variantStatus": "Active",
+  "price": 3200000,
+  "quantity": 1,
+  "subPrice": 3200000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564082/fashion-ecommerce/products/--ng-h--th--thao-nam-1.avif",
+  "categoryInfo": {
+    "masterCategory": "Accessories",
+    "subCategory": "Watch",
+    "articleType": "Watch"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T11:17:06.674Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T11:17:06.674Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690f2b1e90788b6bf7ec9069"
+  },
+  "orderId": {
+    "$oid": "690f2b1d90788b6bf7ec9066"
+  },
+  "productId": {
+    "$oid": "6909e6835ffbf7bef7affc93"
+  },
+  "variantId": {
+    "$oid": "6909e6835ffbf7bef7affc99"
+  },
+  "productName": "SWE HONEY EDGE BRA - WHITE",
+  "brand": "SWE",
+  "color": "White",
+  "size": "S",
+  "sku": "AFFC93-S",
+  "variantStatus": "Active",
+  "price": 280000,
+  "quantity": 1,
+  "subPrice": 280000,
+  "image": "https://res.cloudinary.com/du391fsvp/image/upload/v1762256508/fashion-ecommerce/products/kx3nrdnqj5rizh6ishmi.jpg",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T11:35:58.266Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T11:35:58.266Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fc077e6b73b1745b6a659"
+  },
+  "orderId": {
+    "$oid": "690fc076e6b73b1745b6a656"
+  },
+  "productId": {
+    "$oid": "68dfcc7484cd07dea32e23b6"
+  },
+  "variantId": {
+    "$oid": "68e0853e356d2e1cbe1ebc63"
+  },
+  "productName": "SWE RING BOXY TEE - BLACK",
+  "brand": "SWE",
+  "color": "Black",
+  "size": "XL",
+  "sku": "2E23B6-XL",
+  "variantStatus": "Active",
+  "price": 650000,
+  "quantity": 1,
+  "subPrice": 650000,
+  "image": "https://res.cloudinary.com/du391fsvp/image/upload/v1759497331/fashion-ecommerce/products/s3bm1wikvt6ukvxjchbp.jpg",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T22:13:11.984Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T22:13:11.984Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fc174e6b73b1745b6a6c1"
+  },
+  "orderId": {
+    "$oid": "690fc173e6b73b1745b6a6be"
+  },
+  "productId": {
+    "$oid": "6909e6835ffbf7bef7affc93"
+  },
+  "variantId": {
+    "$oid": "6909e6835ffbf7bef7affc99"
+  },
+  "productName": "SWE HONEY EDGE BRA - WHITE",
+  "brand": "SWE",
+  "color": "White",
+  "size": "S",
+  "sku": "AFFC93-S",
+  "variantStatus": "Active",
+  "price": 280000,
+  "quantity": 2,
+  "subPrice": 560000,
+  "image": "https://res.cloudinary.com/du391fsvp/image/upload/v1762256508/fashion-ecommerce/products/kx3nrdnqj5rizh6ishmi.jpg",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T22:17:24.407Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T22:17:24.407Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fc1e9e6b73b1745b6a713"
+  },
+  "orderId": {
+    "$oid": "690fc1e9e6b73b1745b6a710"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffddfc"
+  },
+  "variantId": {
+    "$oid": "690849f3dd4c5426044815b6"
+  },
+  "productName": "Quần Culotte Linen Nữ",
+  "brand": "LinenCo",
+  "color": "Khaki",
+  "size": "S",
+  "sku": "FFDDFC-S",
+  "variantStatus": "Active",
+  "price": 560000,
+  "quantity": 1,
+  "subPrice": 560000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141042/fashion-ecommerce/products/qu-n-culotte-linen-n--1.webp",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Bottomwear",
+    "articleType": "Pants"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T22:19:21.745Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T22:19:21.745Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69143f080270b94cc81b4392"
+  },
+  "orderId": {
+    "$oid": "69143f080270b94cc81b438f"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffde08"
+  },
+  "variantId": {
+    "$oid": "690849f4dd4c5426044815ce"
+  },
+  "productName": "Beanie Knit Warm",
+  "brand": "CozyHead",
+  "color": "Maroon",
+  "size": "ONESIZE",
+  "sku": "FFDE08-ONESIZE",
+  "variantStatus": "Active",
+  "price": 90000,
+  "quantity": 1,
+  "subPrice": 90000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141052/fashion-ecommerce/products/beanie-knit-warm-1.avif",
+  "categoryInfo": {
+    "masterCategory": "Accessories",
+    "subCategory": "Hat",
+    "articleType": "Baseball cap"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-12T08:02:17.364Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:02:17.364Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69143f090270b94cc81b4393"
+  },
+  "orderId": {
+    "$oid": "69143f080270b94cc81b438f"
+  },
+  "productId": {
+    "$oid": "69081ce2879f6ee47dffde05"
+  },
+  "variantId": {
+    "$oid": "690849f4dd4c5426044815ca"
+  },
+  "productName": "Snapback Urban",
+  "brand": "UrbanMove",
+  "color": "Black",
+  "size": "ONESIZE",
+  "sku": "FFDE05-ONESIZE",
+  "variantStatus": "Active",
+  "price": 150000,
+  "quantity": 1,
+  "subPrice": 150000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141048/fashion-ecommerce/products/snapback-urban-1.avif",
+  "categoryInfo": {
+    "masterCategory": "Accessories",
+    "subCategory": "Hat",
+    "articleType": "Baseball cap"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-12T08:02:17.364Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:02:17.364Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69143f740270b94cc81b43b5"
+  },
+  "orderId": {
+    "$oid": "69143f740270b94cc81b43b2"
+  },
+  "productId": {
+    "$oid": "68e8dcb3d78957d01e035447"
+  },
+  "variantId": {
+    "$oid": "68e8e7ff085e4dda8283ebd4"
+  },
+  "productName": "Đồng Hồ Nữ Thể Thao Trắng",
+  "brand": "Garmin",
+  "color": "White",
+  "size": "ONESIZE",
+  "sku": "035447-ONESIZE",
+  "variantStatus": "Active",
+  "price": 2800000,
+  "quantity": 1,
+  "subPrice": 2800000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093979/fashion-ecommerce/products/--ng-h--n--th--thao-tr-ng-1.jpg",
+  "categoryInfo": {
+    "masterCategory": "Accessories",
+    "subCategory": "Watch",
+    "articleType": "Watch"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-12T08:04:04.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:04:04.966Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "691449e4ef6f2e38d4536fac"
+  },
+  "orderId": {
+    "$oid": "691449e3ef6f2e38d4536fa8"
+  },
+  "productId": {
+    "$oid": "69087cc29498c31f42599eb2"
+  },
+  "variantId": {
+    "$oid": "6908a2fec324524497675c00"
+  },
+  "productName": "Áo Nỉ Crewneck",
+  "brand": "CozyLayer",
+  "color": "Grey",
+  "size": "XL",
+  "sku": "599EB2-XL",
+  "variantStatus": "Active",
+  "price": 600000,
+  "quantity": 1,
+  "subPrice": 600000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762163275/fashion-ecommerce/products/-o-n--crewneck-1.avif",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-12T08:48:36.889Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:48:36.889Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "691449e4ef6f2e38d4536fab"
+  },
+  "orderId": {
+    "$oid": "691449e3ef6f2e38d4536fa8"
+  },
+  "productId": {
+    "$oid": "68dfcdb384cd07dea32e23c0"
+  },
+  "variantId": {
+    "$oid": "68e0e360eb3ed889daec21ad"
+  },
+  "productName": "SWE SIGNATURE TEE - BLACK",
+  "brand": "SWE",
+  "color": "Black",
+  "size": "S",
+  "sku": "2E23C0-S",
+  "variantStatus": "Active",
+  "price": 400000,
+  "quantity": 1,
+  "subPrice": 400000,
+  "image": "https://res.cloudinary.com/du391fsvp/image/upload/v1759497651/fashion-ecommerce/products/elkb4qyan8v5rcovxwds.jpg",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-12T08:48:36.888Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:48:36.888Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69144b15ef6f2e38d4537013"
+  },
+  "orderId": {
+    "$oid": "69144b14ef6f2e38d453700d"
+  },
+  "productId": {
+    "$oid": "68e97123a6704d964776968c"
+  },
+  "variantId": {
+    "$oid": "68ea24f1840402ab12381e06"
+  },
+  "productName": "Giày Loafer Nam Gucci",
+  "brand": "Gucci",
+  "color": "Brown",
+  "size": "41",
+  "sku": "76968C-41",
+  "variantStatus": "Active",
+  "price": 18500000,
+  "quantity": 1,
+  "subPrice": 18500000,
+  "image": "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174847/fashion-ecommerce/products/gi-y-loafer-nam-gucci-1.png",
+  "categoryInfo": {
+    "masterCategory": "Footwear",
+    "subCategory": "Shoes",
+    "articleType": "Casual shoes"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-12T08:53:41.093Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-12T08:53:41.093Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6915885075047a64885f3217"
+  },
+  "orderId": {
+    "$oid": "6915884f75047a64885f3214"
+  },
+  "productId": {
+    "$oid": "690fbc13ef07fd66293bebe4"
+  },
+  "variantId": {
+    "$oid": "690fbc15ef07fd66293bebee"
+  },
+  "productName": "SWE Red Button Shirt",
+  "brand": "SWE",
+  "color": "Black",
+  "size": "M",
+  "sku": "3BEBE4-M",
+  "variantStatus": "Active",
+  "price": 450000,
+  "quantity": 1,
+  "subPrice": 450000,
+  "image": "https://res.cloudinary.com/du391fsvp/image/upload/v1762638863/fashion-ecommerce/products/v5zfhol1bptdbqzqszus.jpg",
+  "categoryInfo": {
+    "masterCategory": "Apparel",
+    "subCategory": "Topwear",
+    "articleType": "Shirt"
+  },
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-13T07:27:12.195Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-13T07:27:12.195Z"
+  }
+}]
