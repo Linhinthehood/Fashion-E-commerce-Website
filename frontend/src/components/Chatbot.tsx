@@ -17,6 +17,10 @@ interface Product {
   gender: string;
   color: string;
   image: string;
+  categoryId?: {
+    articleType?: string;
+    masterCategory?: string;
+  };
 }
 
 interface Message {
@@ -67,6 +71,113 @@ const Chatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  /**
+   * Detect product category from product name
+   * Fallback method when categoryId is not populated
+   */
+  const detectProductCategory = (product: Product): string => {
+    // First try to get from categoryId
+    if (product.categoryId?.articleType) {
+      return product.categoryId.articleType;
+    }
+
+    // Fallback: Detect from product name
+    const name = product.name.toLowerCase();
+    
+    if (name.includes('shirt') || name.includes('tee') || name.includes('top') || 
+        name.includes('hoodie') || name.includes('jacket') || name.includes('sweater') ||
+        name.includes('blouse') || name.includes('polo')) {
+      return 'Shirt';
+    }
+    
+    if (name.includes('pant') || name.includes('trouser') || name.includes('jean') || 
+        name.includes('short') || name.includes('chino')) {
+      return 'Pants';
+    }
+    
+    if (name.includes('shoe') || name.includes('sneaker') || name.includes('boot') || 
+        name.includes('loafer')) {
+      return 'Shoes';
+    }
+    
+    if (name.includes('sandal') || name.includes('slipper') || name.includes('flip')) {
+      return 'Sandals';
+    }
+    
+    if (name.includes('watch')) {
+      return 'Watch';
+    }
+    
+    if (name.includes('cap') || name.includes('hat') || name.includes('beanie')) {
+      return 'Hat';
+    }
+    
+    if (name.includes('wallet') || name.includes('purse')) {
+      return 'Wallet';
+    }
+    
+    if (name.includes('bag') || name.includes('backpack')) {
+      return 'Bag';
+    }
+    
+    if (name.includes('belt')) {
+      return 'Belt';
+    }
+    
+    if (name.includes('sock')) {
+      return 'Socks';
+    }
+    
+    // Default fallback
+    return 'Other';
+  };
+
+  /**
+   * Smart product filtering for outfit recommendations
+   * Shows ONLY 2 products per category for mixed requests
+   */
+  const filterProductsForDisplay = (products: Product[]): Product[] => {
+    if (!products || products.length === 0) return [];
+
+    console.log('🔍 Filtering products:', products.length);
+
+    // Group products by detected category
+    const grouped = products.reduce((acc: { [key: string]: Product[] }, product) => {
+      const category = detectProductCategory(product);
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(product);
+      return acc;
+    }, {});
+
+    const categories = Object.keys(grouped);
+    console.log('📦 Categories found:', categories);
+    console.log('📊 Products per category:', Object.keys(grouped).map(cat => ({
+      category: cat,
+      count: grouped[cat].length
+    })));
+
+    // If only one category, show up to 5 products
+    if (categories.length === 1) {
+      console.log('✅ Single category - showing up to 5 products');
+      return products.slice(0, 5);
+    }
+
+    // Multiple categories (outfit recommendation) - show ONLY 2 from each
+    console.log('🎨 Multiple categories detected - showing 2 per category');
+    const filtered: Product[] = [];
+
+    categories.forEach(category => {
+      const categoryProducts = grouped[category].slice(0, 2); // ONLY 2 products per category
+      console.log(`  - ${category}: taking ${categoryProducts.length} products`);
+      filtered.push(...categoryProducts);
+    });
+
+    console.log('✅ Final filtered count:', filtered.length);
+    return filtered;
+  };
+
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
@@ -89,10 +200,14 @@ const Chatbot = () => {
         throw new Error(response.message || 'Failed to get response');
       }
 
-      console.log('Bot response:', response.data);
+      console.log('📨 Bot response:', response.data);
       
-      // Limit products to 5
-      const products = response.data?.products?.slice(0, 5) || [];
+      // Smart filtering: ONLY 2 products per category for outfit recommendations
+      const allProducts = response.data?.products || [];
+      console.log('📦 Total products from backend:', allProducts.length);
+      
+      const products = filterProductsForDisplay(allProducts);
+      console.log('✨ Products after filtering:', products.length);
       
       const botMessage: Message = {
         role: 'model',

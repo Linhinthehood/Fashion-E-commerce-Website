@@ -14,10 +14,26 @@ Return ONLY a JSON object with these fields:
   "orderQuery": "list|status|track|details|null"
 }
 
-IMPORTANT: 
-- When user asks for OUTFIT or COMPLETE LOOK for an occasion, set "articleTypes" array with multiple types
-- For occasions like "interview", "wedding", "party" → automatically include related product types
-- Set "occasion" field to help find appropriate products
+CRITICAL RULES:
+========================================
+
+🚨 STYLE WORDS ARE OCCASIONS:
+When user says "formal shirt", "casual pants", "sport shoes":
+- "formal" → occasion: "formal"
+- "casual" → occasion: "casual"  
+- "sport"/"sporty"/"gym" → occasion: "gym"
+
+Examples:
+- "show me formal shirts" → {"intent":"search","articleType":"Shirt","occasion":"formal"}
+- "casual pants" → {"intent":"search","articleType":"Pants","occasion":"casual"}
+- "sport shoes" → {"intent":"search","category":"Footwear","occasion":"gym"}
+- "formal outfit" → {"intent":"recommendation","occasion":"formal","articleTypes":["Shirt","Pants","Watch"]}
+
+OUTFIT KEYWORDS (require articleTypes array):
+- "outfit", "complete look", "set", "combination", "ensemble"
+- "group of", "matching", "pair with", "goes with"
+- "shirt AND pants", "pants AND shoes", "top AND bottom"
+- ANY occasion word (wedding, party, interview, etc.)
 
 INTENT CLASSIFICATION RULES:
 
@@ -25,10 +41,10 @@ INTENT CLASSIFICATION RULES:
    Examples: "hello", "hi", "hey", "thanks", "thank you", "good morning", "how are you", "goodbye", "bye"
 
 2. "search" → Looking for SPECIFIC products to browse/buy
-   Examples: "show me shirts", "do you have watches", "red dresses", "Nike shoes", "men's pants"
+   Examples: "show me shirts", "do you have watches", "red dresses", "Nike shoes", "men's pants", "formal shirts"
 
 3. "recommendation" → Asking for SUGGESTIONS or advice on what to buy/wear
-   Keywords: "suggest", "recommend", "what should I", "which item", "what goes with", "what matches", "suitable for", "best for", "help me choose"
+   Keywords: "suggest", "recommend", "what should I", "which item", "what goes with", "what matches", "suitable for", "best for", "help me choose", "outfit", "complete look"
    Examples: "what should I wear to a wedding", "suggest something for party", "what goes well with black pants", "recommend shoes for running"
 
 4. "question" → Fashion-related HOW-TO or informational questions
@@ -36,68 +52,83 @@ INTENT CLASSIFICATION RULES:
 
 5. "order" → Questions about USER'S ORDERS, tracking, order status, order history
    Keywords: "my order", "my orders", "order status", "track order", "where is my order", "order history", "recent orders", "purchase history"
-   Examples: "show my orders", "where is my order", "track my package", "order status", "what did I order", "my purchase history"
-   orderQuery values:
-   - "list" → Show all/recent orders
-   - "status" → Check order status
-   - "track" → Track specific order
-   - "details" → Get order details
 
 6. "out-of-topic" → NOT related to fashion/shopping at all
    Examples: "what's the weather", "how to cook pasta", "who won the game", "fix my computer", "capital of France"
 
+========================================
 CLASSIFICATION EXAMPLES:
+========================================
 
 GENERAL (greetings/small talk):
 - "hello" → {"intent":"general"}
 - "hi there" → {"intent":"general"}
 - "thanks" → {"intent":"general"}
-- "thank you so much" → {"intent":"general"}
-- "good morning" → {"intent":"general"}
-- "how are you" → {"intent":"general"}
-- "bye" → {"intent":"general"}
 
-SEARCH (specific product lookup):
+SEARCH WITH STYLE/OCCASION (MOST IMPORTANT):
+- "show me formal shirts" → {"intent":"search","articleType":"Shirt","occasion":"formal"}
+- "formal pants" → {"intent":"search","articleType":"Pants","occasion":"formal"}
+- "casual shirt" → {"intent":"search","articleType":"Shirt","occasion":"casual"}
+- "sport shoes" → {"intent":"search","category":"Footwear","occasion":"gym"}
+- "gym clothes" → {"intent":"search","category":"Apparel","occasion":"gym"}
+- "work pants" → {"intent":"search","articleType":"Pants","occasion":"work"}
+
+SEARCH WITHOUT OCCASION:
 - "show me shirts" → {"intent":"search","category":"Apparel","articleType":"Shirt"}
 - "do you have red watches" → {"intent":"search","category":"Accessories","articleType":"Watch","color":"red"}
 - "Nike shoes" → {"intent":"search","category":"Footwear","brand":"Nike"}
 - "men's pants" → {"intent":"search","category":"Apparel","articleType":"Pants","gender":"Male"}
-- "blue dresses for women" → {"intent":"search","category":"Apparel","articleType":"Dress","color":"blue","gender":"Female"}
 
-RECOMMENDATION (asking for advice):
-- "what should I wear to a wedding" → {"intent":"recommendation","occasion":"wedding","articleTypes":["Shirt","Pants","Accessories"]}
-- "suggest something for a party" → {"intent":"recommendation","occasion":"party","articleTypes":["Shirt","Pants","Accessories"]}
-- "help me find an outfit for a job interview" → {"intent":"recommendation","occasion":"interview","articleTypes":["Shirt","Pants","Accessories"],"gender":"Male"}
-- "what should I wear for work" → {"intent":"recommendation","occasion":"work","articleTypes":["Shirt","Pants"]}
-- "outfit for a casual day" → {"intent":"recommendation","occasion":"casual","articleTypes":["Shirt","Pants"]}
-- "which item is suitable for this" → {"intent":"recommendation"}
-- "what goes well with black pants" → {"intent":"recommendation","category":"Apparel","articleType":"Pants","color":"black"}
-- "recommend shoes for running" → {"intent":"recommendation","category":"Footwear","occasion":"gym"}
+RECOMMENDATION - SINGLE ITEM:
+- "recommend a shirt" → {"intent":"recommendation","category":"Apparel","articleType":"Shirt"}
+- "suggest formal shoes" → {"intent":"recommendation","category":"Footwear","occasion":"formal"}
 - "what pants can I pair with this shirt" → {"intent":"recommendation","category":"Apparel","articleType":"Pants"}
-- "is there any product for job interview" → {"intent":"recommendation","occasion":"interview","articleTypes":["Shirt","Pants","Accessories"]}
+
+RECOMMENDATION - OUTFIT (MULTIPLE ITEMS):
+⚠️ CRITICAL: These MUST return articleTypes ARRAY with multiple types!
+
+- "what should I wear to a wedding" → {"intent":"recommendation","occasion":"wedding","articleTypes":["Shirt","Pants","Watch"]}
+- "suggest something for a party" → {"intent":"recommendation","occasion":"party","articleTypes":["Shirt","Pants","Watch"]}
+- "recommend an outfit for job interview" → {"intent":"recommendation","occasion":"interview","articleTypes":["Shirt","Pants","Watch"]}
+- "formal outfit" → {"intent":"recommendation","occasion":"formal","articleTypes":["Shirt","Pants","Watch"]}
+- "casual outfit" → {"intent":"recommendation","occasion":"casual","articleTypes":["Shirt","Pants"]}
+- "outfit for gym" → {"intent":"recommendation","occasion":"gym","articleTypes":["Shirt","Pants","Casual shoes"]}
+
+⚠️ Multi-item requests with "AND":
+- "recommend shirt and pants for party" → {"intent":"recommendation","occasion":"party","articleTypes":["Shirt","Pants"]}
+- "suggest shirt and pants" → {"intent":"recommendation","articleTypes":["Shirt","Pants"]}
+- "formal shirt and pants" → {"intent":"recommendation","occasion":"formal","articleTypes":["Shirt","Pants"]}
 
 QUESTION (fashion advice):
 - "how to care for leather shoes" → {"intent":"question","category":"Footwear"}
 - "what size should I get" → {"intent":"question"}
-- "how do I style oversized shirts" → {"intent":"question","category":"Apparel","articleType":"Shirt"}
-- "what's the difference between sneakers and running shoes" → {"intent":"question","category":"Footwear"}
 
 ORDER (order-related queries):
 - "show my orders" → {"intent":"order","orderQuery":"list"}
 - "where is my order" → {"intent":"order","orderQuery":"track"}
-- "track my package" → {"intent":"order","orderQuery":"track"}
 - "order status" → {"intent":"order","orderQuery":"status"}
-- "what did I order" → {"intent":"order","orderQuery":"list"}
-- "my purchase history" → {"intent":"order","orderQuery":"list"}
-- "recent orders" → {"intent":"order","orderQuery":"list"}
-- "check order status" → {"intent":"order","orderQuery":"status"}
 
 OUT-OF-TOPIC (non-fashion):
 - "what's the weather like" → {"intent":"out-of-topic"}
 - "how do I cook pasta" → {"intent":"out-of-topic"}
-- "who won the football game" → {"intent":"out-of-topic"}
-- "fix my computer" → {"intent":"out-of-topic"}
-- "what is 2+2" → {"intent":"out-of-topic"}
+
+========================================
+IMPORTANT DETECTION RULES:
+========================================
+
+STYLE/OCCASION DETECTION (CRITICAL):
+1. "formal" in message → set occasion: "formal"
+2. "casual" in message → set occasion: "casual"
+3. "sport"/"sporty"/"gym"/"workout" → set occasion: "gym"
+4. "work"/"office" → set occasion: "work"
+5. "wedding" → set occasion: "wedding"
+6. "party"/"celebration" → set occasion: "party"
+7. "interview" → set occasion: "interview"
+
+OUTFIT DETECTION:
+1. IF message contains: "outfit", "complete look", "set", "combination" → USE articleTypes array
+2. IF message mentions occasion (wedding, party, interview, work, formal, casual) → USE articleTypes array
+3. IF message mentions 2+ product types with "and" → USE articleTypes array
 
 GENDER DETECTION:
 - "women", "women's", "female", "for her", "ladies", "girls" → "Female"

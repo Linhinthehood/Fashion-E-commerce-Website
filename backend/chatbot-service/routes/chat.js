@@ -10,7 +10,7 @@ const logger = require('../utils/logger');
 /**
  * POST /api/chat/message
  * Send a message to the chatbot
- * UPDATED: Fixed product context passing and gender filtering
+ * FIXED: Added occasion parameter to ALL product searches for smart filtering
  */
 router.post('/message', async (req, res) => {
   try {
@@ -44,7 +44,7 @@ router.post('/message', async (req, res) => {
 
     let productsData = [];
     let searchAttempted = false;
-    let searchFilters = null; // Initialize searchFilters at the top scope
+    let searchFilters = null;
 
     // Handle ORDER queries
     if (intent.intent === 'order') {
@@ -143,18 +143,14 @@ router.post('/message', async (req, res) => {
 
     // Handle out-of-topic questions directly
     if (intent.intent === 'out-of-topic') {
-      // Generate response directly without product search
       const aiResponse = await geminiService.generateResponse(
         message, 
         conversationHistory,
-        null, // No product context for out-of-topic questions
-        intent // Pass intent for proper handling
+        null,
+        intent
       );
       
-      // Log AI response
       logger.logConversation(userId, 'assistant', aiResponse);
-
-      // Save user message and AI response to cache
       conversationCache.addMessage(userId, 'user', message);
       conversationCache.addMessage(userId, 'model', aiResponse);
 
@@ -168,7 +164,7 @@ router.post('/message', async (req, res) => {
           timestamp: new Date().toISOString()
         }
       });
-      return; // Exit early for out-of-topic questions
+      return;
     }
 
     // If it's a search/recommendation intent, fetch products
@@ -183,28 +179,30 @@ router.post('/message', async (req, res) => {
             occasion: intent.occasion 
           });
           
-          // Search for each article type and combine results
+          // FIXED: Search for each article type with occasion parameter
           const productPromises = intent.articleTypes.map(async (articleType) => {
             const filters = {
               articleType: articleType,
               gender: intent.gender,
               brand: intent.brand,
               color: intent.color,
-              limit: 5 // Limit per type to get variety
+              occasion: intent.occasion, // ← ADDED FOR SMART FILTERING
+              limit: 10 // Increased for better filtering
             };
             return await productService.searchProducts(filters);
           });
           
           const productArrays = await Promise.all(productPromises);
-          productsData = productArrays.flat(); // Combine all results
+          productsData = productArrays.flat();
           
-          // Also include unisex items if gender specified
+          // FIXED: Also include unisex items with occasion
           if (intent.gender && (intent.gender === 'Male' || intent.gender === 'Female')) {
             const unisexPromises = intent.articleTypes.map(async (articleType) => {
               return await productService.searchProducts({
                 articleType: articleType,
                 gender: 'Unisex',
-                limit: 3
+                occasion: intent.occasion, // ← ADDED FOR SMART FILTERING
+                limit: 5
               });
             });
             const unisexArrays = await Promise.all(unisexPromises);
@@ -220,19 +218,59 @@ router.post('/message', async (req, res) => {
           logger.info('Multi-type recommendation results', {
             userId,
             totalProducts: productsData.length,
+            occasion: intent.occasion,
             byType: intent.articleTypes.map(type => ({
               type,
-              count: productsData.filter(p => p.articleType === type).length
+              count: productsData.filter(p => {
+                // Try to match by category articleType
+                if (p.categoryId && p.categoryId.articleType) {
+                  return p.categoryId.articleType === type;
+                }
+                // Fallback: match by name
+                return p.name.toLowerCase().includes(type.toLowerCase());
+              }).length
             }))
           });
         }
         // For recommendation requests with single criteria
         else if (userId && userId !== 'anonymous') {
-          // Get personalized recommendations if user is logged in
           searchAttempted = true;
-          productsData = await productService.getPersonalizedRecommendations(userId, 10);
-        } else if (intent.category || intent.articleType || intent.gender || intent.color) {
-          // If user specified some criteria, search for matching products
+          
+          // Try personalized recommendations first
+          try {
+            productsData = await productService.getPersonalizedRecommendations(userId, 8);
+            logger.info('Using personalized recommendations', { 
+              userId, 
+              count: productsData.length 
+            });
+          } catch (error) {
+            logger.warn('Personalized recommendations failed, using search fallback', { 
+              userId, 
+              error: error.message 
+            });
+            productsData = [];
+          }
+          
+          // FIXED: Fallback to search with filters including occasion
+          if (productsData.length === 0) {
+            searchFilters = {
+              category: intent.category,
+              articleType: intent.articleType,
+              brand: intent.brand,
+              gender: intent.gender,
+              color: intent.color,
+              occasion: intent.occasion, // ← ADDED FOR SMART FILTERING
+              limit: 10
+            };
+            
+            productsData = await productService.searchProducts(searchFilters);
+            logger.info('Fallback search results', { 
+              filters: searchFilters, 
+              count: productsData.length 
+            });
+          }
+        } else {
+          // Anonymous user - use general search with filters
           searchAttempted = true;
           searchFilters = {
             category: intent.category,
@@ -240,346 +278,155 @@ router.post('/message', async (req, res) => {
             brand: intent.brand,
             gender: intent.gender,
             color: intent.color,
-            limit: 15
+            occasion: intent.occasion, // ← ADDED FOR SMART FILTERING
+            limit: 10
           };
+          
           productsData = await productService.searchProducts(searchFilters);
-        } else {
-          // For general recommendations without specific criteria, get a diverse selection
-          searchAttempted = true;
-          productsData = await productService.getGeneralRecommendations(12);
         }
-      } else if (intent.intent === 'search') {
-        // ALWAYS search for products when intent is 'search'
+      } else {
+        // SEARCH intent - direct product lookup
         searchAttempted = true;
         
+        // FIXED: Build search filters with occasion
         searchFilters = {
           category: intent.category,
           articleType: intent.articleType,
           brand: intent.brand,
           gender: intent.gender,
           color: intent.color,
-          limit: 20 // Increased limit for better results
+          occasion: intent.occasion, // ← ADDED FOR SMART FILTERING
+          limit: 20 // Higher limit for search, filtering will reduce it
         };
         
         productsData = await productService.searchProducts(searchFilters);
         
-        // IMPORTANT FIX: If gender filter is Male or Female, also include Unisex items
-        if (intent.gender && (intent.gender === 'Male' || intent.gender === 'Female')) {
-          const unisexFilters = { ...searchFilters, gender: 'Unisex' };
+        logger.info('Direct search results', { 
+          userId,
+          filters: searchFilters,
+          count: productsData.length,
+          occasion: intent.occasion
+        });
+      }
+      
+      // Include Unisex items for gendered searches
+      if (productsData.length > 0 && 
+          intent.gender && 
+          (intent.gender === 'Male' || intent.gender === 'Female') &&
+          (!intent.articleTypes || intent.articleTypes.length === 0)) {
+        
+        try {
+          // FIXED: Add occasion to unisex search
+          const unisexFilters = {
+            ...searchFilters,
+            gender: 'Unisex',
+            occasion: intent.occasion, // ← ADDED FOR SMART FILTERING
+            limit: 5
+          };
+          
           const unisexProducts = await productService.searchProducts(unisexFilters);
           
-          // Combine and remove duplicates based on _id
-          const combinedProducts = [...productsData, ...unisexProducts];
-          const uniqueProducts = Array.from(
-            new Map(combinedProducts.map(p => [p._id.toString(), p])).values()
-          );
-          productsData = uniqueProducts;
-          
-          logger.info('Combined gender-specific and unisex products', {
-            userId,
-            originalCount: productsData.length - unisexProducts.length,
-            unisexCount: unisexProducts.length,
-            totalCount: productsData.length
-          });
+          if (unisexProducts.length > 0) {
+            productsData = [...productsData, ...unisexProducts];
+            
+            // Remove duplicates by ID
+            productsData = Array.from(
+              new Map(productsData.map(p => [p._id.toString(), p])).values()
+            );
+            
+            logger.info('Added unisex products', { 
+              unisexCount: unisexProducts.length,
+              totalCount: productsData.length 
+            });
+          }
+        } catch (error) {
+          logger.warn('Failed to fetch unisex products', { error: error.message });
         }
-        
-        // Log search results to file
-        logger.logSearch(userId, searchFilters, productsData.length);
       }
     }
 
-    // UPDATED: Build enhanced message with strict product context
-    let productContext = null;
-    if (productsData.length > 0) {
-      // Format product details with gender and all relevant info
-      const productList = productsData.map((p, i) => 
-        `${i + 1}. ${p.name || p.displayName} - ${p.brand || 'Unknown'} (₫${(p.defaultPrice || p.price || 0).toLocaleString()}) [Gender: ${p.gender}, Color: ${p.color}]`
-      ).join('\n');
-      
-      productContext = {
-        products: productsData,
-        intent: intent
-      };
-      
-      logger.info('Passing product context to AI', {
-        userId,
-        productCount: productsData.length,
-        genderFilter: intent.gender
-      });
-    } else if (searchAttempted) {
-      // We searched but found nothing - pass empty array
-      productContext = {
-        products: [],
-        intent: intent
-      };
-      
-      logger.info('No products found, passing empty context', {
-        userId,
-        filters: searchFilters
-      });
-    }
-
-    // Generate AI response with product context (UPDATED METHOD SIGNATURE)
-    const aiResponse = await geminiService.generateResponse(
-      message, 
-      conversationHistory,
-      productContext, // Pass product context as third parameter
-      intent // Pass intent to help with response generation
-    );
+    // Generate AI response with product context
+    const productContext = productsData.length > 0 ? { products: productsData } : null;
     
+    const aiResponse = await geminiService.generateResponse(
+      message,
+      conversationHistory,
+      productContext,
+      intent
+    );
+
     // Log AI response
     logger.logConversation(userId, 'assistant', aiResponse);
 
-    // Save user message and AI response to cache
+    // Format products for response
+    const formattedProducts = productsData.map(product => ({
+      id: product._id || product.id,
+      name: product.name,
+      brand: product.brand,
+      price: product.defaultPrice || product.price,
+      gender: product.gender,
+      color: product.color,
+      usage: product.usage, // Include usage for frontend debugging
+      image: (product.images && product.images[0]) || product.image || null,
+      categoryId: product.categoryId
+    }));
+
+    // Save to conversation cache
     conversationCache.addMessage(userId, 'user', message);
     conversationCache.addMessage(userId, 'model', aiResponse);
 
+    // Send response
     res.json({
       success: true,
       data: {
         message: aiResponse,
         intent: intent.intent,
-        productsFound: productsData.length,
-        products: productsData.map(p => ({
-          id: p._id,
-          name: p.name || p.displayName,
-          brand: p.brand,
-          price: p.defaultPrice || p.price,
-          gender: p.gender,
-          color: p.color,
-          image: p.imageUrls?.[0] || p.images?.[0]?.url || p.images?.[0]
-        })),
+        occasion: intent.occasion, // Include occasion in response for debugging
+        productsFound: formattedProducts.length,
+        products: formattedProducts,
+        searchFilters: searchFilters,
         timestamp: new Date().toISOString()
       }
     });
 
   } catch (error) {
-    logger.error('Chat error', {
-      userId: req.body.userId || 'anonymous',
-      message: req.body.message,
-      error: error.message,
-      stack: error.stack
-    });
+    console.error('Chat error:', error);
+    logger.error('Chat message error', { error: error.message, stack: error.stack });
     
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to process chat message',
-      error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      message: error.message || 'An error occurred while processing your request'
     });
   }
 });
 
 /**
- * POST /api/chat/product-query
- * Ask about a specific product
+ * POST /api/chat/clear
+ * Clear conversation history
  */
-router.post('/product-query', async (req, res) => {
+router.post('/clear', async (req, res) => {
   try {
-    const { productId, question } = req.body;
-
-    if (!productId || !question) {
-      return res.status(400).json({
-        success: false,
-        message: 'Product ID and question are required'
-      });
-    }
-
-    if (!geminiService.isAvailable()) {
-      return res.status(503).json({
-        success: false,
-        message: 'Chatbot service is not configured'
-      });
-    }
-
-    // Fetch product details
-    const product = await productService.getProductById(productId);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found'
-      });
-    }
-
-    // Build context with product details
-    const productContext = {
-      products: [product],
-      intent: { intent: 'question' }
-    };
-
-    // Generate AI response with product context
-    const aiResponse = await geminiService.generateResponse(
-      question,
-      [],
-      productContext,
-      { intent: 'question' }
-    );
-
-    res.json({
-      success: true,
-      data: {
-        message: aiResponse,
-        product: {
-          id: product._id,
-          name: product.name || product.displayName,
-          brand: product.brand,
-          price: product.defaultPrice || product.price
-        },
-        timestamp: new Date().toISOString()
-      }
-    });
-
-  } catch (error) {
-    console.error('Product query error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to process product query'
-    });
-  }
-});
-
-/**
- * POST /api/chat/recommendations
- * Get AI-powered product recommendations with explanation
- */
-router.post('/recommendations', async (req, res) => {
-  try {
-    const { userId, preferences = '', limit = 8 } = req.body;
-
-    if (!geminiService.isAvailable()) {
-      return res.status(503).json({
-        success: false,
-        message: 'Chatbot service is not configured'
-      });
-    }
-
-    // Get personalized recommendations
-    const products = await productService.getPersonalizedRecommendations(userId, limit);
-
-    if (products.length === 0) {
-      return res.json({
-        success: true,
-        data: {
-          message: 'I couldn\'t find personalized recommendations at the moment. Try browsing our catalog or tell me what you\'re looking for!',
-          products: [],
-          timestamp: new Date().toISOString()
-        }
-      });
-    }
-
-    // Build product context for AI
-    const productContext = {
-      products: products,
-      intent: { intent: 'recommendation' }
-    };
-
-    const prompt = preferences 
-      ? `Recommend products based on user preferences: ${preferences}`
-      : 'Recommend these products to the user with enthusiasm';
-
-    const aiResponse = await geminiService.generateResponse(
-      prompt,
-      [],
-      productContext,
-      { intent: 'recommendation' }
-    );
-
-    res.json({
-      success: true,
-      data: {
-        message: aiResponse,
-        products: products.map(p => ({
-          id: p._id,
-          name: p.name || p.displayName,
-          brand: p.brand,
-          price: p.defaultPrice || p.price,
-          image: p.imageUrls?.[0] || p.images?.[0]?.url || p.images?.[0],
-          category: p.categoryId?.articleType
-        })),
-        timestamp: new Date().toISOString()
-      }
-    });
-
-  } catch (error) {
-    console.error('Recommendations error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to get recommendations'
-    });
-  }
-});
-
-/**
- * DELETE /api/chat/history/:userId
- * Clear conversation history for a user
- */
-router.delete('/history/:userId', (req, res) => {
-  try {
-    const { userId } = req.params;
+    const { userId = 'anonymous' } = req.body;
+    
     conversationCache.clearHistory(userId);
+    logger.info('Conversation history cleared', { userId });
     
     res.json({
       success: true,
-      message: `Conversation history cleared for user: ${userId}`
+      message: 'Conversation history cleared'
     });
   } catch (error) {
     console.error('Clear history error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to clear history'
-    });
-  }
-});
-
-/**
- * GET /api/chat/history/:userId
- * Get conversation history for a user
- */
-router.get('/history/:userId', (req, res) => {
-  try {
-    const { userId } = req.params;
-    const history = conversationCache.getHistory(userId);
-    
-    res.json({
-      success: true,
-      data: {
-        userId,
-        messageCount: history.length,
-        history
-      }
-    });
-  } catch (error) {
-    console.error('Get history error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to get history'
-    });
-  }
-});
-
-/**
- * GET /api/chat/stats
- * Get cache statistics
- */
-router.get('/stats', (req, res) => {
-  try {
-    const stats = conversationCache.getStats();
-    
-    res.json({
-      success: true,
-      data: stats
-    });
-  } catch (error) {
-    console.error('Get stats error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to get stats'
+      message: 'Failed to clear conversation history'
     });
   }
 });
 
 /**
  * POST /api/chat/orders
- * Get user's orders and provide AI response
+ * Get user's orders with AI assistance
  */
 router.post('/orders', async (req, res) => {
   try {
@@ -588,7 +435,7 @@ router.post('/orders', async (req, res) => {
     if (!userId || userId === 'anonymous') {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required to fetch orders. Please log in to view your orders.',
+        message: 'User ID is required to fetch orders',
         requiresAuth: true
       });
     }

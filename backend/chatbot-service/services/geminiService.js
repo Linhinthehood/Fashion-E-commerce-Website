@@ -42,19 +42,27 @@ class GeminiService {
         if (productContext && productContext.products && productContext.products.length > 0) {
           // Format products clearly for the AI
           const productList = productContext.products.map((p, idx) => 
-            `${idx + 1}. ${p.name} - ${p.brand} (₫${p.defaultPrice?.toLocaleString() || 'N/A'}) [Gender: ${p.gender}, Color: ${p.color}]`
+            `${idx + 1}. ${p.name} - ${p.brand} (₫${p.defaultPrice?.toLocaleString() || 'N/A'}) [Gender: ${p.gender}, Color: ${p.color}, Usage: ${p.usage || 'N/A'}]`
           ).join('\n');
           
+          // ENHANCED: Stronger anti-hallucination rules
           enhancedMessage = `User question: "${userMessage}"
 
 AVAILABLE PRODUCTS (${productContext.products.length} total):
 ${productList}
 
-IMPORTANT: 
-- Only mention products from the list above
-- Count = ${productContext.products.length} products
-- If asked "how many", answer: "${productContext.products.length}"
-- Never mention products not in this list`;
+🚨 CRITICAL RULES - VIOLATIONS WILL CAUSE SYSTEM FAILURE:
+1. NEVER invent or make up product names that are not in the list above
+2. NEVER mention specific product names in your response
+3. If user asks for a specific product name, check if it EXISTS in the list:
+   - If it EXISTS → Say "Great choice! I found it for you"
+   - If it DOES NOT EXIST → Say "I don't see that specific product, but here are similar options"
+4. The UI will show product cards - you do NOT need to describe products
+5. Keep response under 2 sentences
+6. Only mention the COUNT: "${productContext.products.length} products"
+7. DO NOT write product names like "Áo Blouse..." - let the UI show them
+
+REMEMBER: The product cards below your message will show all details. You just provide a friendly intro!`;
         } else {
           // No products found - handle based on intent
           if (intent.intent === 'recommendation') {
@@ -144,6 +152,7 @@ IMPORTANT:
 
   /**
    * Extract search intent from user message
+   * ENHANCED: Now includes fallback logic to detect outfit requests
    */
   async extractSearchIntent(userMessage) {
     await this.waitForRateLimit();
@@ -158,7 +167,15 @@ IMPORTANT:
         userMessage: userMessage
       });
 
-      const result = await this.model.generateContent(prompt);
+      // ENHANCED: Use higher temperature for better intent detection
+      const result = await this.model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.5,  // Increased from default for better pattern recognition
+          maxOutputTokens: 500
+        }
+      });
+
       const responseText = typeof result.response.text === 'function' 
         ? result.response.text() 
         : (result.response.text || '');
@@ -198,9 +215,91 @@ IMPORTANT:
         }
       });
 
+      // ===== ENHANCEMENT: Auto-detect outfit requests that Gemini missed =====
+      if (parsed.intent === 'recommendation' || parsed.intent === 'search') {
+        const message = userMessage.toLowerCase();
+        
+        // Detect outfit keywords
+        const outfitKeywords = ['outfit', 'complete look', 'group', 'matching', 'pair', 'set', 'combination'];
+        const hasOutfitKeyword = outfitKeywords.some(kw => message.includes(kw));
+        
+        // Detect multiple product mentions
+        const mentionsShirt = /shirt|top|tee|blouse/.test(message);
+        const mentionsPants = /pant|trouser|jean|bottom/.test(message);
+        const mentionsShoes = /shoe|footwear|sandal/.test(message);
+        const mentionsAccessories = /watch|cap|hat|wallet|accessori/.test(message);
+        
+        const mentionedTypes = [
+          mentionsShirt ? 'Shirt' : null,
+          mentionsPants ? 'Pants' : null,
+          mentionsShoes ? 'Casual shoes' : null,
+          mentionsAccessories ? 'Watch' : null
+        ].filter(Boolean);
+        
+        const multipleProductTypes = mentionedTypes.length >= 2;
+        
+        // Detect conjunctions suggesting multiple items
+        const hasConjunction = /\band\b|\bwith\b|\bplus\b/.test(message);
+        
+        // CRITICAL: Detect style words like "formal", "casual", "sport" as occasions
+        const styleWords = {
+          'formal': 'formal',
+          'casual': 'casual', 
+          'sport': 'sport',
+          'sporty': 'sport',
+          'gym': 'gym',
+          'workout': 'gym'
+        };
+        
+        for (const [word, occasion] of Object.entries(styleWords)) {
+          if (message.includes(word) && !parsed.occasion) {
+            parsed.occasion = occasion;
+            logger.info('🎯 Detected style word as occasion', { word, occasion });
+          }
+        }
+        
+        // If outfit request OR occasion mentioned OR multiple products mentioned
+        // AND articleTypes is not already properly set
+        if ((hasOutfitKeyword || multipleProductTypes || (parsed.occasion && hasConjunction)) && 
+            (!parsed.articleTypes || parsed.articleTypes.length < 2)) {
+          
+          // Build articleTypes based on what was mentioned
+          if (mentionedTypes.length >= 2) {
+            // User explicitly mentioned multiple types
+            parsed.articleTypes = mentionedTypes;
+          } else if (parsed.occasion) {
+            // User mentioned occasion - provide complete outfit
+            parsed.articleTypes = ['Shirt', 'Pants'];
+            // Add accessories for formal occasions
+            if (['wedding', 'interview', 'formal', 'work'].includes(parsed.occasion)) {
+              parsed.articleTypes.push('Watch');
+            }
+          } else if (hasOutfitKeyword) {
+            // Generic outfit request
+            parsed.articleTypes = ['Shirt', 'Pants'];
+          }
+          
+          // Remove single articleType if articleTypes array is set
+          if (parsed.articleTypes && parsed.articleTypes.length > 0) {
+            delete parsed.articleType;
+          }
+          
+          logger.info('🔧 Auto-enhanced articleTypes for outfit request', {
+            userMessage: userMessage.substring(0, 80),
+            detectedKeyword: outfitKeywords.filter(kw => message.includes(kw)),
+            mentionedTypes,
+            occasion: parsed.occasion,
+            originalArticleType: parsed.articleType,
+            enhancedArticleTypes: parsed.articleTypes
+          });
+        }
+      }
+      // ===== END ENHANCEMENT =====
+
       logger.info('Extracted search intent', { 
         message: userMessage.substring(0, 50), 
-        intent: parsed 
+        intent: parsed,
+        hasMultipleTypes: parsed.articleTypes?.length > 1
       });
 
       return parsed;

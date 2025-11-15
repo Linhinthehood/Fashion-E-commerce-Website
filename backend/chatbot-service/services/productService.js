@@ -5,26 +5,83 @@ const FASHION_SERVICE_URL = process.env.FASHION_SERVICE_URL || 'http://localhost
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:3002';
 
 /**
- * Product Service
+ * SMART PRODUCT FILTERING SYSTEM
  * 
- * This service handles product search and recommendations.
+ * This enhanced service analyzes product attributes to determine suitability:
+ * - usage: Casual, Formal, Sports, Daily
+ * - gender: Male, Female, Unisex
+ * - color: For occasion matching
+ * - description: For additional context
  * 
- * SEARCH FLOW:
- * 1. Extract search filters (category, articleType, brand, color, gender)
- * 2. Query categories from database to resolve categoryId
- * 3. Match filters against database categories (singular/plural aware)
- * 4. Query products using resolved categoryId + other filters
- * 5. Return products to chatbot
- * 
- * CATEGORY MATCHING:
- * - Priority 1: articleType (most specific) - e.g., "Shirt", "Watch"
- * - Priority 2: masterCategory/subCategory (broader) - e.g., "Apparel", "Accessories"
- * - Smart matching handles plural/singular variations (Shirts → Shirt)
- * 
- * DATABASE STRUCTURE:
- * Categories: { _id, masterCategory, subCategory, articleType }
- * Products: { _id, name, brand, categoryId (references Category._id), color, gender, price }
+ * Occasion Mapping:
+ * - party → Casual/Formal (depending on formality)
+ * - wedding → Formal only
+ * - interview → Formal only
+ * - casual → Casual/Daily
+ * - gym/sport → Sports
+ * - work → Formal/Daily
  */
+
+/**
+ * Map user occasion to appropriate usage types
+ */
+const getUsageForOccasion = (occasion) => {
+  const occasionMap = {
+    'wedding': ['Formal'],
+    'interview': ['Formal'],
+    'formal': ['Formal'],
+    'work': ['Formal', 'Daily'],
+    'office': ['Formal', 'Daily'],
+    'party': ['Formal', 'Casual'],
+    'celebration': ['Formal', 'Casual'],
+    'casual': ['Casual', 'Daily'],
+    'daily': ['Daily', 'Casual'],
+    'gym': ['Sports'],
+    'sport': ['Sports'],
+    'workout': ['Sports'],
+    'exercise': ['Sports']
+  };
+
+  return occasionMap[occasion?.toLowerCase()] || ['Casual', 'Daily', 'Formal'];
+};
+
+/**
+ * Smart product filtering based on occasion and usage
+ */
+const filterProductsByOccasion = (products, occasion) => {
+  if (!occasion || !products || products.length === 0) {
+    return products;
+  }
+
+  const allowedUsages = getUsageForOccasion(occasion);
+  
+  logger.info('🎯 Smart filtering by occasion', {
+    occasion,
+    allowedUsages,
+    totalProducts: products.length
+  });
+
+  const filtered = products.filter(product => {
+    // If product has usage field, check if it matches occasion
+    if (product.usage) {
+      const matches = allowedUsages.includes(product.usage);
+      if (!matches) {
+        logger.debug(`  ❌ Filtered out: ${product.name} (usage: ${product.usage})`);
+      }
+      return matches;
+    }
+    // If no usage field, include it (backward compatibility)
+    return true;
+  });
+
+  logger.info('✅ Filtering complete', {
+    before: products.length,
+    after: filtered.length,
+    removed: products.length - filtered.length
+  });
+
+  return filtered;
+};
 
 /**
  * Get personalized recommendations for a user
@@ -34,7 +91,7 @@ async function getPersonalizedRecommendations(userId, limit = 8) {
     const response = await axios.post(
       `${FASHION_SERVICE_URL}/api/recommendations/retrieve/personalized`,
       {
-        recentItemIds: [], // Will use user's history from localStorage
+        recentItemIds: [],
         limit,
         options: {
           userId,
@@ -57,8 +114,7 @@ async function getPersonalizedRecommendations(userId, limit = 8) {
 }
 
 /**
- * Search products by filters
- * Flow: Extract filters → Resolve category from database → Query products by categoryId
+ * Search products by filters WITH SMART OCCASION MATCHING
  */
 async function searchProducts(filters = {}) {
   try {
@@ -70,15 +126,12 @@ async function searchProducts(filters = {}) {
     // Step 1: Resolve category to categoryId
     let categoryIdToSend = null;
     if (filters.category || filters.articleType) {
-      // If already an ObjectId, use directly
       if (filters.category && looksLikeObjectId(filters.category)) {
         categoryIdToSend = filters.category;
       } else {
-        // Normalize input for matching
         const categoryTerm = filters.category ? String(filters.category).trim() : '';
         const articleTerm = filters.articleType ? String(filters.articleType).trim() : '';
 
-        // Step 2: Fetch all categories from database
         try {
           const catRes = await axios.get(`${PRODUCT_SERVICE_URL}/api/categories`, { timeout: 5000 });
           const categories = Array.isArray(catRes.data?.data?.categories) ? catRes.data.data.categories : [];
@@ -87,25 +140,22 @@ async function searchProducts(filters = {}) {
 
           let found = null;
 
-          // Normalize function: handle singular/plural and case differences
           const normalize = (str) => {
             if (!str) return '';
-            const lower = String(str).toLowerCase().trim();
-            // Remove trailing 's' or 'es' to handle plural variations (Shirts → Shirt)
-            return lower.replace(/e?s$/, '');
+            let lower = String(str).toLowerCase().trim();
+            const exactTerms = ['shirt', 'pants', 'watch', 'wallet', 'sandals', 'baseball cap', 'casual shoes'];
+            if (exactTerms.includes(lower)) return lower;
+            return lower.replace(/s$/, '');
           };
 
-          // Priority 1: Match by articleType (most specific)
-          // Example: "Shirt" or "Shirts" → finds articleType: "Shirt"
+          // Priority 1: Match by articleType
           if (articleTerm) {
             const normalizedSearch = normalize(articleTerm);
             
-            // Try exact match first
             found = categories.find(c => 
               c.articleType && normalize(c.articleType) === normalizedSearch
             );
             
-            // Try partial match if exact fails
             if (!found) {
               found = categories.find(c => 
                 c.articleType && normalize(c.articleType).includes(normalizedSearch)
@@ -119,24 +169,20 @@ async function searchProducts(filters = {}) {
             });
           }
 
-          // Priority 2: Match by masterCategory or subCategory (broader)
-          // Example: "Apparel" → finds masterCategory: "Apparel"
+          // Priority 2: Match by masterCategory or subCategory
           if (!found && categoryTerm) {
             const normalizedSearch = normalize(categoryTerm);
             
-            // Try masterCategory exact match
             found = categories.find(c => 
               c.masterCategory && normalize(c.masterCategory) === normalizedSearch
             );
             
-            // Try subCategory exact match
             if (!found) {
               found = categories.find(c => 
                 c.subCategory && normalize(c.subCategory) === normalizedSearch
               );
             }
             
-            // Try partial matches
             if (!found) {
               found = categories.find(c => 
                 (c.masterCategory && normalize(c.masterCategory).includes(normalizedSearch)) ||
@@ -151,7 +197,6 @@ async function searchProducts(filters = {}) {
             });
           }
 
-          // Step 3: Save the resolved categoryId
           if (found && found._id) {
             categoryIdToSend = found._id;
             logger.info('✅ Category resolved successfully', {
@@ -164,13 +209,8 @@ async function searchProducts(filters = {}) {
               }
             });
           } else {
-            logger.warn('❌ Category not found in database', {
-              input: { category: filters.category, articleType: filters.articleType },
-              availableCategories: categories.map(c => ({
-                master: c.masterCategory,
-                sub: c.subCategory,
-                article: c.articleType
-              }))
+            logger.warn('⚠️ Category not found in database', {
+              input: { category: filters.category, articleType: filters.articleType }
             });
           }
         } catch (err) {
@@ -179,30 +219,50 @@ async function searchProducts(filters = {}) {
       }
     }
 
-    // Step 4: Build query parameters for product search
+    // Step 2: Build query parameters for product search
     if (categoryIdToSend) params.append('categoryId', categoryIdToSend);
     if (filters.brand) params.append('brand', filters.brand);
     if (filters.gender) params.append('gender', filters.gender);
     if (filters.color) params.append('color', filters.color);
-    if (filters.limit) params.append('limit', filters.limit);
     
-    logger.info('Querying products', { 
+    // IMPORTANT: Request MORE products than needed for smart filtering
+    const requestLimit = filters.limit ? filters.limit * 3 : 50;
+    params.append('limit', requestLimit);
+    
+    logger.info('Querying products with smart filtering', { 
       categoryId: categoryIdToSend, 
       brand: filters.brand, 
       gender: filters.gender,
-      color: filters.color 
+      color: filters.color,
+      occasion: filters.occasion,
+      requestLimit
     });
 
-    // Step 5: Query products from product-service
+    // Step 3: Query products from product-service
     const response = await axios.get(
       `${PRODUCT_SERVICE_URL}/api/products?${params.toString()}`,
       { timeout: 5000 }
     );
 
-    // Step 6: Return products
     if (response.data?.success && response.data?.data?.products) {
-      const products = response.data.data.products;
-      logger.info('✅ Products found', { count: products.length });
+      let products = response.data.data.products;
+      
+      logger.info('📦 Products received from database', { 
+        count: products.length,
+        occasion: filters.occasion 
+      });
+
+      // Step 4: SMART FILTERING by occasion and usage
+      if (filters.occasion) {
+        products = filterProductsByOccasion(products, filters.occasion);
+      }
+
+      // Step 5: Limit to requested amount
+      if (filters.limit && products.length > filters.limit) {
+        products = products.slice(0, filters.limit);
+      }
+
+      logger.info('✅ Final products after smart filtering', { count: products.length });
       return products;
     }
     
@@ -211,7 +271,12 @@ async function searchProducts(filters = {}) {
   } catch (error) {
     logger.error('Product search failed', { 
       error: error.message,
-      filters: { category: filters.category, articleType: filters.articleType, brand: filters.brand }
+      filters: { 
+        category: filters.category, 
+        articleType: filters.articleType, 
+        brand: filters.brand,
+        occasion: filters.occasion 
+      }
     });
     return [];
   }
@@ -262,7 +327,6 @@ async function getSimilarProducts(productId, limit = 8) {
  */
 async function getGeneralRecommendations(limit = 12) {
   try {
-    // Get a mix of different categories for diverse recommendations
     const categories = ['Apparel', 'Footwear', 'Accessories'];
     let allProducts = [];
     
@@ -274,18 +338,15 @@ async function getGeneralRecommendations(limit = 12) {
       allProducts = allProducts.concat(products);
     }
     
-    // If we don't have enough products, get more without category filter
     if (allProducts.length < limit) {
       const additionalProducts = await searchProducts({ limit: limit * 2 });
       allProducts = allProducts.concat(additionalProducts);
     }
     
-    // Remove duplicates and limit results
     const uniqueProducts = Array.from(
       new Map(allProducts.map(p => [p._id?.toString() || p.id, p])).values()
     );
     
-    // Shuffle and return limited results
     const shuffled = uniqueProducts.sort(() => Math.random() - 0.5);
     return shuffled.slice(0, limit);
     
@@ -300,5 +361,7 @@ module.exports = {
   searchProducts,
   getProductById,
   getSimilarProducts,
-  getGeneralRecommendations
+  getGeneralRecommendations,
+  filterProductsByOccasion, // Export for testing
+  getUsageForOccasion // Export for testing
 };
