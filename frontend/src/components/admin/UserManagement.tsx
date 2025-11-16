@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { authApi, customerApi } from '../../utils/apiService'
 import { Link } from 'react-router-dom'
+import { authApi, customerApi } from '../../utils/apiService'
+import {
+  getStrategyConfig,
+  getStrategyIdentifier,
+} from '../../utils/abTesting'
 
 type CustomerUser = {
   _id: string
@@ -236,6 +240,7 @@ export default function UserManagement() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Liên hệ</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">A/B Strategy</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Điểm thưởng</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Địa chỉ</th>
@@ -244,6 +249,9 @@ export default function UserManagement() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {displayedCustomers.map((item) => {
                   const defaultAddress = item.addresses?.find(address => address.isDefault) ?? item.addresses?.[0]
+                  const linkedUserId = item.userId?._id || (item as any).userId || null
+                  const strategyConfig = getStrategyConfig(linkedUserId ?? null, 'admin-preview-session')
+                  const strategyId = getStrategyIdentifier(strategyConfig)
                   return (
                     <tr key={item._id} className="hover:bg-gray-50">
                       <td className="px-4 py-4 whitespace-nowrap">
@@ -256,6 +264,15 @@ export default function UserManagement() {
                         <div className="space-y-1">
                           <p>{item.userId?.email}</p>
                           {item.userId?.phoneNumber && <p className="text-xs text-gray-500">{item.userId.phoneNumber}</p>}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-gray-700">
+                        <div className="flex flex-col">
+                          <p className="font-semibold text-gray-900">{strategyConfig.name}</p>
+                          <p className="text-xs text-gray-500 break-all">{strategyId}</p>
+                          <span className="inline-flex items-center mt-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+                            Auto assigned
+                          </span>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-700">

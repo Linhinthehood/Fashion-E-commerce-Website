@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { eventsApi } from '../../utils/apiService'
+import { STRATEGIES, type StrategyConfig, getStrategyIdentifier } from '../../utils/abTesting'
 
 type StrategyMetrics = {
   strategy: string
@@ -17,6 +18,10 @@ type StrategyMetrics = {
   atcRate: number
   conversionRate: number
   revenuePerImpression: number
+}
+
+type StrategyMetricWithLabel = StrategyMetrics & {
+  strategyLabel: string
 }
 
 type ABTestMetricsResponse = {
@@ -46,24 +51,86 @@ function formatPercent(value: number): string {
   return `${(value * 100).toFixed(2)}%`
 }
 
+const formatDateInput = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = `${date.getMonth() + 1}`.padStart(2, '0')
+  const day = `${date.getDate()}`.padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const strategyIdToConfig = (): Array<StrategyConfig & { strategyId: string }> => {
+  return Object.values(STRATEGIES).map((config) => ({
+    ...config,
+    strategyId: getStrategyIdentifier(config)
+  }))
+}
+
+const parseHybridId = (strategyId: string) => {
+  const match = /^hybrid-alpha([0-9.]+)-beta([0-9.]+)-gamma([0-9.]+)$/i.exec(strategyId)
+  if (!match) return null
+  return {
+    alpha: parseFloat(match[1]),
+    beta: parseFloat(match[2]),
+    gamma: parseFloat(match[3])
+  }
+}
+
+const areWeightsClose = (a: number, b: number, tolerance = 0.0001): boolean => {
+  return Math.abs(a - b) <= tolerance
+}
+
+const resolveStrategyLabel = (strategyId: string | null | undefined): string | null => {
+  if (!strategyId || strategyId === 'unknown') {
+    return null
+  }
+
+  const configs = strategyIdToConfig()
+  const direct = configs.find((cfg) => cfg.strategyId === strategyId)
+  if (direct) {
+    return direct.name
+  }
+
+  const parsed = parseHybridId(strategyId)
+  if (parsed) {
+    const matched = configs.find((cfg) =>
+      areWeightsClose(cfg.alpha, parsed.alpha) &&
+      areWeightsClose(cfg.beta, parsed.beta) &&
+      areWeightsClose(cfg.gamma, parsed.gamma)
+    )
+    if (matched) {
+      return matched.name
+    }
+  }
+
+  return strategyId
+}
+
 export default function ABTestDashboard() {
   const [metrics, setMetrics] = useState<StrategyMetrics[]>([])
   const [summary, setSummary] = useState<ABTestMetricsResponse['data']['summary'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [startDate, setStartDate] = useState<string>('')
-  const [endDate, setEndDate] = useState<string>('')
+  const [startDate, setStartDate] = useState<string>(() => formatDateInput(new Date()))
+  const [endDate, setEndDate] = useState<string>(() => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    return formatDateInput(tomorrow)
+  })
   const [selectedStrategy, setSelectedStrategy] = useState<string>('')
 
-  const loadMetrics = async () => {
+  const loadMetrics = async (overrides?: { start?: string; end?: string; strategy?: string }) => {
     try {
       setLoading(true)
       setError(null)
 
+      const effectiveStart = overrides?.start ?? (startDate ? startDate : undefined)
+      const effectiveEnd = overrides?.end ?? (endDate ? endDate : undefined)
+      const effectiveStrategy = overrides?.strategy ?? (selectedStrategy ? selectedStrategy : undefined)
+
       const response = await eventsApi.getABTestMetrics({
-        startDate: startDate || undefined,
-        endDate: endDate || undefined,
-        strategy: selectedStrategy || undefined
+        startDate: effectiveStart,
+        endDate: effectiveEnd,
+        strategy: effectiveStrategy
       }) as ABTestMetricsResponse
 
       if (response.success && response.data) {
@@ -89,11 +156,29 @@ export default function ABTestDashboard() {
   }
 
   const handleReset = () => {
-    setStartDate('')
-    setEndDate('')
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const todayStr = formatDateInput(today)
+    const tomorrowStr = formatDateInput(tomorrow)
+    setStartDate(todayStr)
+    setEndDate(tomorrowStr)
     setSelectedStrategy('')
-    loadMetrics()
+    loadMetrics({ start: todayStr, end: tomorrowStr, strategy: '' })
   }
+
+  const metricsWithLabel: StrategyMetricWithLabel[] = useMemo(() => {
+    return metrics
+      .map((metric) => {
+        const strategyLabel = resolveStrategyLabel(metric.strategy)
+        if (!strategyLabel) return null
+        return {
+          ...metric,
+          strategyLabel
+        }
+      })
+      .filter((metric): metric is StrategyMetricWithLabel => metric !== null)
+  }, [metrics])
 
   if (loading && metrics.length === 0) {
     return (
@@ -111,7 +196,7 @@ export default function ABTestDashboard() {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900">A/B Test Dashboard</h2>
         <button
-          onClick={loadMetrics}
+          onClick={() => loadMetrics()}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Làm mới
@@ -205,7 +290,7 @@ export default function ABTestDashboard() {
       )}
 
       {/* Strategy Metrics Table */}
-      {metrics.length > 0 ? (
+      {metricsWithLabel.length > 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -235,11 +320,14 @@ export default function ABTestDashboard() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {metrics.map((strategy) => (
-                  <tr key={strategy.strategy} className="hover:bg-gray-50">
+                {metricsWithLabel.map((strategy) => (
+                  <tr key={strategy.strategy}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        {strategy.strategy || 'unknown'}
+                        {strategy.strategyLabel}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        ID: {strategy.strategy || 'unknown'}
                       </div>
                       <div className="text-xs text-gray-500">
                         {strategy.uniqueUsers} users, {strategy.uniqueSessions} sessions

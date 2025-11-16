@@ -11,7 +11,14 @@ import ABTestDashboard from '../components/admin/ABTestDashboard'
 type TabType = 'dashboard' | 'users' | 'products' | 'create-product' | 'orders' | 'ab-test'
 
 const resolveTabParam = (value: string | null): TabType => {
-  if (value === 'products' || value === 'orders' || value === 'create-product' || value === 'dashboard' || value === 'ab-test') {
+  if (
+    value === 'products' ||
+    value === 'orders' ||
+    value === 'create-product' ||
+    value === 'dashboard' ||
+    value === 'ab-test' ||
+    value === 'users'
+  ) {
     return value
   }
   return 'dashboard' // Default to dashboard
