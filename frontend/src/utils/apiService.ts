@@ -1054,6 +1054,7 @@ export const chatbotApi = {
       intent: string;
       productsFound: number;
       products: any[];
+      orders?: any[];
       timestamp: string;
     }>(API_ENDPOINTS.chatbot.sendMessage(), {
       message,

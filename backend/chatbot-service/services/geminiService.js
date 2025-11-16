@@ -31,22 +31,33 @@ class GeminiService {
     }
 
     try {
-      // Load system context from prompt file
-      const systemContext = promptLoader.loadPrompt('system-context');
-
-      // Build enhanced message with product context
+      // ENHANCED: Load different system context based on intent
+      let systemContext;
       let enhancedMessage = userMessage;
       
-      // FIXED: Only add product context for search/recommendation intents
-      if (intent && (intent.intent === 'search' || intent.intent === 'recommendation')) {
-        if (productContext && productContext.products && productContext.products.length > 0) {
-          // Format products clearly for the AI
-          const productList = productContext.products.map((p, idx) => 
-            `${idx + 1}. ${p.name} - ${p.brand} (₫${p.defaultPrice?.toLocaleString() || 'N/A'}) [Gender: ${p.gender}, Color: ${p.color}, Usage: ${p.usage || 'N/A'}]`
-          ).join('\n');
-          
-          // ENHANCED: Stronger anti-hallucination rules
-          enhancedMessage = `User question: "${userMessage}"
+      // Use order-specific context for order queries
+      if (intent && intent.intent === 'order') {
+        systemContext = promptLoader.loadPrompt('order-context');
+        
+        // For orders, the message should already be enhanced in chat.js with order data
+        // Just pass it through
+        enhancedMessage = userMessage;
+        
+        logger.info('Using order-specific context', { intent: intent.intent });
+      } else {
+        // Use product context for search/recommendation/general
+        systemContext = promptLoader.loadPrompt('system-context');
+        
+        // Build enhanced message with product context
+        if (intent && (intent.intent === 'search' || intent.intent === 'recommendation')) {
+          if (productContext && productContext.products && productContext.products.length > 0) {
+            // Format products clearly for the AI
+            const productList = productContext.products.map((p, idx) => 
+              `${idx + 1}. ${p.name} - ${p.brand} (₫${p.defaultPrice?.toLocaleString() || 'N/A'}) [Gender: ${p.gender}, Color: ${p.color}, Usage: ${p.usage || 'N/A'}]`
+            ).join('\n');
+            
+            // ENHANCED: Stronger anti-hallucination rules
+            enhancedMessage = `User question: "${userMessage}"
 
 AVAILABLE PRODUCTS (${productContext.products.length} total):
 ${productList}
@@ -54,7 +65,7 @@ ${productList}
 🚨 CRITICAL RULES - VIOLATIONS WILL CAUSE SYSTEM FAILURE:
 1. NEVER invent or make up product names that are not in the list above
 2. NEVER mention specific product names in your response
-3. If user asks for a specific product name, check if it EXISTS in the list:
+3. If asked for a specific product name, check if it EXISTS in the list:
    - If it EXISTS → Say "Great choice! I found it for you"
    - If it DOES NOT EXIST → Say "I don't see that specific product, but here are similar options"
 4. The UI will show product cards - you do NOT need to describe products
@@ -63,10 +74,10 @@ ${productList}
 7. DO NOT write product names like "Áo Blouse..." - let the UI show them
 
 REMEMBER: The product cards below your message will show all details. You just provide a friendly intro!`;
-        } else {
-          // No products found - handle based on intent
-          if (intent.intent === 'recommendation') {
-            enhancedMessage = `User question: "${userMessage}"
+          } else {
+            // No products found - handle based on intent
+            if (intent.intent === 'recommendation') {
+              enhancedMessage = `User question: "${userMessage}"
 
 AVAILABLE PRODUCTS: None found
 
@@ -76,17 +87,17 @@ IMPORTANT:
 - If asking about pairing items (pants with shirts, shoes with outfits), give style suggestions
 - Be educational about fashion coordination and color matching
 - Example: "Shirts pair well with dress pants for formal looks, jeans for casual wear, or chinos for business casual"`;
-          } else if (intent.intent === 'search') {
-            enhancedMessage = `User question: "${userMessage}"
+            } else if (intent.intent === 'search') {
+              enhancedMessage = `User question: "${userMessage}"
 
 AVAILABLE PRODUCTS: None found
 
 IMPORTANT: Since no products were found, politely inform the user we don't have those items in stock right now.`;
+            }
           }
-        }
-      } else {
-        // For general, question, or out-of-topic intents - don't mention products at all
-        enhancedMessage = `User question: "${userMessage}"
+        } else {
+          // For general, question, or out-of-topic intents - don't mention products at all
+          enhancedMessage = `User question: "${userMessage}"
 
 INTENT: ${intent?.intent || 'general'}
 
@@ -94,6 +105,9 @@ IMPORTANT:
 - This is a ${intent?.intent || 'general'} conversation
 - DO NOT mention product availability or stock
 - Respond naturally based on the intent type as described in your instructions`;
+        }
+        
+        logger.info('Using product-specific context', { intent: intent?.intent || 'general' });
       }
 
       // Build chat history
@@ -110,12 +124,15 @@ IMPORTANT:
           },
           {
             role: 'model',
-            parts: [{ text: 'Hello! I\'m here to help you find fashion items. What are you looking for today?' }]
+            parts: [{ text: intent?.intent === 'order' 
+              ? 'Hello! I\'m here to help you with your orders. What would you like to know?' 
+              : 'Hello! I\'m here to help you find fashion items. What are you looking for today?' 
+            }]
           },
           ...chatHistory
         ],
         generationConfig: {
-          temperature: 0.3, // Lower temperature for more consistent responses
+          temperature: 0.3,
           topP: 0.95,
           topK: 40,
           maxOutputTokens: 300,
@@ -130,7 +147,8 @@ IMPORTANT:
         messageLength: userMessage.length, 
         responseLength: text.length,
         productsProvided: productContext?.products?.length || 0,
-        intent: intent?.intent || 'unknown'
+        intent: intent?.intent || 'unknown',
+        contextUsed: intent?.intent === 'order' ? 'order-context' : 'system-context'
       });
       
       return text;
@@ -171,7 +189,7 @@ IMPORTANT:
       const result = await this.model.generateContent({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig: {
-          temperature: 0.5,  // Increased from default for better pattern recognition
+          temperature: 0.5,
           maxOutputTokens: 500
         }
       });
