@@ -27,14 +27,39 @@ class UserService {
   // Get user by ID
   async getUserById(userId) {
     try {
-      const response = await axios.get(`${this.baseUrl}/api/auth/internal/user/${userId}`, {
+      const url = `${this.baseUrl}/api/auth/internal/user/${userId}`;
+      console.log(`[UserService] Fetching user ${userId} from ${url}`);
+      
+      const response = await axios.get(url, {
         headers: {
           'x-service-token': this.serviceToken
         }
       });
+      
+      console.log(`[UserService] Response for user ${userId}:`, {
+        success: response.data?.success,
+        hasData: !!response.data?.data,
+        hasUser: !!response.data?.data?.user,
+        userKeys: response.data?.data?.user ? Object.keys(response.data.data.user) : []
+      });
+      
+      if (!response.data || !response.data.success) {
+        throw new Error(`User service returned unsuccessful response: ${JSON.stringify(response.data)}`);
+      }
+      
+      if (!response.data.data || !response.data.data.user) {
+        console.warn(`[UserService] User ${userId} not found in response:`, response.data);
+        return null;
+      }
+      
       return response.data.data.user;
     } catch (error) {
-      console.error('Error fetching user details:', error);
+      console.error(`[UserService] Error fetching user ${userId}:`, {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url
+      });
       throw this.normalizeAxiosError(error, `Failed to fetch user ${userId}`);
     }
   }

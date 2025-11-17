@@ -115,6 +115,25 @@ orderSchema.methods.updatePaymentStatus = function(newStatus) {
     throw new Error('Invalid payment status');
   }
   
+  const currentStatus = this.paymentStatus;
+  
+  // Define valid transitions
+  const validTransitions = {
+    'Pending': ['Paid', 'Failed'],
+    'Paid': ['Refunded'],
+    'Failed': [], // Terminal state - cannot transition
+    'Refunded': [] // Terminal state - cannot transition
+  };
+  
+  // Check if transition is valid
+  if (currentStatus === newStatus) {
+    throw new Error(`Payment status is already ${newStatus}`);
+  }
+  
+  if (!validTransitions[currentStatus] || !validTransitions[currentStatus].includes(newStatus)) {
+    throw new Error(`Cannot transition payment status from ${currentStatus} to ${newStatus}. Valid transitions from ${currentStatus}: ${validTransitions[currentStatus].join(', ') || 'none (terminal state)'}`);
+  }
+  
   this.paymentStatus = newStatus;
   this.paymentHistory.push({
     status: newStatus,
@@ -128,6 +147,25 @@ orderSchema.methods.updatePaymentStatus = function(newStatus) {
 orderSchema.methods.updateShipmentStatus = function(newStatus) {
   if (!['Pending', 'Packed', 'Delivered', 'Returned'].includes(newStatus)) {
     throw new Error('Invalid shipment status');
+  }
+  
+  const currentStatus = this.shipmentStatus;
+  
+  // Define valid transitions
+  const validTransitions = {
+    'Pending': ['Packed', 'Returned'],
+    'Packed': ['Delivered', 'Returned'],
+    'Delivered': [], // Terminal state - cannot transition
+    'Returned': [] // Terminal state - cannot transition
+  };
+  
+  // Check if transition is valid
+  if (currentStatus === newStatus) {
+    throw new Error(`Shipment status is already ${newStatus}`);
+  }
+  
+  if (!validTransitions[currentStatus] || !validTransitions[currentStatus].includes(newStatus)) {
+    throw new Error(`Cannot transition shipment status from ${currentStatus} to ${newStatus}. Valid transitions from ${currentStatus}: ${validTransitions[currentStatus].join(', ') || 'none (terminal state)'}`);
   }
   
   this.shipmentStatus = newStatus;

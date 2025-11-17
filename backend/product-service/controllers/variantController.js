@@ -11,6 +11,7 @@ const getVariants = async (req, res) => {
       productId,
       status = 'Active',
       size,
+      sku,
       hasStock = false
     } = req.query;
 
@@ -24,10 +25,11 @@ const getVariants = async (req, res) => {
     if (productId) filter.productId = productId;
     if (status) filter.status = status;
     if (size) filter.size = size;
+    if (sku) filter.sku = new RegExp(sku, 'i'); // Case-insensitive SKU search
     if (hasStock === 'true') filter.stock = { $gt: 0 };
 
     const variants = await Variant.find(filter)
-      .populate('productId', 'name brand gender season')
+      .populate('productId', 'name brand gender season images')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limitNum)
@@ -125,7 +127,7 @@ const getVariantById = async (req, res) => {
     const { id } = req.params;
 
     const variant = await Variant.findById(id)
-      .populate('productId', 'name brand gender season categoryId')
+      .populate('productId', 'name brand gender season categoryId images')
       .lean();
 
     if (!variant) {
@@ -326,7 +328,7 @@ const getLowStockVariants = async (req, res) => {
       status: 'Active',
       stock: { $gt: 0, $lte: effectiveThreshold }
     })
-      .populate('productId', 'name brand gender season categoryId')
+      .populate('productId', 'name brand gender season categoryId images')
       .sort({ stock: 1, updatedAt: -1 })
       .lean();
 
@@ -351,7 +353,7 @@ const getOutOfStockVariants = async (req, res) => {
       status: 'Active',
       stock: 0
     })
-      .populate('productId', 'name brand gender season categoryId')
+      .populate('productId', 'name brand gender season categoryId images')
       .sort({ updatedAt: -1 })
       .lean();
 

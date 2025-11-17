@@ -110,12 +110,22 @@ export default function ABTestDashboard() {
   const [summary, setSummary] = useState<ABTestMetricsResponse['data']['summary'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [startDate, setStartDate] = useState<string>(() => formatDateInput(new Date()))
-  const [endDate, setEndDate] = useState<string>(() => {
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    return formatDateInput(tomorrow)
-  })
+  
+  // Get current month start and end dates
+  const getCurrentMonthStart = () => {
+    const now = new Date()
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
+  }
+  
+  const getCurrentMonthEnd = () => {
+    const now = new Date()
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+  }
+  
+  const [dateFilterType, setDateFilterType] = useState<'day' | 'month' | 'year'>('month')
+  const [startDate, setStartDate] = useState<string>(() => getCurrentMonthStart())
+  const [endDate, setEndDate] = useState<string>(() => getCurrentMonthEnd())
   const [selectedStrategy, setSelectedStrategy] = useState<string>('')
 
   const loadMetrics = async (overrides?: { start?: string; end?: string; strategy?: string }) => {
@@ -155,16 +165,26 @@ export default function ABTestDashboard() {
     loadMetrics()
   }
 
+  const getCurrentYearStart = () => {
+    const now = new Date()
+    return `${now.getFullYear()}-01-01`
+  }
+  
+  const getCurrentYearEnd = () => {
+    const now = new Date()
+    return `${now.getFullYear()}-12-31`
+  }
+  
+  const getTodayDate = () => {
+    return formatDateInput(new Date())
+  }
+
   const handleReset = () => {
-    const today = new Date()
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const todayStr = formatDateInput(today)
-    const tomorrowStr = formatDateInput(tomorrow)
-    setStartDate(todayStr)
-    setEndDate(tomorrowStr)
+    setDateFilterType('month')
+    setStartDate(getCurrentMonthStart())
+    setEndDate(getCurrentMonthEnd())
     setSelectedStrategy('')
-    loadMetrics({ start: todayStr, end: tomorrowStr, strategy: '' })
+    loadMetrics({ start: getCurrentMonthStart(), end: getCurrentMonthEnd(), strategy: '' })
   }
 
   const metricsWithLabel: StrategyMetricWithLabel[] = useMemo(() => {
@@ -205,26 +225,112 @@ export default function ABTestDashboard() {
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        {/* Date Filter Type Selection */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Khoảng thời gian:</label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilterType('day')
+                const today = getTodayDate()
+                setStartDate(today)
+                setEndDate(today)
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                dateFilterType === 'day'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Ngày
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilterType('month')
+                setStartDate(getCurrentMonthStart())
+                setEndDate(getCurrentMonthEnd())
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                dateFilterType === 'month'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Tháng
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilterType('year')
+                setStartDate(getCurrentYearStart())
+                setEndDate(getCurrentYearEnd())
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                dateFilterType === 'year'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Năm
+            </button>
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ngày bắt đầu
+              {dateFilterType === 'day' ? 'Ngày bắt đầu' : dateFilterType === 'month' ? 'Tháng bắt đầu' : 'Năm bắt đầu'}
             </label>
             <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              type={dateFilterType === 'day' ? 'date' : dateFilterType === 'month' ? 'month' : 'number'}
+              value={
+                dateFilterType === 'year' 
+                  ? startDate.split('-')[0] 
+                  : dateFilterType === 'month'
+                  ? startDate.substring(0, 7) // YYYY-MM from YYYY-MM-DD
+                  : startDate
+              }
+              onChange={(e) => {
+                if (dateFilterType === 'year') {
+                  setStartDate(`${e.target.value}-01-01`)
+                } else if (dateFilterType === 'month') {
+                  setStartDate(`${e.target.value}-01`)
+                } else {
+                  setStartDate(e.target.value)
+                }
+              }}
+              min={dateFilterType === 'year' ? '2020' : undefined}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ngày kết thúc
+              {dateFilterType === 'day' ? 'Ngày kết thúc' : dateFilterType === 'month' ? 'Tháng kết thúc' : 'Năm kết thúc'}
             </label>
             <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              type={dateFilterType === 'day' ? 'date' : dateFilterType === 'month' ? 'month' : 'number'}
+              value={
+                dateFilterType === 'year' 
+                  ? endDate.split('-')[0] 
+                  : dateFilterType === 'month'
+                  ? endDate.substring(0, 7) // YYYY-MM from YYYY-MM-DD
+                  : endDate
+              }
+              onChange={(e) => {
+                if (dateFilterType === 'year') {
+                  setEndDate(`${e.target.value}-12-31`)
+                } else if (dateFilterType === 'month') {
+                  const monthValue = e.target.value
+                  const [year, month] = monthValue.split('-')
+                  const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate()
+                  setEndDate(`${monthValue}-${String(lastDay).padStart(2, '0')}`)
+                } else {
+                  setEndDate(e.target.value)
+                }
+              }}
+              min={dateFilterType === 'year' ? '2020' : undefined}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>

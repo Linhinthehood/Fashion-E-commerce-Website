@@ -123,6 +123,7 @@ export default function UserManagement() {
     loadCustomers(customerFilters.page)
   }, [loadCustomers, customerFilters.page])
 
+  // Note: Search is client-side filtered for now since backend doesn't support search parameter
   const displayedCustomers = useMemo(() => {
     if (!searchTerm.trim()) return customers
     const keyword = searchTerm.trim().toLowerCase()

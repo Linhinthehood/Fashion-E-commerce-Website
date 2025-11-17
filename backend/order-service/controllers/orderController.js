@@ -523,6 +523,20 @@ const updatePaymentStatus = async (req, res) => {
     });
   } catch (error) {
     console.error('Update payment status error:', error);
+    
+    // Handle validation errors (400) vs server errors (500)
+    if (error.message && (
+      error.message.includes('Cannot transition') || 
+      error.message.includes('already') ||
+      error.message.includes('Invalid payment status')
+    )) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -554,7 +568,21 @@ const updateShipmentStatus = async (req, res) => {
       });
     }
 
-    await order.updateShipmentStatus(status);
+    // Normalize status (similar to payment status)
+    const rawStatus = typeof status === 'string' ? status.trim() : '';
+    const lowerStatus = rawStatus.toLowerCase();
+    
+    let normalizedStatus;
+    if (['pending', 'packed', 'delivered', 'returned'].includes(lowerStatus)) {
+      normalizedStatus = lowerStatus.charAt(0).toUpperCase() + lowerStatus.slice(1);
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid shipment status'
+      });
+    }
+
+    await order.updateShipmentStatus(normalizedStatus);
 
     res.json({
       success: true,
@@ -563,6 +591,20 @@ const updateShipmentStatus = async (req, res) => {
     });
   } catch (error) {
     console.error('Update shipment status error:', error);
+    
+    // Handle validation errors (400) vs server errors (500)
+    if (error.message && (
+      error.message.includes('Cannot transition') || 
+      error.message.includes('already') ||
+      error.message.includes('Invalid shipment status')
+    )) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: 'Internal server error',

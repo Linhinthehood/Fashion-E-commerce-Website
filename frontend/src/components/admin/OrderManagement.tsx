@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import { orderApi } from '../../utils/apiService'
+import { useToast } from '../../contexts/ToastContext'
 
 type Order = {
   _id: string
@@ -107,7 +108,54 @@ function getStatusText(status: string, type: 'payment' | 'shipment'): string {
   }
 }
 
+// Helper function to format validation error messages to Vietnamese
+function formatValidationError(message: string, type: 'payment' | 'shipment'): string {
+  const statusType = type === 'payment' ? 'thanh toán' : 'giao hàng'
+  
+  // Check if it's a transition error
+  if (message.includes('Cannot transition')) {
+    // Extract the current and new status from the error message
+    const match = message.match(/from (\w+) to (\w+)/)
+    if (match) {
+      const [, currentStatus, newStatus] = match
+      const currentStatusText = getStatusText(currentStatus, type)
+      const newStatusText = getStatusText(newStatus, type)
+      
+      // Extract valid transitions
+      const validTransitionsMatch = message.match(/Valid transitions from \w+: (.+)/)
+      if (validTransitionsMatch) {
+        const validTransitions = validTransitionsMatch[1]
+        if (validTransitions.includes('none')) {
+          return `Không thể chuyển trạng thái ${statusType} từ "${currentStatusText}" sang "${newStatusText}". Trạng thái "${currentStatusText}" là trạng thái cuối cùng và không thể thay đổi.`
+        } else {
+          const validStatuses = validTransitions
+            .split(',')
+            .map(s => s.trim())
+            .map(s => getStatusText(s, type))
+            .join(', ')
+          return `Không thể chuyển trạng thái ${statusType} từ "${currentStatusText}" sang "${newStatusText}". Chỉ có thể chuyển sang: ${validStatuses}.`
+        }
+      }
+      return `Không thể chuyển trạng thái ${statusType} từ "${currentStatusText}" sang "${newStatusText}".`
+    }
+  }
+  
+  // Check if status is already set
+  if (message.includes('already')) {
+    const match = message.match(/already (\w+)/)
+    if (match) {
+      const status = match[1]
+      const statusText = getStatusText(status, type)
+      return `Trạng thái ${statusType} đã là "${statusText}".`
+    }
+  }
+  
+  // Return original message if no pattern matches
+  return message
+}
+
 export default function OrderManagement() {
+  const toast = useToast()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -116,32 +164,51 @@ export default function OrderManagement() {
   const [showOrderDetail, setShowOrderDetail] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   
+  // Get current month start date (YYYY-MM-DD)
+  const getCurrentMonthStart = () => {
+    const now = new Date()
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
+  }
+
+  // Get current month end date (YYYY-MM-DD)
+  const getCurrentMonthEnd = () => {
+    const now = new Date()
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+  }
+
   // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date()
     return today.toISOString().split('T')[0]
   }
 
-  // Get maximum date (today + 1 day) for date inputs
+  // Get maximum date (today) for date inputs
   const getMaxDate = () => {
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    return tomorrow.toISOString().split('T')[0]
+    return getTodayDate()
   }
 
-  // Get tomorrow's date in YYYY-MM-DD format
-  const getTomorrowDate = () => {
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    return tomorrow.toISOString().split('T')[0]
+  // Get current year start date
+  const getCurrentYearStart = () => {
+    const now = new Date()
+    return `${now.getFullYear()}-01-01`
   }
 
-  // Filters - default startDate to today, endDate to tomorrow
+  // Get current year end date
+  const getCurrentYearEnd = () => {
+    const now = new Date()
+    return `${now.getFullYear()}-12-31`
+  }
+
+  // Date filter type
+  const [dateFilterType, setDateFilterType] = useState<'day' | 'month' | 'year'>('month')
+
+  // Filters - default to current month
   const [filters, setFilters] = useState({
     paymentStatus: '',
     shipmentStatus: '',
-    startDate: getTodayDate(),
-    endDate: getTomorrowDate(),
+    startDate: getCurrentMonthStart(),
+    endDate: getCurrentMonthEnd(),
     sortBy: 'createdAt',
     sortOrder: 'desc' as 'asc' | 'desc'
   })
@@ -163,7 +230,7 @@ export default function OrderManagement() {
 
       const params = {
         page,
-        limit: 20,
+        limit: 10,
         ...(filters.paymentStatus && { paymentStatus: filters.paymentStatus as 'Pending' | 'Paid' | 'Failed' | 'Refunded' }),
         ...(filters.shipmentStatus && { shipmentStatus: filters.shipmentStatus as 'Pending' | 'Packed' | 'Delivered' | 'Returned' }),
         ...(filters.startDate && { startDate: filters.startDate }),
@@ -235,15 +302,28 @@ export default function OrderManagement() {
       const response = await orderApi.updatePaymentStatus(orderId, { status: status as any })
       
       if (response.success) {
+        const statusText = getStatusText(status, 'payment')
+        toast.success(`Đã cập nhật trạng thái thanh toán thành "${statusText}"`)
         // Reload orders
         loadOrders(pagination.currentPage)
         setError(null)
       } else {
-        throw new Error(response.message || 'Failed to update payment status')
+        // Handle API error response - only show toast, don't set error state
+        const errorMessage = response.message || 'Có lỗi xảy ra khi cập nhật trạng thái thanh toán'
+        const formattedMessage = formatValidationError(errorMessage, 'payment')
+        
+        toast.error(formattedMessage, { duration: 5000 })
+        // Don't set error state - keep orders visible
       }
     } catch (error: any) {
       console.error('Error updating payment status:', error)
-      setError(error.message || 'Có lỗi xảy ra khi cập nhật trạng thái thanh toán')
+      
+      // Handle network or unexpected errors - only show toast
+      const errorMessage = error.message || 'Có lỗi xảy ra khi cập nhật trạng thái thanh toán'
+      const formattedMessage = formatValidationError(errorMessage, 'payment')
+      
+      toast.error(formattedMessage, { duration: 5000 })
+      // Don't set error state - keep orders visible
     }
   }
 
@@ -253,15 +333,28 @@ export default function OrderManagement() {
       const response = await orderApi.updateShipmentStatus(orderId, { status: status as any })
       
       if (response.success) {
+        const statusText = getStatusText(status, 'shipment')
+        toast.success(`Đã cập nhật trạng thái giao hàng thành "${statusText}"`)
         // Reload orders
         loadOrders(pagination.currentPage)
         setError(null)
       } else {
-        throw new Error(response.message || 'Failed to update shipment status')
+        // Handle API error response - only show toast, don't set error state
+        const errorMessage = response.message || 'Có lỗi xảy ra khi cập nhật trạng thái giao hàng'
+        const formattedMessage = formatValidationError(errorMessage, 'shipment')
+        
+        toast.error(formattedMessage, { duration: 5000 })
+        // Don't set error state - keep orders visible
       }
     } catch (error: any) {
       console.error('Error updating shipment status:', error)
-      setError(error.message || 'Có lỗi xảy ra khi cập nhật trạng thái giao hàng')
+      
+      // Handle network or unexpected errors - only show toast
+      const errorMessage = error.message || 'Có lỗi xảy ra khi cập nhật trạng thái giao hàng'
+      const formattedMessage = formatValidationError(errorMessage, 'shipment')
+      
+      toast.error(formattedMessage, { duration: 5000 })
+      // Don't set error state - keep orders visible
     }
   }
 
@@ -281,6 +374,57 @@ export default function OrderManagement() {
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+        
+        {/* Date Filter Type Selection */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Khoảng thời gian:</label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilterType('day')
+                const today = getTodayDate()
+                setFilters(prev => ({ ...prev, startDate: today, endDate: today }))
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                dateFilterType === 'day'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Ngày
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilterType('month')
+                setFilters(prev => ({ ...prev, startDate: getCurrentMonthStart(), endDate: getCurrentMonthEnd() }))
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                dateFilterType === 'month'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Tháng
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilterType('year')
+                setFilters(prev => ({ ...prev, startDate: getCurrentYearStart(), endDate: getCurrentYearEnd() }))
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                dateFilterType === 'year'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Năm
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
@@ -311,33 +455,74 @@ export default function OrderManagement() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {dateFilterType === 'day' ? 'Ngày' : dateFilterType === 'month' ? 'Tháng' : 'Năm bắt đầu'}
+            </label>
             <input
-              type="date"
-              value={filters.startDate}
-              max={getMaxDate()}
+              type={dateFilterType === 'day' ? 'date' : dateFilterType === 'month' ? 'month' : 'number'}
+              value={
+                dateFilterType === 'year' 
+                  ? filters.startDate.split('-')[0] 
+                  : dateFilterType === 'month'
+                  ? filters.startDate.substring(0, 7) // YYYY-MM from YYYY-MM-DD
+                  : filters.startDate
+              }
+              max={dateFilterType === 'day' ? getMaxDate() : undefined}
+              min={dateFilterType === 'year' ? '2020' : undefined}
               onChange={(e) => {
-                const selectedDate = e.target.value
-                // Prevent selecting future dates
-                if (selectedDate <= getMaxDate()) {
-                  setFilters(prev => ({ ...prev, startDate: selectedDate }))
+                let newStartDate: string
+                if (dateFilterType === 'year') {
+                  const year = e.target.value
+                  newStartDate = `${year}-01-01`
+                } else if (dateFilterType === 'month') {
+                  newStartDate = `${e.target.value}-01`
+                } else {
+                  const selectedDate = e.target.value
+                  if (selectedDate <= getMaxDate()) {
+                    newStartDate = selectedDate
+                  } else {
+                    return
+                  }
                 }
+                setFilters(prev => ({ ...prev, startDate: newStartDate }))
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {dateFilterType === 'day' ? 'Ngày' : dateFilterType === 'month' ? 'Tháng' : 'Năm kết thúc'}
+            </label>
             <input
-              type="date"
-              value={filters.endDate}
-              max={getMaxDate()}
+              type={dateFilterType === 'day' ? 'date' : dateFilterType === 'month' ? 'month' : 'number'}
+              value={
+                dateFilterType === 'year' 
+                  ? filters.endDate.split('-')[0] 
+                  : dateFilterType === 'month'
+                  ? filters.endDate.substring(0, 7) // YYYY-MM from YYYY-MM-DD
+                  : filters.endDate
+              }
+              max={dateFilterType === 'day' ? getMaxDate() : undefined}
+              min={dateFilterType === 'year' ? '2020' : undefined}
               onChange={(e) => {
-                const selectedDate = e.target.value
-                // Prevent selecting future dates
-                if (selectedDate <= getMaxDate()) {
-                  setFilters(prev => ({ ...prev, endDate: selectedDate }))
+                let newEndDate: string
+                if (dateFilterType === 'year') {
+                  const year = e.target.value
+                  newEndDate = `${year}-12-31`
+                } else if (dateFilterType === 'month') {
+                  const monthValue = e.target.value
+                  const [year, month] = monthValue.split('-')
+                  const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate()
+                  newEndDate = `${monthValue}-${String(lastDay).padStart(2, '0')}`
+                } else {
+                  const selectedDate = e.target.value
+                  if (selectedDate <= getMaxDate()) {
+                    newEndDate = selectedDate
+                  } else {
+                    return
+                  }
                 }
+                setFilters(prev => ({ ...prev, endDate: newEndDate }))
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -483,24 +668,97 @@ export default function OrderManagement() {
 
           {/* Pagination */}
           {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-2">
-              <button
-                disabled={!pagination.hasPrevPage}
-                onClick={() => loadOrders(pagination.currentPage - 1)}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300"
-              >
-                Trước
-              </button>
-              <span className="px-4 py-2 text-gray-700">
-                Trang {pagination.currentPage} / {pagination.totalPages}
-              </span>
-              <button
-                disabled={!pagination.hasNextPage}
-                onClick={() => loadOrders(pagination.currentPage + 1)}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300"
-              >
-                Sau
-              </button>
+            <div className="flex items-center justify-between mt-6">
+              <p className="text-sm text-gray-500">
+                Trang {pagination.currentPage} / {pagination.totalPages} (Tổng {pagination.totalOrders} đơn hàng)
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => loadOrders(1)}
+                  disabled={pagination.currentPage === 1}
+                  className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 text-sm"
+                >
+                  Đầu
+                </button>
+                <button
+                  disabled={!pagination.hasPrevPage}
+                  onClick={() => loadOrders(pagination.currentPage - 1)}
+                  className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 text-sm"
+                >
+                  Trước
+                </button>
+                
+                {/* Page numbers */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                    let pageNum: number
+                    const current = pagination.currentPage
+                    const total = pagination.totalPages
+                    
+                    if (total <= 5) {
+                      pageNum = i + 1
+                    } else if (current <= 3) {
+                      pageNum = i + 1
+                    } else if (current >= total - 2) {
+                      pageNum = total - 4 + i
+                    } else {
+                      pageNum = current - 2 + i
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => loadOrders(pageNum)}
+                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                          pagination.currentPage === pageNum
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  })}
+                </div>
+                
+                <button
+                  disabled={!pagination.hasNextPage}
+                  onClick={() => loadOrders(pagination.currentPage + 1)}
+                  className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 text-sm"
+                >
+                  Sau
+                </button>
+                <button
+                  onClick={() => loadOrders(pagination.totalPages)}
+                  disabled={pagination.currentPage === pagination.totalPages}
+                  className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 text-sm"
+                >
+                  Cuối
+                </button>
+                
+                {/* Jump to page input */}
+                <div className="flex items-center gap-2 ml-4">
+                  <span className="text-sm text-gray-600">Đến trang:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={pagination.totalPages}
+                    defaultValue={pagination.currentPage}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const target = e.target as HTMLInputElement
+                        const pageNum = parseInt(target.value, 10)
+                        if (pageNum >= 1 && pageNum <= pagination.totalPages) {
+                          loadOrders(pageNum)
+                          target.value = ''
+                        }
+                      }
+                    }}
+                    className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder={String(pagination.currentPage)}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>

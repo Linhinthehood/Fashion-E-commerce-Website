@@ -95,8 +95,8 @@ export default function DashboardAnalytics() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
-  const [period, setPeriod] = useState<Period>('day')
-  const [date, setDate] = useState<string>(getDateInputFormat('day'))
+  const [period, setPeriod] = useState<Period>('month')
+  const [date, setDate] = useState<string>(getDateInputFormat('month'))
   
   const [overview, setOverview] = useState<OverviewData | null>(null)
   const [topProducts, setTopProducts] = useState<TopProduct[]>([])
@@ -176,7 +176,11 @@ export default function DashboardAnalytics() {
 
   const handlePeriodChange = (newPeriod: Period) => {
     setPeriod(newPeriod)
-    setDate(getDateInputFormat(newPeriod))
+    if (newPeriod === 'all') {
+      setDate('')
+    } else {
+      setDate(getDateInputFormat(newPeriod))
+    }
   }
 
   const getDateInputType = (): string => {
@@ -211,21 +215,59 @@ export default function DashboardAnalytics() {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-gray-700">Khoảng thời gian:</label>
-              <select
-                value={period}
-                onChange={(e) => handlePeriodChange(e.target.value as Period)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="day">Ngày</option>
-                <option value="month">Tháng</option>
-                <option value="year">Năm</option>
-                <option value="all">Tất cả</option>
-              </select>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange('day')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    period === 'day'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Ngày
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange('month')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    period === 'month'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Tháng
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange('year')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    period === 'year'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Năm
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange('all')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    period === 'all'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Tất cả
+                </button>
+              </div>
             </div>
 
             {period !== 'all' && (
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">Ngày:</label>
+                <label className="text-sm font-medium text-gray-700">
+                  {period === 'day' ? 'Ngày' : period === 'month' ? 'Tháng' : 'Năm'}:
+                </label>
                 <input
                   type={getDateInputType()}
                   value={date}

@@ -470,6 +470,7 @@ export const variantApi = {
     productId?: string;
     status?: string;
     size?: string;
+    sku?: string;
     hasStock?: boolean;
   }) => {
     const searchParams = new URLSearchParams();

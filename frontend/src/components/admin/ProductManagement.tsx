@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback, useRef, type ChangeEvent, type FormEvent } from 'react'
+import { useState, useEffect, useCallback, type ChangeEvent, type FormEvent } from 'react'
 import { productApi, categoryApi, variantApi } from '../../utils/apiService'
 
 type Product = {
@@ -113,16 +113,15 @@ export default function ProductManagement() {
   const [productLoading, setProductLoading] = useState(true)
   const [productError, setProductError] = useState<string | null>(null)
   const [productPagination, setProductPagination] = useState({ ...INITIAL_PRODUCT_PAGINATION })
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [productFilters, setProductFilters] = useState({
     categoryId: '',
     brand: '',
     gender: '',
     color: '',
     sortBy: 'createdAt',
-    sortOrder: 'desc' as 'asc' | 'desc'
+    sortOrder: 'desc' as 'asc' | 'desc',
+    page: 1
   })
-  const productLoadMoreRef = useRef<HTMLDivElement | null>(null)
 
   // Categories state
   const [categories, setCategories] = useState<Category[]>([])
@@ -138,10 +137,9 @@ export default function ProductManagement() {
     productId: '',
     status: 'Active',
     size: '',
-    hasStock: false
+    hasStock: false,
+    page: 1
   })
-  const [isVariantLoadingMore, setIsVariantLoadingMore] = useState(false)
-  const variantLoadMoreRef = useRef<HTMLDivElement | null>(null)
   const [variantViewMode, setVariantViewMode] = useState<'all' | 'lowStock' | 'outOfStock'>('all')
   const [lowStockThreshold, setLowStockThreshold] = useState(10)
 
@@ -168,13 +166,9 @@ export default function ProductManagement() {
   ]
 
   // Load products
-  const loadProducts = useCallback(async (page: number = 1, append: boolean = false) => {
+  const loadProducts = useCallback(async (page: number = 1) => {
     try {
-      if (append) {
-        setIsLoadingMore(true)
-      } else {
-        setProductLoading(true)
-      }
+      setProductLoading(true)
       setProductError(null)
 
       const params = {
@@ -194,34 +188,18 @@ export default function ProductManagement() {
         const data = response.data as any
         const incomingProducts: Product[] = data.products || []
 
-        setProducts(prevProducts => {
-          if (!append) {
-            return incomingProducts
-          }
-
-          const existingIds = new Set(prevProducts.map(product => product._id))
-          const mergedProducts = [...prevProducts]
-
-          incomingProducts.forEach(product => {
-            if (!existingIds.has(product._id)) {
-              mergedProducts.push(product)
-            }
-          })
-
-          return mergedProducts
-        })
+        setProducts(incomingProducts)
 
         if (data.pagination) {
-          setProductPagination(prev => ({
-            ...prev,
-            ...data.pagination
-          }))
+          setProductPagination(data.pagination)
         } else {
-          setProductPagination(prev => ({
-            ...prev,
+          setProductPagination({
             currentPage: page,
+            totalPages: 1,
+            totalProducts: incomingProducts.length,
+            hasNextPage: false,
             hasPrevPage: page > 1
-          }))
+          })
         }
       } else {
         throw new Error(response.message || 'Failed to load products')
@@ -230,13 +208,9 @@ export default function ProductManagement() {
       console.error('Error loading products:', error)
       setProductError(error.message || 'Có lỗi xảy ra khi tải sản phẩm')
     } finally {
-      if (append) {
-        setIsLoadingMore(false)
-      } else {
-        setProductLoading(false)
-      }
+      setProductLoading(false)
     }
-  }, [productFilters])
+  }, [productFilters.categoryId, productFilters.brand, productFilters.gender, productFilters.color, productFilters.sortBy, productFilters.sortOrder])
 
   // Load categories
   const loadCategories = useCallback(async () => {
@@ -261,14 +235,10 @@ export default function ProductManagement() {
   }, [])
 
   // Load variants
-  const loadVariants = useCallback(async (page: number = 1, append: boolean = false) => {
+  const loadVariants = useCallback(async (page: number = 1) => {
     try {
       if (variantViewMode === 'all') {
-        if (append) {
-          setIsVariantLoadingMore(true)
-        } else {
-          setVariantLoading(true)
-        }
+        setVariantLoading(true)
         setVariantError(null)
 
         const params = {
@@ -289,44 +259,25 @@ export default function ProductManagement() {
           }
           const incomingVariants: Variant[] = data.variants || []
 
-          setVariants(prevVariants => {
-            if (!append) {
-              return incomingVariants
-            }
-
-            const existingIds = new Set(prevVariants.map(variant => variant._id))
-            const mergedVariants = [...prevVariants]
-
-            incomingVariants.forEach(variant => {
-              if (!existingIds.has(variant._id)) {
-                mergedVariants.push(variant)
-              }
-            })
-
-            return mergedVariants
-          })
+          setVariants(incomingVariants)
 
           if (data.pagination) {
-            setVariantPagination(prev => ({
-              ...prev,
-              ...data.pagination
-            }))
+            setVariantPagination(data.pagination)
           } else {
-            setVariantPagination(prev => ({
-              ...prev,
+            setVariantPagination({
               currentPage: page,
-              hasPrevPage: page > 1,
-              hasNextPage: incomingVariants.length === 12
-            }))
+              totalPages: 1,
+              totalVariants: incomingVariants.length,
+              hasNextPage: false,
+              hasPrevPage: page > 1
+            })
           }
         } else {
           throw new Error(response.message || 'Failed to load variants')
         }
       } else if (variantViewMode === 'lowStock') {
-        if (!append) {
-          setVariantLoading(true)
-          setVariantError(null)
-        }
+        setVariantLoading(true)
+        setVariantError(null)
 
         const response = await variantApi.getLowStockVariants(lowStockThreshold)
 
@@ -343,10 +294,8 @@ export default function ProductManagement() {
           throw new Error(response.message || 'Failed to load low stock variants')
         }
       } else {
-        if (!append) {
-          setVariantLoading(true)
-          setVariantError(null)
-        }
+        setVariantLoading(true)
+        setVariantError(null)
 
         const response = await variantApi.getOutOfStockVariants()
 
@@ -367,24 +316,16 @@ export default function ProductManagement() {
       console.error('Error loading variants:', error)
       setVariantError(error.message || 'Có lỗi xảy ra khi tải variants')
     } finally {
-      if (variantViewMode === 'all') {
-        if (append) {
-          setIsVariantLoadingMore(false)
-        } else {
-          setVariantLoading(false)
-        }
-      } else {
-        setVariantLoading(false)
-        setIsVariantLoadingMore(false)
-      }
+      setVariantLoading(false)
     }
-  }, [variantFilters, variantViewMode, lowStockThreshold])
+  }, [variantFilters.productId, variantFilters.status, variantFilters.size, variantFilters.hasStock, variantViewMode, lowStockThreshold])
 
   useEffect(() => {
     if (activeTab === 'products') {
       setProducts([])
       setProductPagination(() => ({ ...INITIAL_PRODUCT_PAGINATION }))
-      loadProducts(1, false)
+      setProductFilters(prev => ({ ...prev, page: 1 }))
+      loadProducts(1)
     }
   }, [activeTab, loadProducts])
 
@@ -404,59 +345,24 @@ export default function ProductManagement() {
     if (activeTab === 'variants') {
       setVariants([])
       setVariantPagination({ ...INITIAL_VARIANT_PAGINATION })
-      loadVariants(1, false)
+      setVariantFilters(prev => ({ ...prev, page: 1 }))
+      loadVariants(1)
     }
   }, [activeTab, loadVariants])
 
+  // Reload products when filters change
   useEffect(() => {
-    if (activeTab !== 'variants' || variantViewMode !== 'all') return
-
-    const sentinel = variantLoadMoreRef.current
-    if (!sentinel) return
-
-    const observer = new IntersectionObserver(entries => {
-      const [entry] = entries
-      if (
-        entry?.isIntersecting &&
-        !variantLoading &&
-        !isVariantLoadingMore &&
-        variantPagination.hasNextPage
-      ) {
-        loadVariants(variantPagination.currentPage + 1, true)
-      }
-    }, { rootMargin: '200px 0px' })
-
-    observer.observe(sentinel)
-
-    return () => {
-      observer.disconnect()
+    if (activeTab === 'products') {
+      loadProducts(productFilters.page)
     }
-  }, [activeTab, variantViewMode, variantLoading, isVariantLoadingMore, variantPagination.currentPage, variantPagination.hasNextPage, loadVariants])
+  }, [activeTab, productFilters.page, productFilters.categoryId, productFilters.brand, productFilters.gender, productFilters.color, productFilters.sortBy, productFilters.sortOrder, loadProducts])
 
+  // Reload variants when filters change
   useEffect(() => {
-    if (activeTab !== 'products') return
-
-    const sentinel = productLoadMoreRef.current
-    if (!sentinel) return
-
-    const observer = new IntersectionObserver(entries => {
-      const [entry] = entries
-      if (
-        entry?.isIntersecting &&
-        !productLoading &&
-        !isLoadingMore &&
-        productPagination.hasNextPage
-      ) {
-        loadProducts(productPagination.currentPage + 1, true)
-      }
-    }, { rootMargin: '200px 0px' })
-
-    observer.observe(sentinel)
-
-    return () => {
-      observer.disconnect()
+    if (activeTab === 'variants') {
+      loadVariants(variantFilters.page)
     }
-  }, [activeTab, productLoading, isLoadingMore, productPagination.currentPage, productPagination.hasNextPage, loadProducts])
+  }, [activeTab, variantFilters.page, variantFilters.productId, variantFilters.status, variantFilters.size, variantFilters.hasStock, variantViewMode, lowStockThreshold, loadVariants])
 
   const resetEditState = () => {
     setEditingProduct(null)
@@ -528,6 +434,7 @@ export default function ProductManagement() {
     setVariantViewMode(mode)
     setVariants([])
     setVariantPagination({ ...INITIAL_VARIANT_PAGINATION })
+    setVariantFilters(prev => ({ ...prev, page: 1 }))
   }
 
   const handleLowStockThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -708,7 +615,7 @@ export default function ProductManagement() {
       if (variantViewMode === 'all') {
         setVariants(prev => prev.map(variant => variant._id === editingVariant._id ? { ...variant, stock: updatedStock } : variant))
       } else {
-        await loadVariants(1, false)
+        await loadVariants(1)
       }
 
       setEditingVariant(prev => prev ? { ...prev, stock: updatedStock } : prev)
@@ -728,7 +635,10 @@ export default function ProductManagement() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-900">Products Management</h2>
         <button
-          onClick={() => loadProducts(1, false)}
+          onClick={() => {
+            setProductFilters(prev => ({ ...prev, page: 1 }))
+            loadProducts(1)
+          }}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Refresh
@@ -848,17 +758,39 @@ export default function ProductManagement() {
               </div>
             ))}
           </div>
-          {isLoadingMore && (
-            <div className="flex items-center justify-center py-6">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          
+          {/* Pagination */}
+          {productPagination.totalPages > 1 && (
+            <div className="flex items-center justify-between mt-6">
+              <p className="text-sm text-gray-500">
+                Trang {productPagination.currentPage} / {productPagination.totalPages} (Tổng {productPagination.totalProducts} sản phẩm)
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const prevPage = productPagination.currentPage - 1
+                    setProductFilters(prev => ({ ...prev, page: prevPage }))
+                    loadProducts(prevPage)
+                  }}
+                  disabled={!productPagination.hasPrevPage}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition-colors"
+                >
+                  Trước
+                </button>
+                <button
+                  onClick={() => {
+                    const nextPage = productPagination.currentPage + 1
+                    setProductFilters(prev => ({ ...prev, page: nextPage }))
+                    loadProducts(nextPage)
+                  }}
+                  disabled={!productPagination.hasNextPage}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition-colors"
+                >
+                  Sau
+                </button>
+              </div>
             </div>
           )}
-          {!productPagination.hasNextPage && (
-            <div className="py-4 text-center text-sm text-gray-500">
-              Đã hiển thị tất cả sản phẩm
-            </div>
-          )}
-          <div ref={productLoadMoreRef} className="h-1" />
         </>
       )}
     </div>
@@ -934,7 +866,8 @@ export default function ProductManagement() {
           onClick={() => {
             setVariants([])
             setVariantPagination({ ...INITIAL_VARIANT_PAGINATION })
-            loadVariants(1, false)
+            setVariantFilters(prev => ({ ...prev, page: 1 }))
+            loadVariants(1)
           }}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
@@ -1107,17 +1040,39 @@ export default function ProductManagement() {
               </div>
             ))}
           </div>
-          {isVariantLoadingMore && (
-            <div className="flex items-center justify-center py-6">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          
+          {/* Pagination - Only show for 'all' view mode */}
+          {variantViewMode === 'all' && variantPagination.totalPages > 1 && (
+            <div className="flex items-center justify-between mt-6">
+              <p className="text-sm text-gray-500">
+                Trang {variantPagination.currentPage} / {variantPagination.totalPages} (Tổng {variantPagination.totalVariants} variants)
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const prevPage = variantPagination.currentPage - 1
+                    setVariantFilters(prev => ({ ...prev, page: prevPage }))
+                    loadVariants(prevPage)
+                  }}
+                  disabled={!variantPagination.hasPrevPage}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition-colors"
+                >
+                  Trước
+                </button>
+                <button
+                  onClick={() => {
+                    const nextPage = variantPagination.currentPage + 1
+                    setVariantFilters(prev => ({ ...prev, page: nextPage }))
+                    loadVariants(nextPage)
+                  }}
+                  disabled={!variantPagination.hasNextPage}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition-colors"
+                >
+                  Sau
+                </button>
+              </div>
             </div>
           )}
-          {!variantPagination.hasNextPage && (
-            <div className="py-4 text-center text-sm text-gray-500">
-              Đã hiển thị tất cả variants
-            </div>
-          )}
-          <div ref={variantLoadMoreRef} className="h-1" />
         </>
       )}
     </div>
