@@ -104,6 +104,10 @@ const userSchema = new mongoose.Schema({
   lastLogin: {
     type: Date,
     default: null
+  },
+  isTemporaryPassword: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true

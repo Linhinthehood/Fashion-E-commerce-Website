@@ -104,11 +104,15 @@ export default function ProfilePage() {
         gender?: 'Male' | 'Female' | 'Others';
       } = {}
       
-      if (profileForm.name) updateData.name = profileForm.name
-      if (profileForm.phoneNumber) updateData.phoneNumber = profileForm.phoneNumber
-      if (profileForm.avatar !== undefined) updateData.avatar = profileForm.avatar
-      if (profileForm.dob) updateData.dob = profileForm.dob
-      if (profileForm.gender) {
+      if (profileForm.name && profileForm.name.trim()) updateData.name = profileForm.name.trim()
+      if (profileForm.phoneNumber && profileForm.phoneNumber.trim()) updateData.phoneNumber = profileForm.phoneNumber.trim()
+      // Avatar: send empty string if cleared, or URL if provided
+      if (profileForm.avatar !== undefined) {
+        const trimmedAvatar = profileForm.avatar.trim()
+        updateData.avatar = trimmedAvatar || undefined
+      }
+      if (profileForm.dob && profileForm.dob.trim()) updateData.dob = profileForm.dob.trim()
+      if (profileForm.gender && profileForm.gender.trim()) {
         updateData.gender = profileForm.gender as 'Male' | 'Female' | 'Others'
       }
       

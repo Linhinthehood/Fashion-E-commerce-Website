@@ -67,14 +67,36 @@ class UserService {
   // Get customer by user ID
   async getCustomerByUserId(userId) {
     try {
-      const response = await axios.get(`${this.baseUrl}/api/customers/internal/user/${userId}`, {
+      const url = `${this.baseUrl}/api/customers/internal/user/${userId}`;
+      console.log(`[UserService] Fetching customer for user ${userId} from ${url}`);
+      
+      const response = await axios.get(url, {
         headers: {
           'x-service-token': this.serviceToken
         }
       });
-      return response.data.data.customer;
+      
+      const customer = response.data.data.customer;
+      console.log(`[UserService] Customer fetched:`, {
+        hasCustomer: !!customer,
+        hasAddresses: !!(customer && customer.addresses),
+        addressesCount: customer?.addresses?.length || 0,
+        addressesSample: customer?.addresses?.slice(0, 2).map(addr => {
+          if (typeof addr === 'object' && addr._id) {
+            return { id: addr._id.toString(), name: addr.name };
+          }
+          return { id: addr.toString() };
+        }) || []
+      });
+      
+      return customer;
     } catch (error) {
-      console.error('Error fetching customer details:', error);
+      console.error('[UserService] Error fetching customer details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url
+      });
       throw this.normalizeAxiosError(error, `Failed to fetch customer for user ${userId}`);
     }
   }
@@ -82,28 +104,68 @@ class UserService {
   // Get customer address by ID
   async getAddressById(addressId, userId) {
     try {
+      console.log(`[UserService] Fetching address ${addressId} for user ${userId}`);
+      
       // Get customer profile with addresses populated
       const customer = await this.getCustomerByUserId(userId);
       
-      if (!customer || !customer.addresses) {
-        throw new Error('Customer profile or addresses not found');
+      console.log(`[UserService] Customer fetched:`, {
+        hasCustomer: !!customer,
+        hasAddresses: !!(customer && customer.addresses),
+        addressesCount: customer?.addresses?.length || 0,
+        addressesType: customer?.addresses ? (Array.isArray(customer.addresses) ? 'array' : typeof customer.addresses) : 'none'
+      });
+      
+      if (!customer) {
+        throw new Error('Customer profile not found');
       }
+      
+      if (!customer.addresses || !Array.isArray(customer.addresses) || customer.addresses.length === 0) {
+        console.warn(`[UserService] Customer has no addresses. Addresses:`, customer.addresses);
+        throw new Error('Customer has no addresses');
+      }
+      
+      // Normalize addressId to string for comparison
+      const addressIdStr = addressId.toString();
+      console.log(`[UserService] Looking for address with ID: ${addressIdStr}`);
+      console.log(`[UserService] Available address IDs:`, customer.addresses.map(addr => {
+        if (typeof addr === 'object' && addr._id) {
+          return addr._id.toString();
+        }
+        return addr.toString();
+      }));
       
       // Find the specific address in the customer's addresses
-      const address = customer.addresses.find(addr => addr._id.toString() === addressId);
+      // Handle both populated (object with _id) and non-populated (just ObjectId) cases
+      const address = customer.addresses.find(addr => {
+        if (typeof addr === 'object' && addr._id) {
+          return addr._id.toString() === addressIdStr;
+        }
+        return addr.toString() === addressIdStr;
+      });
       
       if (!address) {
-        throw new Error(`Address ${addressId} not found in customer profile`);
+        console.error(`[UserService] Address ${addressIdStr} not found in customer's addresses`);
+        throw new Error(`Address ${addressIdStr} not found in customer profile`);
       }
       
-      return address;
+      // If address is just an ObjectId (not populated), we need to fetch it separately
+      // But since findByUserId already populates addresses, this shouldn't happen
+      if (typeof address === 'object' && address._id && address.name && address.addressInfo) {
+        console.log(`[UserService] Address found:`, { name: address.name, addressInfo: address.addressInfo });
+        return address;
+      }
+      
+      // If somehow address is not fully populated, throw error
+      throw new Error(`Address ${addressIdStr} found but not properly populated`);
     } catch (error) {
       // If error came from inner network call, it already normalized
       if (error.customStatus) {
         throw error;
       }
-      console.error('Error fetching address details:', error);
-      const err = new Error(`Failed to fetch address details for address ${addressId}`);
+      console.error('[UserService] Error fetching address details:', error.message);
+      console.error('[UserService] Error stack:', error.stack);
+      const err = new Error(`Failed to fetch address details for address ${addressId}: ${error.message}`);
       err.customStatus = 400;
       err.customCode = 'ADDRESS_NOT_FOUND';
       throw err;

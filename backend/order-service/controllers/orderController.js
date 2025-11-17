@@ -3,6 +3,7 @@ const OrderItem = require('../models/OrderItem');
 const { validationResult } = require('express-validator');
 const productService = require('../services/productService');
 const userService = require('../services/userService');
+const emailService = require('../services/emailService');
 
 const LOYALTY_POINT_EARNING_UNIT = 10_000; // 10,000 VND -> 1 point
 const LOYALTY_POINT_REDEMPTION_VALUE = 1_000; // 1 point = 1,000 VND when redeemed
@@ -321,6 +322,107 @@ const addOrderItems = async (req, res) => {
     order.finalPrice = totalPrice - order.discount;
     order.itemCount = itemCount;
     await order.save();
+
+    // Send order confirmation email (async, don't wait for it)
+    try {
+      console.log('[Order Email] Starting email preparation for order:', order._id.toString());
+      console.log('[Order Email] Order userId:', order.userId.toString());
+      console.log('[Order Email] Order addressId:', order.addressId.toString());
+      
+      // Get user and address details for email
+      let user, address;
+      
+      try {
+        user = await userService.getUserById(order.userId);
+        console.log('[Order Email] User fetched:', user ? { name: user.name, email: user.email } : 'null');
+      } catch (userError) {
+        console.error('[Order Email] Error fetching user:', userError.message);
+        user = null;
+      }
+      
+      try {
+        address = await userService.getAddressById(order.addressId, order.userId);
+        console.log('[Order Email] Address fetched:', address ? { name: address.name, addressInfo: address.addressInfo } : 'null');
+      } catch (addressError) {
+        console.error('[Order Email] Error fetching address:', addressError.message);
+        console.error('[Order Email] Address error details:', {
+          addressId: order.addressId.toString(),
+          userId: order.userId.toString(),
+          errorCode: addressError.customCode,
+          errorStatus: addressError.customStatus
+        });
+        address = null;
+      }
+      
+      if (!user) {
+        console.error('[Order Email] User not found for userId:', order.userId.toString());
+      }
+      
+      if (!address) {
+        console.error('[Order Email] Address not found for addressId:', order.addressId.toString(), 'userId:', order.userId.toString());
+        console.warn('[Order Email] Will attempt to send email without address details');
+      }
+      
+      // Send email even if address is missing (use placeholder)
+      if (user) {
+        // Populate order items with full details for email
+        const populatedOrderItems = orderItems.map(item => ({
+          productName: item.productName,
+          brand: item.brand,
+          color: item.color,
+          size: item.size,
+          sku: item.sku,
+          quantity: item.quantity,
+          price: item.price,
+          subPrice: item.subPrice,
+          image: item.image
+        }));
+
+        console.log('[Order Email] Sending confirmation email to:', user.email);
+        console.log('[Order Email] Order items count:', populatedOrderItems.length);
+        
+        emailService.sendOrderConfirmationEmail({
+          order: {
+            _id: order._id,
+            totalPrice: order.totalPrice,
+            discount: order.discount,
+            finalPrice: order.finalPrice,
+            itemCount: order.itemCount,
+            paymentMethod: order.paymentMethod,
+            paymentStatus: order.paymentStatus,
+            shipmentStatus: order.shipmentStatus,
+            createdAt: order.createdAt
+          },
+          user: {
+            name: user.name,
+            email: user.email
+          },
+          orderItems: populatedOrderItems,
+          address: address ? {
+            name: address.name,
+            addressInfo: address.addressInfo
+          } : {
+            name: 'Địa chỉ không khả dụng',
+            addressInfo: 'Vui lòng kiểm tra địa chỉ giao hàng trong tài khoản của bạn'
+          }
+        }).then(result => {
+          if (result.success) {
+            console.log('[Order Email] Email sent successfully:', result.messageId || 'skipped (SMTP not configured)');
+          } else {
+            console.error('[Order Email] Failed to send email:', result.error);
+          }
+        }).catch(emailError => {
+          console.error('[Order Email] Error sending email:', emailError);
+          // Don't fail the request if email fails
+        });
+      } else {
+        console.warn('[Order Email] Cannot send email - missing user data');
+      }
+    } catch (emailError) {
+      console.error('[Order Email] Error preparing order confirmation email:', emailError);
+      console.error('[Order Email] Stack trace:', emailError.stack);
+      // Don't fail the request if email preparation fails
+    }
 
     res.status(201).json({
       success: true,

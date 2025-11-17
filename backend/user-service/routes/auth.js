@@ -9,7 +9,8 @@ const {
   changePassword,
   getUserById,
   googleCallback,
-  googleFailure
+  googleFailure,
+  forgotPassword
 } = require('../controllers/authController');
 const { authenticate, internalAuth } = require('../middleware/auth');
 const { authValidation } = require('../middleware/validation');
@@ -32,6 +33,7 @@ const handleValidationErrors = (req, res, next) => {
 // Public routes
 router.post('/register', authValidation.register, handleValidationErrors, register);
 router.post('/login', authValidation.login, handleValidationErrors, login);
+router.post('/forgot-password', forgotPassword);
 
 // Google OAuth routes
 router.get('/google', passport.authenticate('google', {

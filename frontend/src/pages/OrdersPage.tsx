@@ -381,7 +381,7 @@ export default function OrdersPage() {
         {/* Order Detail Modal */}
         {showOrderDetail && selectedOrder && (
           <div 
-            className={`fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 transition-all duration-300 ${
+            className={`fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all duration-300 ${
               isClosing ? 'animate-out fade-out duration-300' : 'animate-in fade-in duration-300'
             }`}
             onClick={handleCloseModal}

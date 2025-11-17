@@ -226,6 +226,9 @@ export const authApi = {
     newPassword: string;
   }) => apiClient.put(API_ENDPOINTS.auth.changePassword(), passwordData),
 
+  forgotPassword: (email: string) =>
+    apiClient.post(API_ENDPOINTS.auth.forgotPassword(), { email }, false),
+
   // Google OAuth functions
   googleLogin: () => {
     // Redirect to Google OAuth (not an API call)

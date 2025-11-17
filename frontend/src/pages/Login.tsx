@@ -51,6 +51,17 @@ export default function Login() {
           localStorage.removeItem('rememberedEmail')
         }
         
+        // Handle temporary password case
+        if (result.requiresPasswordChange) {
+          navigate('/change-password', { 
+            state: { 
+              message: 'Vui lòng đổi mật khẩu tạm thời của bạn',
+              isTemporaryPassword: true 
+            } 
+          })
+          return
+        }
+        
         // Show success message briefly before redirect
         const redirectTimer = setTimeout(() => {
           navigate(result.redirectPath || '/products')

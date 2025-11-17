@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/User');
 const Customer = require('../models/Customer');
 const Address = require('../models/Address');
+const emailService = require('../services/emailService');
 
 // Generate JWT Token
 const generateToken = (userId) => {
@@ -98,6 +100,19 @@ const login = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: 'Wrong email or password'
+      });
+    }
+
+    // Check if user is using temporary password
+    if (user.isTemporaryPassword) {
+      return res.status(200).json({
+        success: false,
+        message: 'Please change your temporary password',
+        requiresPasswordChange: true,
+        data: {
+          user: user.toJSON(),
+          token: generateToken(user._id) // Still generate token so they can change password
+        }
       });
     }
 
@@ -228,8 +243,9 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // Update password
+    // Update password and clear temporary password flag
     user.password = newPassword;
+    user.isTemporaryPassword = false;
     await user.save();
 
     res.json({
@@ -325,6 +341,84 @@ const googleFailure = (req, res) => {
   res.redirect(redirectUrl);
 };
 
+// Forgot password - generate temporary password
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      // Don't reveal if user exists or not for security
+      return res.json({
+        success: true,
+        message: 'If the email exists, a temporary password has been sent'
+      });
+    }
+
+    // Check if user is active
+    if (user.status !== 'Active') {
+      return res.status(401).json({
+        success: false,
+        message: 'Account is deactivated'
+      });
+    }
+
+    // Generate temporary password (8 characters: 4 letters + 4 numbers)
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+    let tempPassword = '';
+    
+    // Add 4 random letters
+    for (let i = 0; i < 4; i++) {
+      tempPassword += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    
+    // Add 4 random numbers
+    for (let i = 0; i < 4; i++) {
+      tempPassword += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    }
+    
+    // Shuffle the password
+    tempPassword = tempPassword.split('').sort(() => Math.random() - 0.5).join('');
+
+    // Set temporary password and mark it as temporary
+    user.password = tempPassword;
+    user.isTemporaryPassword = true;
+    await user.save();
+
+    // Send email with temporary password
+    const emailResult = await emailService.sendForgotPasswordEmail(
+      { name: user.name, email: user.email },
+      tempPassword
+    );
+
+    if (!emailResult.success && !emailResult.skipped) {
+      console.error('Failed to send forgot password email:', emailResult.error);
+      // Still return success to user for security (don't reveal email failure)
+    }
+
+    res.json({
+      success: true,
+      message: 'If the email exists, a temporary password has been sent'
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -333,5 +427,6 @@ module.exports = {
   changePassword,
   getUserById,
   googleCallback,
-  googleFailure
+  googleFailure,
+  forgotPassword
 };

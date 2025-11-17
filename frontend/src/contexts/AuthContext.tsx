@@ -16,7 +16,7 @@ type AuthContextType = {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (email: string, password: string) => Promise<{ success: boolean; redirectPath?: string }>
+  login: (email: string, password: string) => Promise<{ success: boolean; redirectPath?: string; requiresPasswordChange?: boolean }>
   logout: () => void
   updateUser: (userData: Partial<User>) => void
 }
@@ -89,10 +89,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth()
   }, [])
 
-  const login = async (email: string, password: string): Promise<{ success: boolean; redirectPath?: string }> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; redirectPath?: string; requiresPasswordChange?: boolean }> => {
     try {
       // Use the same authAPI.login that works
-      const response = await authAPI.login({ email, password }) as LoginResponse
+      const response = await authAPI.login({ email, password }) as LoginResponse & { requiresPasswordChange?: boolean }
+
+      // Handle temporary password case
+      if (response.requiresPasswordChange && response.data) {
+        // Store token and user data
+        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        
+        // Update state
+        setUser(response.data.user)
+        
+        // Redirect to change password page
+        return { success: true, redirectPath: '/change-password', requiresPasswordChange: true }
+      }
 
       if (response.success && response.data) {
         // Store token and user data

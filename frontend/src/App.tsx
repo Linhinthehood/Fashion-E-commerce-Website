@@ -17,6 +17,8 @@ import { ToastProvider } from './contexts/ToastContext'
 import CategoryPage from './pages/CategoryPage'
 import ProfilePage from './pages/ProfilePage'
 import AuthCallback from './pages/AuthCallback'
+import ForgotPassword from './pages/ForgotPassword'
+import ChangePassword from './pages/ChangePassword'
 
 // Only ProductsPage is lazy loaded
 const ProductsPage = lazy(() => import('./pages/ProductsPage'))
@@ -48,6 +50,8 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/change-password" element={<ChangePassword />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/stock-clerk" element={<StockClerkPage />} />

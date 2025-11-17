@@ -60,8 +60,32 @@ const authValidation = {
       .withMessage('Phone number must be 9 to 12 digits'),
     body('avatar')
       .optional()
-      .isURL()
-      .withMessage('Avatar must be a valid URL')
+      .custom((value) => {
+        // Allow empty string, null, or valid URL
+        if (value === '' || value === null || value === undefined) {
+          return true;
+        }
+        // If value exists, it must be a valid URL
+        const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+        if (!urlPattern.test(value)) {
+          throw new Error('Avatar must be a valid URL');
+        }
+        return true;
+      }),
+    body('dob')
+      .optional()
+      .isISO8601()
+      .withMessage('Date of birth must be a valid date')
+      .custom((value) => {
+        if (value && new Date(value) >= new Date()) {
+          throw new Error('Date of birth must be in the past');
+        }
+        return true;
+      }),
+    body('gender')
+      .optional()
+      .isIn(['Male', 'Female', 'Others'])
+      .withMessage('Gender must be one of: Male, Female, Others')
   ],
 
   changePassword: [
