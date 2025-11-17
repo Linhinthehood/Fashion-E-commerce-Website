@@ -116,6 +116,8 @@ const buildServiceProxy = (targetUrl, serviceName) => {
 // Debug middleware
 app.use('/api/*', (req, res, next) => {
   console.log(`🔍 API Gateway received: ${req.method} ${req.originalUrl}`);
+  console.log(`   Headers: ${JSON.stringify(req.headers, null, 2)}`);
+  console.log(`   Body preview: ${req.body ? JSON.stringify(req.body) : 'No body'}`);
   next();
 });
 
@@ -157,6 +159,8 @@ app.use('/api/variants', buildServiceProxy(PRODUCT_SERVICE_URL, 'product-service
 // Fashion Service routes
 app.use('/api/recommendations', buildServiceProxy(FASHION_SERVICE_URL, 'fashion-service'));
 
+
+
 // 404 for non-API routes
 app.use('*', (req, res) => {
   res.status(404).json({ success: false, message: 'Route not found in gateway' });
@@ -168,4 +172,6 @@ app.listen(PORT, () => {
   console.log(`   🔐 User Service: ${USER_SERVICE_URL}`);
   console.log(`   📦 Product Service: ${PRODUCT_SERVICE_URL}`);
   console.log(`   🛒 Order Service: ${ORDER_SERVICE_URL}`);
+  console.log(`   🎨 Fashion Service: ${FASHION_SERVICE_URL}`);
+  console.log(`   ℹ️  Chatbot Service: Running independently on port 3009`);
 });

@@ -11,6 +11,7 @@ import CartPage from './pages/CartPage'
 import OrdersPage from './pages/OrdersPage'
 import Header from './components/Header.tsx'
 import Footer from './components/Footer.tsx'
+import Chatbot from './components/Chatbot.tsx'
 import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
 import { ToastProvider } from './contexts/ToastContext'
@@ -61,6 +62,7 @@ function App() {
             </Routes>
             </main>
             <Footer />
+            <Chatbot />
           </div>
         </CartProvider>
       </AuthProvider>

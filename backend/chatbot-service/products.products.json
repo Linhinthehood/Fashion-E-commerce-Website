@@ -1,0 +1,1856 @@
+[{
+  "_id": {
+    "$oid": "68dfcc7484cd07dea32e23b6"
+  },
+  "name": "SWE RING BOXY TEE - BLACK",
+  "description": "RING BOXY TEE - Chiếc áo thun mới được thiết kế ấn tượng với điểm nhấn của áo nằm ở họa tiết mặt trước được sử dụng kỹ thuật in trame sắc nét kết hợp gắn tag da phía sau lưng tạo điểm nhấn tinh tế và mang đậm dấu ấn của SWE.",
+  "brand": "SWE",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Black",
+  "images": [
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497331/fashion-ecommerce/products/s3bm1wikvt6ukvxjchbp.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497331/fashion-ecommerce/products/pv9l6dj5jyjf5uhovnu9.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497331/fashion-ecommerce/products/ar8ojv4eygm4byzde7bl.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-03T13:15:32.731Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:16.656Z"
+  },
+  "__v": 2,
+  "defaultPrice": 650000
+},
+{
+  "_id": {
+    "$oid": "68dfcd3984cd07dea32e23bb"
+  },
+  "name": "SWE SKEYE BOXY TEE - WHITE",
+  "description": "SKEYE BOXY TEE - Chiếc áo thun mới nằm trong bộ sưu tập \"THE FUTURE IS BRIGHT\" được thiết kế ấn tượng. Điểm nhấn của áo nằm ở họa tiết con mắt mặt trước được in Trame sắc nét kết hợp thêu chữ tỉ mỉ. Mặt sau đơn giản với tag da mới của SWE.",
+  "brand": "SWE",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "White",
+  "images": [
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497528/fashion-ecommerce/products/dc8c50y5zgct53hvh2mo.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497528/fashion-ecommerce/products/nefrcaubbpufacfnsbvg.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497528/fashion-ecommerce/products/vthdkcokflhp2uhughg9.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-03T13:18:49.499Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:16.719Z"
+  },
+  "__v": 0,
+  "defaultPrice": 550000
+},
+{
+  "_id": {
+    "$oid": "68dfcdb384cd07dea32e23c0"
+  },
+  "name": "SWE SIGNATURE TEE - BLACK",
+  "description": "SIGNATURE TEE - Một chiếc áo được thiết kế cực kì đơn giản và dễ dàng phối đồ với các họa tiết mặt trước và sau đều được thêu xù.",
+  "brand": "SWE",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Black",
+  "images": [
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497651/fashion-ecommerce/products/elkb4qyan8v5rcovxwds.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497650/fashion-ecommerce/products/inbzmfkraed8rq6wepoi.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497650/fashion-ecommerce/products/eb0n5uplqhukrgbskugw.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-03T13:20:51.848Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:16.782Z"
+  },
+  "__v": 0,
+  "defaultPrice": 400000
+},
+{
+  "_id": {
+    "$oid": "68dfce0884cd07dea32e23c5"
+  },
+  "name": "SWE STARCHECK SNAPBACK - BLACK",
+  "description": "STARCHECK SNAPBACK - Chiếc nón mới được thiết kế form dáng snapback mềm. Điểm nhấn của nón nằm ở họa tiết logo SWE được thêu 3D kỹ thuật xương cá ở mặt trước và 1 câu slogan được thêu 2D ở bên hông. Phía sau nón được sử dụng khóa nhựa 7 lỗ để bạn có thể dễ dàng tăng chỉnh kích thước phù hợp với đầu.",
+  "brand": "SWE",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Black",
+  "images": [
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497735/fashion-ecommerce/products/rs5rhpplbtvj7melb0yv.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497736/fashion-ecommerce/products/goahqahebuclv4wqekun.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497735/fashion-ecommerce/products/au0ufmw3q15gyogslwap.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759497736/fashion-ecommerce/products/byzenfq7zsnqadv8vpq4.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc1d84cd07dea32e23ad"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-03T13:22:16.908Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:16.845Z"
+  },
+  "__v": 0,
+  "defaultPrice": 350000
+},
+{
+  "_id": {
+    "$oid": "68e005f17d3c1abe691f508f"
+  },
+  "name": "SWE AIRWAVE SWEATPANTS - GRAY",
+  "description": "AIRWAVE SWEATPANTS - Chiếc quần dài mới được thiết kế theo phong cách đơn giản, với họa tiết tên thương hiệu mặt trước được thêu đắp tinh tế và mang đậm dấu ấn của SWE. Phần túi sau được thiết kế double layer kèm logo SWE thêu 3D sắc nét. Cạp chun co giãn kèm dây rút ở eo, ống quần giúp điều chỉnh linh hoạt và duy trì form dáng đẹp.",
+  "brand": "SWE",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Gray",
+  "images": [
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759512048/fashion-ecommerce/products/jsxx78lfezz8nwzd6g1c.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759512048/fashion-ecommerce/products/wdyixkkbn5x69gphrh5h.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1759512048/fashion-ecommerce/products/ip6yrhvrypdseaer958k.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-03T17:20:49.291Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:16.905Z"
+  },
+  "__v": 0,
+  "defaultPrice": 800000
+},
+{
+  "_id": {
+    "$oid": "68e0081a3cd27cf69de61cce"
+  },
+  "name": "Áo Thun Pique",
+  "description": "Áo thun raglan dáng rộng vải Pique, mềm mại, co giãn thoáng mát,",
+  "brand": "Yame",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "White",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759512603/fashion-ecommerce/products/pccrzvwapsqd54njhxl3.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759512603/fashion-ecommerce/products/qqftr3odgn9jmigl0hvf.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759512602/fashion-ecommerce/products/v57lkcyz3igqiwaixd6h.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-03T17:30:02.443Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:16.965Z"
+  },
+  "__v": 0,
+  "defaultPrice": 250000
+},
+{
+  "_id": {
+    "$oid": "68e0cee62ca76bf7ae455b82"
+  },
+  "name": "Áo Sơ Mi Trắng Nam Công Sở",
+  "description": "Áo sơ mi trắng basic cho nam, phù hợp đi làm văn phòng.",
+  "brand": "Yame",
+  "gender": "Male",
+  "usage": "Formal",
+  "color": "White",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564071/fashion-ecommerce/products/-o-s--mi-tr-ng-nam-c-ng-s--1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564072/fashion-ecommerce/products/-o-s--mi-tr-ng-nam-c-ng-s--2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564073/fashion-ecommerce/products/-o-s--mi-tr-ng-nam-c-ng-s--3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:38:14.552Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.027Z"
+  },
+  "__v": 0,
+  "defaultPrice": 350000
+},
+{
+  "_id": {
+    "$oid": "68e0cee62ca76bf7ae455b86"
+  },
+  "name": "Áo Thun Nam Cổ Tròn Basic",
+  "description": "Áo thun nam cổ tròn, vải cotton mềm mại thoáng mát.",
+  "brand": "Yame",
+  "gender": "Male",
+  "usage": "Casual",
+  "color": "Navy",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563778/fashion-ecommerce/products/-o-thun-nam-c--tr-n-basic-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563779/fashion-ecommerce/products/-o-thun-nam-c--tr-n-basic-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563780/fashion-ecommerce/products/-o-thun-nam-c--tr-n-basic-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:38:14.610Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.090Z"
+  },
+  "__v": 0,
+  "defaultPrice": 250000
+},
+{
+  "_id": {
+    "$oid": "68e0cee62ca76bf7ae455b8a"
+  },
+  "name": "Quần Jeans Nam Slim Fit",
+  "description": "Quần jeans nam dáng slim fit, chất liệu denim cao cấp.",
+  "brand": "Yame",
+  "gender": "Male",
+  "usage": "Casual",
+  "color": "Blue",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563781/fashion-ecommerce/products/qu-n-jeans-nam-slim-fit-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563782/fashion-ecommerce/products/qu-n-jeans-nam-slim-fit-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563783/fashion-ecommerce/products/qu-n-jeans-nam-slim-fit-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:38:14.662Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.156Z"
+  },
+  "__v": 0,
+  "defaultPrice": 550000
+},
+{
+  "_id": {
+    "$oid": "68e0cee62ca76bf7ae455b8d"
+  },
+  "name": "Quần Tây Nam Công Sở",
+  "description": "Quần tây nam công sở, form chuẩn, dáng thanh lịch.",
+  "brand": "Yame",
+  "gender": "Male",
+  "usage": "Formal",
+  "color": "Black",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564074/fashion-ecommerce/products/qu-n-t-y-nam-c-ng-s--1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564075/fashion-ecommerce/products/qu-n-t-y-nam-c-ng-s--2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564076/fashion-ecommerce/products/qu-n-t-y-nam-c-ng-s--3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:38:14.713Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.221Z"
+  },
+  "__v": 0,
+  "defaultPrice": 450000
+},
+{
+  "_id": {
+    "$oid": "68e0cee62ca76bf7ae455b8f"
+  },
+  "name": "Mũ Lưỡi Trai Thể Thao Đen",
+  "description": "Mũ lưỡi trai thể thao, chất liệu vải thoáng khí.",
+  "brand": "Yame",
+  "gender": "Unisex",
+  "usage": "Sports",
+  "color": "Black",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563784/fashion-ecommerce/products/m--l--i-trai-th--thao--en-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563785/fashion-ecommerce/products/m--l--i-trai-th--thao--en-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563786/fashion-ecommerce/products/m--l--i-trai-th--thao--en-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc1d84cd07dea32e23ad"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:38:14.770Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.283Z"
+  },
+  "__v": 0,
+  "defaultPrice": 180000
+},
+{
+  "_id": {
+    "$oid": "68e0cee62ca76bf7ae455b91"
+  },
+  "name": "Mũ Lưỡi Trai Basic Trắng",
+  "description": "Mũ lưỡi trai màu trắng basic, phù hợp mọi phong cách.",
+  "brand": "Yame",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "White",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563787/fashion-ecommerce/products/m--l--i-trai-basic-tr-ng-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563788/fashion-ecommerce/products/m--l--i-trai-basic-tr-ng-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563790/fashion-ecommerce/products/m--l--i-trai-basic-tr-ng-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc1d84cd07dea32e23ad"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:38:14.823Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.346Z"
+  },
+  "__v": 0,
+  "defaultPrice": 150000
+},
+{
+  "_id": {
+    "$oid": "68e0cee62ca76bf7ae455b93"
+  },
+  "name": "Đồng Hồ Nam Dây Da Nâu",
+  "description": "Đồng hồ nam dây da nâu, mặt tròn classic.",
+  "brand": "Titoni",
+  "gender": "Male",
+  "usage": "Formal",
+  "color": "Brown",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564077/fashion-ecommerce/products/--ng-h--nam-d-y-da-n-u-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564078/fashion-ecommerce/products/--ng-h--nam-d-y-da-n-u-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564080/fashion-ecommerce/products/--ng-h--nam-d-y-da-n-u-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc5184cd07dea32e23b3"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:38:14.875Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.407Z"
+  },
+  "__v": 0,
+  "defaultPrice": 5500000
+},
+{
+  "_id": {
+    "$oid": "68e0cee62ca76bf7ae455b95"
+  },
+  "name": "Đồng Hồ Thể Thao Nam",
+  "description": "Đồng hồ thể thao điện tử, chống nước 50m.",
+  "brand": "G-shock",
+  "gender": "Male",
+  "usage": "Sports",
+  "color": "Black",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564082/fashion-ecommerce/products/--ng-h--th--thao-nam-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564083/fashion-ecommerce/products/--ng-h--th--thao-nam-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564084/fashion-ecommerce/products/--ng-h--th--thao-nam-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc5184cd07dea32e23b3"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:38:14.927Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.468Z"
+  },
+  "__v": 0,
+  "defaultPrice": 3200000
+},
+{
+  "_id": {
+    "$oid": "68e0cf4084381d74137c5519"
+  },
+  "name": "Giày Sneaker Nam Trắng Basic",
+  "description": "Giày sneaker nam màu trắng basic, dễ phối đồ.",
+  "brand": "Nike",
+  "gender": "Male",
+  "usage": "Casual",
+  "color": "White",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563791/fashion-ecommerce/products/gi-y-sneaker-nam-tr-ng-basic-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563792/fashion-ecommerce/products/gi-y-sneaker-nam-tr-ng-basic-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759563793/fashion-ecommerce/products/gi-y-sneaker-nam-tr-ng-basic-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e069a6ddce55ce977444e9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:39:44.378Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.530Z"
+  },
+  "__v": 0,
+  "defaultPrice": 2500000
+},
+{
+  "_id": {
+    "$oid": "68e0cf4084381d74137c551b"
+  },
+  "name": "Giày Da Nam Công Sở",
+  "description": "Giày da nam công sở màu đen, kiểu dáng lịch sự.",
+  "brand": "Yame",
+  "gender": "Male",
+  "usage": "Formal",
+  "color": "Black",
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564085/fashion-ecommerce/products/gi-y-da-nam-c-ng-s--1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564086/fashion-ecommerce/products/gi-y-da-nam-c-ng-s--2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564087/fashion-ecommerce/products/gi-y-da-nam-c-ng-s--3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e069a6ddce55ce977444e9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T07:39:44.459Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.592Z"
+  },
+  "__v": 0,
+  "defaultPrice": 850000
+},
+{
+  "_id": {
+    "$oid": "68e0d6d833514af994350abf"
+  },
+  "name": "Ví Da Nam Ngang Đen",
+  "description": "Ví da nam ngang, nhiều ngăn đựng thẻ và tiền.",
+  "brand": "Yame",
+  "gender": "Male",
+  "usage": "Daily",
+  "color": "Black",
+  "defaultPrice": 450000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564088/fashion-ecommerce/products/v--da-nam-ngang--en-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564089/fashion-ecommerce/products/v--da-nam-ngang--en-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564090/fashion-ecommerce/products/v--da-nam-ngang--en-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0d5be535ec32cbe22462f"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T08:12:08.605Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.657Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e0d6d833514af994350ac2"
+  },
+  "name": "Ví Da Nam Đứng Nâu",
+  "description": "Ví da nam đứng màu nâu, thiết kế gọn gàng.",
+  "brand": "Yame",
+  "gender": "Male",
+  "usage": "Daily",
+  "color": "Brown",
+  "defaultPrice": 380000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564091/fashion-ecommerce/products/v--da-nam---ng-n-u-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564092/fashion-ecommerce/products/v--da-nam---ng-n-u-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1759564093/fashion-ecommerce/products/v--da-nam---ng-n-u-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0d5be535ec32cbe22462f"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-04T08:12:08.705Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.722Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb2d78957d01e035432"
+  },
+  "name": "Áo Sơ Mi Nữ Trắng Công Sở",
+  "description": "Áo sơ mi nữ trắng elegant, phù hợp môi trường văn phòng.",
+  "brand": "Root Rotation",
+  "gender": "Female",
+  "usage": "Formal",
+  "color": "White",
+  "defaultPrice": 380000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093953/fashion-ecommerce/products/-o-s--mi-n--tr-ng-c-ng-s--1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093954/fashion-ecommerce/products/-o-s--mi-n--tr-ng-c-ng-s--2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093956/fashion-ecommerce/products/-o-s--mi-n--tr-ng-c-ng-s--3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:14.741Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.786Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb2d78957d01e035435"
+  },
+  "name": "Áo Thun Nữ Cổ Tròn Pastel",
+  "description": "Áo thun nữ cổ tròn màu pastel, vải cotton mềm mại.",
+  "brand": "Root Rotation",
+  "gender": "Female",
+  "usage": "Casual",
+  "color": "Pink",
+  "defaultPrice": 280000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093957/fashion-ecommerce/products/-o-thun-n--c--tr-n-pastel-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093958/fashion-ecommerce/products/-o-thun-n--c--tr-n-pastel-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093960/fashion-ecommerce/products/-o-thun-n--c--tr-n-pastel-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:14.845Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.850Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb2d78957d01e035438"
+  },
+  "name": "Quần Jeans Nữ Skinny Fit",
+  "description": "Quần jeans nữ dáng skinny, co giãn thoải mái.",
+  "brand": "Root Rotation",
+  "gender": "Female",
+  "usage": "Casual",
+  "color": "Blue",
+  "defaultPrice": 520000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093962/fashion-ecommerce/products/qu-n-jeans-n--skinny-fit-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093964/fashion-ecommerce/products/qu-n-jeans-n--skinny-fit-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093966/fashion-ecommerce/products/qu-n-jeans-n--skinny-fit-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:14.940Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.915Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb3d78957d01e03543b"
+  },
+  "name": "Quần Tây Nữ Công Sở Đen",
+  "description": "Quần tây nữ công sở màu đen, dáng straight fit thanh lịch.",
+  "brand": "Root Rotation",
+  "gender": "Female",
+  "usage": "Formal",
+  "color": "Black",
+  "defaultPrice": 480000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093968/fashion-ecommerce/products/qu-n-t-y-n--c-ng-s---en-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093969/fashion-ecommerce/products/qu-n-t-y-n--c-ng-s---en-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093970/fashion-ecommerce/products/qu-n-t-y-n--c-ng-s---en-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:15.028Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:17.981Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb3d78957d01e03543e"
+  },
+  "name": "Mũ Lưỡi Trai Nữ Hồng Pastel",
+  "description": "Mũ lưỡi trai nữ màu hồng pastel, thiết kế trendy.",
+  "brand": "Root Rotation",
+  "gender": "Female",
+  "usage": "Casual",
+  "color": "Pink",
+  "defaultPrice": 165000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093972/fashion-ecommerce/products/m--l--i-trai-n--h-ng-pastel-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093973/fashion-ecommerce/products/m--l--i-trai-n--h-ng-pastel-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093974/fashion-ecommerce/products/m--l--i-trai-n--h-ng-pastel-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc1d84cd07dea32e23ad"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:15.125Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.048Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb3d78957d01e035444"
+  },
+  "name": "Đồng Hồ Nữ Dây Da Hồng",
+  "description": "Đồng hồ nữ dây da màu hồng, mặt số tinh tế feminine.",
+  "brand": "Silver Sunray and Bee Roman",
+  "gender": "Female",
+  "usage": "Formal",
+  "color": "Pink",
+  "defaultPrice": 4800000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093976/fashion-ecommerce/products/--ng-h--n--d-y-da-h-ng-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093977/fashion-ecommerce/products/--ng-h--n--d-y-da-h-ng-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093978/fashion-ecommerce/products/--ng-h--n--d-y-da-h-ng-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc5184cd07dea32e23b3"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:15.316Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.117Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb3d78957d01e035447"
+  },
+  "name": "Đồng Hồ Nữ Thể Thao Trắng",
+  "description": "Đồng hồ thể thao nữ màu trắng, chống nước và va đập.",
+  "brand": "Garmin",
+  "gender": "Female",
+  "usage": "Sports",
+  "color": "White",
+  "defaultPrice": 2800000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093979/fashion-ecommerce/products/--ng-h--n--th--thao-tr-ng-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093980/fashion-ecommerce/products/--ng-h--n--th--thao-tr-ng-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093982/fashion-ecommerce/products/--ng-h--n--th--thao-tr-ng-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc5184cd07dea32e23b3"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:15.404Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.179Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb3d78957d01e03544a"
+  },
+  "name": "Giày Sneaker Nữ Trắng Hồng",
+  "description": "Giày sneaker nữ trắng phối hồng, phong cách năng động.",
+  "brand": "Root Rotation",
+  "gender": "Female",
+  "usage": "Casual",
+  "color": "White",
+  "defaultPrice": 2200000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093984/fashion-ecommerce/products/gi-y-sneaker-n--tr-ng-h-ng-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093985/fashion-ecommerce/products/gi-y-sneaker-n--tr-ng-h-ng-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093986/fashion-ecommerce/products/gi-y-sneaker-n--tr-ng-h-ng-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e069a6ddce55ce977444e9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:15.492Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.243Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e8dcb3d78957d01e03544d"
+  },
+  "name": "Ví Da Nữ Mini Hồng",
+  "description": "Ví da nữ mini màu hồng, thiết kế compact và xinh xắn.",
+  "brand": "Root Rotation",
+  "gender": "Female",
+  "usage": "Daily",
+  "color": "Pink",
+  "defaultPrice": 420000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093987/fashion-ecommerce/products/v--da-n--mini-h-ng-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093988/fashion-ecommerce/products/v--da-n--mini-h-ng-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760093990/fashion-ecommerce/products/v--da-n--mini-h-ng-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0d5be535ec32cbe22462f"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T10:15:15.583Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.306Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e97123a6704d9647769686"
+  },
+  "name": "Áo Polo Nam Pierre Cardin Classic",
+  "description": "Áo polo nam Pierre Cardin thiết kế classic với logo thêu tinh tế, chất liệu cotton cao cấp thoáng mát.",
+  "brand": "Pierre Cardin",
+  "gender": "Male",
+  "usage": "Casual",
+  "color": "Navy",
+  "defaultPrice": 890000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174842/fashion-ecommerce/products/-o-polo-nam-pierre-cardin-classic-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174844/fashion-ecommerce/products/-o-polo-nam-pierre-cardin-classic-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174845/fashion-ecommerce/products/-o-polo-nam-pierre-cardin-classic-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T20:48:35.411Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.368Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e97123a6704d964776968c"
+  },
+  "name": "Giày Loafer Nam Gucci",
+  "description": "Giày loafer nam Gucci da thật cao cấp, thiết kế horsebit classic, crafted in Italy.",
+  "brand": "Gucci",
+  "gender": "Male",
+  "usage": "Formal",
+  "color": "Brown",
+  "defaultPrice": 18500000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174847/fashion-ecommerce/products/gi-y-loafer-nam-gucci-1.png",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174848/fashion-ecommerce/products/gi-y-loafer-nam-gucci-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174849/fashion-ecommerce/products/gi-y-loafer-nam-gucci-3.png"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e069a6ddce55ce977444e9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T20:48:35.624Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.430Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e9727b5e6976da1d667885"
+  },
+  "name": "Mũ Lưỡi Trai Adidas Originals",
+  "description": "Mũ lưỡi trai Adidas Originals với logo 3 sọc iconic, chất liệu cotton twill bền bỉ.",
+  "brand": "Adidas",
+  "gender": "Unisex",
+  "usage": "Sports",
+  "color": "Black",
+  "defaultPrice": 650000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174850/fashion-ecommerce/products/m--l--i-trai-adidas-originals-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174851/fashion-ecommerce/products/m--l--i-trai-adidas-originals-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174853/fashion-ecommerce/products/m--l--i-trai-adidas-originals-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc1d84cd07dea32e23ad"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T20:54:19.627Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.492Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e9727b5e6976da1d667888"
+  },
+  "name": "Đồng Hồ Nam Rolex Submariner",
+  "description": "Đồng hồ Rolex Submariner automatic, thép không gỉ 904L, chống nước 300m, Swiss Made.",
+  "brand": "Rolex",
+  "gender": "Male",
+  "usage": "Formal",
+  "color": "Black",
+  "defaultPrice": 285000000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174855/fashion-ecommerce/products/--ng-h--nam-rolex-submariner-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174856/fashion-ecommerce/products/--ng-h--nam-rolex-submariner-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174857/fashion-ecommerce/products/--ng-h--nam-rolex-submariner-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc5184cd07dea32e23b3"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T20:54:19.716Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.553Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e9727b5e6976da1d66788b"
+  },
+  "name": "Quần Jeans Nam Levi's 501 Original",
+  "description": "Quần jeans nam Levi's 501 Original Fit, 100% cotton denim, button fly classic từ 1873.",
+  "brand": "Levi's",
+  "gender": "Male",
+  "usage": "Casual",
+  "color": "Blue",
+  "defaultPrice": 1250000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174859/fashion-ecommerce/products/qu-n-jeans-nam-levi-s-501-original-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174860/fashion-ecommerce/products/qu-n-jeans-nam-levi-s-501-original-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174861/fashion-ecommerce/products/qu-n-jeans-nam-levi-s-501-original-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T20:54:19.801Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.614Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68e9727b5e6976da1d66788e"
+  },
+  "name": "Ví Da Nam Louis Vuitton Monogram",
+  "description": "Ví da nam Louis Vuitton canvas Monogram, thiết kế compact với nhiều ngăn thẻ, made in France.",
+  "brand": "Louis Vuitton",
+  "gender": "Male",
+  "usage": "Daily",
+  "color": "Brown",
+  "defaultPrice": 12500000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174862/fashion-ecommerce/products/v--da-nam-louis-vuitton-monogram-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174863/fashion-ecommerce/products/v--da-nam-louis-vuitton-monogram-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1760174864/fashion-ecommerce/products/v--da-nam-louis-vuitton-monogram-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0d5be535ec32cbe22462f"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-10T20:54:19.882Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.677Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69026e4f34fe8e3ddfaa6740"
+  },
+  "name": "Áo Thun Unisex Summer Breeze",
+  "description": "Áo thun nhẹ, thấm hút mồ hôi, phong cách unisex phù hợp đi chơi và dạo phố mùa hè.",
+  "brand": "LocalBrand",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Light Blue",
+  "defaultPrice": 300000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761767387/fashion-ecommerce/products/-o-thun-unisex-summer-breeze-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761767389/fashion-ecommerce/products/-o-thun-unisex-summer-breeze-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761767390/fashion-ecommerce/products/-o-thun-unisex-summer-breeze-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-29T19:43:11.086Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.743Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69026e4f34fe8e3ddfaa6743"
+  },
+  "name": "Quần Short Old Sailor Unisex",
+  "description": "Quần short form relaxed, chất liệu cotton co giãn thoải mái, thiết kế unisex.",
+  "brand": "Old Sailor",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Beige",
+  "defaultPrice": 350000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769456/fashion-ecommerce/products/qu-n-short-chino-unisex-1.png",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769460/fashion-ecommerce/products/qu-n-short-chino-unisex-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769462/fashion-ecommerce/products/qu-n-short-chino-unisex-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-29T19:43:11.196Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.806Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69026e4f34fe8e3ddfaa6749"
+  },
+  "name": "Đồng Hồ Thời Trang Nữ Casio",
+  "description": "Đồng hồ thời trang nữ Clarisse, mặt nhỏ thanh lịch, dây kim loại mỏng.",
+  "brand": "Casio",
+  "gender": "Female",
+  "usage": "Formal",
+  "color": "Rose Gold",
+  "defaultPrice": 2400000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769463/fashion-ecommerce/products/--ng-h--th-i-trang-n--clarisse-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769465/fashion-ecommerce/products/--ng-h--th-i-trang-n--clarisse-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769467/fashion-ecommerce/products/--ng-h--th-i-trang-n--clarisse-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc5184cd07dea32e23b3"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-29T19:43:11.410Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.873Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69026e4f34fe8e3ddfaa674c"
+  },
+  "name": "Giày Slip-on Canvas Unisex",
+  "description": "Giày slip-on vải canvas, đế cao su nhẹ, phong cách unisex tiện dụng cho mọi hoạt động hằng ngày.",
+  "brand": "CanvasCo",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Navy",
+  "defaultPrice": 650000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769469/fashion-ecommerce/products/gi-y-slip-on-canvas-unisex-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769471/fashion-ecommerce/products/gi-y-slip-on-canvas-unisex-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769473/fashion-ecommerce/products/gi-y-slip-on-canvas-unisex-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e069a6ddce55ce977444e9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-29T19:43:11.542Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:18.937Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69026e4f34fe8e3ddfaa674f"
+  },
+  "name": "Ví Da Slim WT Unisex",
+  "description": "Ví da slim phong cách minimal, nhiều ngăn thẻ, thiết kế mỏng gọn phù hợp cả nam và nữ.",
+  "brand": "WT",
+  "gender": "Unisex",
+  "usage": "Daily",
+  "color": "Black",
+  "defaultPrice": 520000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769474/fashion-ecommerce/products/v--da-slim-minimal-unisex-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769477/fashion-ecommerce/products/v--da-slim-minimal-unisex-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769478/fashion-ecommerce/products/v--da-slim-minimal-unisex-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0d5be535ec32cbe22462f"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-29T19:43:11.651Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:19.003Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69026e4f34fe8e3ddfaa6758"
+  },
+  "name": "Sandal Nữ Flat",
+  "description": "Sandal nữ đế thấp, quai bản, thiết kế comfortable cho mọi ngày.",
+  "brand": "SandalWorks",
+  "gender": "Female",
+  "usage": "Casual",
+  "color": "Beige",
+  "defaultPrice": 420000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769480/fashion-ecommerce/products/sandal-n--flat-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769482/fashion-ecommerce/products/sandal-n--flat-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769483/fashion-ecommerce/products/sandal-n--flat-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e397f4428dd87ba9cbd4a9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-29T19:43:11.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:19.066Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69026e5034fe8e3ddfaa675b"
+  },
+  "name": "Túi Đeo Chéo Nữ Herschel",
+  "description": "Túi đeo chéo nhỏ gọn, nhiều ngăn, phong cách tối giản phù hợp đi chơi và đi làm.",
+  "brand": "Herschel",
+  "gender": "Female",
+  "usage": "Daily",
+  "color": "Blush",
+  "defaultPrice": 780000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769485/fashion-ecommerce/products/t-i--eo-ch-o-n--petite-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1761769486/fashion-ecommerce/products/t-i--eo-ch-o-n--petite-2.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0d5be535ec32cbe22462f"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-10-29T19:43:12.074Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:19.128Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6905bc8e9d677bcb1fdf2c2e"
+  },
+  "name": "SWE CROSS SWEATPANTS - GRAY",
+  "description": "CROSS SWEATPANTS - Chiếc quần mới với thiết kế theo phong cách vintage cực ngầu. Điểm nhấn của quần nằm ở các họa tiết mặt trước, mặt sau túi được in lụa sắc nét mang đậm dấu ấn của SWE. Chi tiết may nhiễu trang trí kết hợp quét sơn random thủ công tạo điểm nhấn tinh tế. Sự kết hợp này cùng với CROSS ZIP HOODIE sẽ giúp bạn có 1 set đồ cực kì thời trang và phong cách.",
+  "brand": "SWE",
+  "gender": "Unisex",
+  "usage": "Daily",
+  "color": "Gray",
+  "defaultPrice": 650000,
+  "images": [
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1761983626/fashion-ecommerce/products/nigmmyfq7pjjflb5kno5.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1761983627/fashion-ecommerce/products/udwjxothgvvtrljohk3q.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1761983630/fashion-ecommerce/products/tulkvtqhwatiugylg4e2.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-01T07:53:50.957Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:08:19.193Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce1879f6ee47dffddee"
+  },
+  "name": "Hoodie Unisex Cloud",
+  "description": "Hoodie unisex chất liệu cotton dày dặn, form rộng vừa vặn, màu trung tính dễ phối.",
+  "brand": "UrbanMove",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Heather Grey",
+  "defaultPrice": 520000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141030/fashion-ecommerce/products/hoodie-unisex-cloud-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141031/fashion-ecommerce/products/hoodie-unisex-cloud-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141033/fashion-ecommerce/products/hoodie-unisex-cloud-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:21.608Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:13.980Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce1879f6ee47dffddf3"
+  },
+  "name": "Áo Cardigan Nữ Soft",
+  "description": "Cardigan nữ mỏng nhẹ, vải len pha cho cảm giác mềm mại, phù hợp công sở và dạo phố.",
+  "brand": "LuxeBasics",
+  "gender": "Female",
+  "usage": "Formal",
+  "color": "Cream",
+  "defaultPrice": 470000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141034/fashion-ecommerce/products/-o-cardigan-n--soft-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141036/fashion-ecommerce/products/-o-cardigan-n--soft-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141037/fashion-ecommerce/products/-o-cardigan-n--soft-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:21.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:18.337Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce2879f6ee47dffddf9"
+  },
+  "name": "Quần Cargo Nam Utility",
+  "description": "Quần cargo nam với nhiều túi, chất liệu cotton bền, phong cách utility.",
+  "brand": "UrbanMove",
+  "gender": "Male",
+  "usage": "Casual",
+  "color": "Olive",
+  "defaultPrice": 530000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141039/fashion-ecommerce/products/qu-n-cargo-nam-utility-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141040/fashion-ecommerce/products/qu-n-cargo-nam-utility-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141041/fashion-ecommerce/products/qu-n-cargo-nam-utility-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:22.012Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:21.463Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce2879f6ee47dffddfc"
+  },
+  "name": "Quần Culotte Linen Nữ",
+  "description": "Quần culotte linen cho nữ, thoáng mát, form rộng thoải mái.",
+  "brand": "LinenCo",
+  "gender": "Female",
+  "usage": "Casual",
+  "color": "Khaki",
+  "defaultPrice": 560000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141042/fashion-ecommerce/products/qu-n-culotte-linen-n--1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141043/fashion-ecommerce/products/qu-n-culotte-linen-n--2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141044/fashion-ecommerce/products/qu-n-culotte-linen-n--3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:22.144Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:24.935Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce2879f6ee47dffddff"
+  },
+  "name": "Quần Track Unisex Aero",
+  "description": "Quần track unisex nhẹ, phù hợp chạy bộ và tập luyện nhẹ.",
+  "brand": "AeroFit",
+  "gender": "Unisex",
+  "usage": "Sports",
+  "color": "Black",
+  "defaultPrice": 420000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141045/fashion-ecommerce/products/qu-n-track-unisex-aero-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141046/fashion-ecommerce/products/qu-n-track-unisex-aero-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141047/fashion-ecommerce/products/qu-n-track-unisex-aero-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e0052a7d3c1abe691f508b"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:22.275Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:28.187Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce2879f6ee47dffde05"
+  },
+  "name": "Snapback Urban",
+  "description": "Snapback phong cách streetwear, vòng điều chỉnh kích thước dễ dùng.",
+  "brand": "UrbanMove",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Black",
+  "defaultPrice": 150000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141048/fashion-ecommerce/products/snapback-urban-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141050/fashion-ecommerce/products/snapback-urban-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141051/fashion-ecommerce/products/snapback-urban-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc1d84cd07dea32e23ad"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:22.546Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:31.900Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce2879f6ee47dffde08"
+  },
+  "name": "Beanie Knit Warm",
+  "description": "Beanie knit ấm áp cho mùa lạnh, form ôm đầu nhẹ.",
+  "brand": "CozyHead",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Maroon",
+  "defaultPrice": 90000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141052/fashion-ecommerce/products/beanie-knit-warm-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141054/fashion-ecommerce/products/beanie-knit-warm-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141055/fashion-ecommerce/products/beanie-knit-warm-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc1d84cd07dea32e23ad"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:22.676Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:35.882Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce2879f6ee47dffde0e"
+  },
+  "name": "Đồng Hồ Thể Thao Multi",
+  "description": "Đồng hồ thể thao đa chức năng, chronograph, chống nước cơ bản.",
+  "brand": "AeroFit",
+  "gender": "Male",
+  "usage": "Sports",
+  "color": "Black",
+  "defaultPrice": 860000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141056/fashion-ecommerce/products/--ng-h--th--thao-multi-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141057/fashion-ecommerce/products/--ng-h--th--thao-multi-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141058/fashion-ecommerce/products/--ng-h--th--thao-multi-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc5184cd07dea32e23b3"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:22.934Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:39.728Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce3879f6ee47dffde17"
+  },
+  "name": "Loafer Casual",
+  "description": "Loafer casual mũi tròn, đế mềm thoải mái, phù hợp cả công sở lẫn dạo phố.",
+  "brand": "LuxeBasics",
+  "gender": "Unisex",
+  "usage": "Formal",
+  "color": "Brown",
+  "defaultPrice": 980000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141064/fashion-ecommerce/products/loafer-casual-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141066/fashion-ecommerce/products/loafer-casual-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141067/fashion-ecommerce/products/loafer-casual-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e069a6ddce55ce977444e9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:23.321Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:48.140Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce3879f6ee47dffde1a"
+  },
+  "name": "Espadrille Woven",
+  "description": "Espadrille đan mây, phong cách mùa hè, dễ phối đồ.",
+  "brand": "Espa",
+  "gender": "Female",
+  "usage": "Casual",
+  "color": "Natural",
+  "defaultPrice": 590000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141068/fashion-ecommerce/products/espadrille-woven-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141070/fashion-ecommerce/products/espadrille-woven-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141071/fashion-ecommerce/products/espadrille-woven-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e069a6ddce55ce977444e9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:23.464Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:52.137Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce3879f6ee47dffde23"
+  },
+  "name": "Sandal Platform Casual",
+  "description": "Sandal đế platform nhẹ, quai bản, phong cách hiện đại cho nữ.",
+  "brand": "SandalWorks",
+  "gender": "Female",
+  "usage": "Casual",
+  "color": "Beige",
+  "defaultPrice": 790000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141072/fashion-ecommerce/products/sandal-platform-casual-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141074/fashion-ecommerce/products/sandal-platform-casual-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141075/fashion-ecommerce/products/sandal-platform-casual-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e397f4428dd87ba9cbd4a9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:23.861Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:56.183Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69081ce3879f6ee47dffde26"
+  },
+  "name": "Slide Sport Unisex",
+  "description": "Slide đơn giản với đệm êm, phù hợp dùng sau tập luyện hoặc đi biển.",
+  "brand": "SlideEase",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Black",
+  "defaultPrice": 210000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141076/fashion-ecommerce/products/slide-sport-unisex-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141077/fashion-ecommerce/products/slide-sport-unisex-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762141078/fashion-ecommerce/products/slide-sport-unisex-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68e397f4428dd87ba9cbd4a9"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T03:09:23.990Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T03:37:59.226Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc19498c31f42599ea6"
+  },
+  "name": "Áo Tank Ôm Cơ",
+  "description": "Áo tank ôm làm từ cotton co giãn, thiết kế cho phòng gym và phối layer mùa hè.",
+  "brand": "Fitline",
+  "gender": "Male",
+  "usage": "Sports",
+  "color": "White",
+  "defaultPrice": 190000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167770/fashion-ecommerce/products/-o-tank--m-c--1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167771/fashion-ecommerce/products/-o-tank--m-c--2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167772/fashion-ecommerce/products/-o-tank--m-c--3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:25.992Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T11:02:54.840Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc29498c31f42599eab"
+  },
+  "name": "Áo Blouse Vải Lụa Nữ Tính",
+  "description": "Áo blouse vải cảm giác lụa nhẹ, dáng rủ nữ tính, phù hợp công sở và trang phục trang trọng.",
+  "brand": "SilkRoad",
+  "gender": "Female",
+  "usage": "Formal",
+  "color": "Ivory",
+  "defaultPrice": 720000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762163272/fashion-ecommerce/products/-o-blouse-v-i-l-a-n--t-nh-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167777/fashion-ecommerce/products/-o-blouse-v-i-l-a-n--t-nh-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167778/fashion-ecommerce/products/-o-blouse-v-i-l-a-n--t-nh-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:26.128Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T11:03:00.527Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc29498c31f42599eb2"
+  },
+  "name": "Áo Nỉ Crewneck",
+  "description": "Áo nỉ cổ tròn truyền thống, lót bông chải mịn giúp giữ ấm và thoải mái.",
+  "brand": "CozyLayer",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Grey",
+  "defaultPrice": 600000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762163275/fashion-ecommerce/products/-o-n--crewneck-1.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167787/fashion-ecommerce/products/-o-n--crewneck-2.avif",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167789/fashion-ecommerce/products/-o-n--crewneck-3.avif"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:26.385Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T11:03:11.343Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc29498c31f42599eb5"
+  },
+  "name": "Overshirt Nhung Tăm",
+  "description": "Overshirt vải nhung tăm cúc bấm — thay thế áo khoác nhẹ cho các set layer.",
+  "brand": "RetroCo",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Brown",
+  "defaultPrice": 670000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762163276/fashion-ecommerce/products/overshirt-nhung-t-m-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167793/fashion-ecommerce/products/overshirt-nhung-t-m-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167794/fashion-ecommerce/products/overshirt-nhung-t-m-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:26.513Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T11:03:15.772Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc29498c31f42599eb8"
+  },
+  "name": "Áo Gile Len Tối Giản",
+  "description": "Áo gile len phong cách tối giản, dễ phối cùng áo sơ mi và tee cho vẻ ngoài smart-casual.",
+  "brand": "LuxeBasics",
+  "gender": "Unisex",
+  "usage": "Formal",
+  "color": "Beige",
+  "defaultPrice": 360000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762163278/fashion-ecommerce/products/-o-gile-len-t-i-gi-n-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167798/fashion-ecommerce/products/-o-gile-len-t-i-gi-n-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167799/fashion-ecommerce/products/-o-gile-len-t-i-gi-n-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:26.638Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T11:03:21.829Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc29498c31f42599ebb"
+  },
+  "name": "Hoodie Core Đen",
+  "description": "Hoodie pullover chất liệu cotton dày, bo tay và bo gấu, logo nhỏ ở ngực — phong cách tối giản.",
+  "brand": "UrbanMove",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Đen",
+  "defaultPrice": 520000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762163279/fashion-ecommerce/products/hoodie-core--en-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167802/fashion-ecommerce/products/hoodie-core--en-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167804/fashion-ecommerce/products/hoodie-core--en-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:26.762Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T11:03:25.116Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc29498c31f42599ebe"
+  },
+  "name": "Hoodie Zip Mỏng",
+  "description": "Hoodie khóa kéo nhẹ, vải thoáng nhanh khô, phù hợp đi du lịch hoặc layer.",
+  "brand": "AeroFit",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Xám Nhạt",
+  "defaultPrice": 580000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167805/fashion-ecommerce/products/hoodie-zip-m-ng-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167807/fashion-ecommerce/products/hoodie-zip-m-ng-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167808/fashion-ecommerce/products/hoodie-zip-m-ng-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:26.888Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T11:03:29.728Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc39498c31f42599ec1"
+  },
+  "name": "Hoodie Fleece Oversized",
+  "description": "Hoodie fleece dáng oversized, vai rớt, lót bông mịn phía trong giữ ấm tốt.",
+  "brand": "CozyLayer",
+  "gender": "Unisex",
+  "usage": "Casual",
+  "color": "Xanh Navy",
+  "defaultPrice": 640000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167809/fashion-ecommerce/products/hoodie-fleece-oversized-1.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167811/fashion-ecommerce/products/hoodie-fleece-oversized-2.jpg",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167812/fashion-ecommerce/products/hoodie-fleece-oversized-3.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:27.013Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-03T11:03:33.472Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69087cc39498c31f42599ec4"
+  },
+  "name": "Hoodie Tech Windbreaker",
+  "description": "Hoodie chống gió, lớp vỏ chống nước nhẹ và lớp cách nhiệt mỏng — phù hợp hoạt động ngoài trời.",
+  "brand": "AeroFitness",
+  "gender": "Unisex",
+  "usage": "Sports",
+  "color": "Olive",
+  "defaultPrice": 760000,
+  "images": [
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167813/fashion-ecommerce/products/hoodie-tech-windbreaker-1.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167814/fashion-ecommerce/products/hoodie-tech-windbreaker-2.webp",
+    "https://res.cloudinary.com/dqnjku7ic/image/upload/v1762167816/fashion-ecommerce/products/hoodie-tech-windbreaker-3.webp"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-03T09:58:27.143Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T21:50:23.449Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6909e6835ffbf7bef7affc93"
+  },
+  "name": "SWE HONEY EDGE BRA - WHITE",
+  "description": "HONEY EDGE BRA - Chiếc áo bra nằm trong bộ sưu tập Edge Melted in Honey* được thiết kế đơn giản với điểm nhấn của áo nằm ở họa tiết in thấm vải tên collection kèm số 09 mặt trước ấn tượng. Áo thân trước may 2 lớp, thân sau 1 lớp, không có lớp mút lót.",
+  "brand": "SWE",
+  "gender": "Female",
+  "usage": "Daily",
+  "color": "White",
+  "defaultPrice": 280000,
+  "images": [
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1762256508/fashion-ecommerce/products/kx3nrdnqj5rizh6ishmi.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1762256510/fashion-ecommerce/products/u1dsrsdhillz4hv3t72f.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1762256514/fashion-ecommerce/products/alxlx5idkxdmcal0nmik.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-04T11:41:55.051Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-04T11:41:55.051Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690fbc13ef07fd66293bebe4"
+  },
+  "name": "SWE Red Button Shirt",
+  "description": "RED BUTTON SHIRT - Chiếc áo sơ mi mới vừa được nhà SWE cho ra mắt vào dịp tết 2024 với 2 phối màu đen và kem. Điểm nhấn của chiếc áo nằm ở các họa tiết được thêu ngay phần cổ áo và logo SWE được thêu ở ngực trái. Phần nút áo đặc biệt với 1 nút màu đỏ khác màu với các nút còn lại để tượng trưng cho sự may mắn trong năm mới.",
+  "brand": "SWE",
+  "gender": "Unisex",
+  "usage": "Daily",
+  "color": "Black",
+  "images": [
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1762638863/fashion-ecommerce/products/v5zfhol1bptdbqzqszus.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1762638864/fashion-ecommerce/products/whg5r52gzygqcxycp3cp.jpg",
+    "https://res.cloudinary.com/du391fsvp/image/upload/v1762638867/fashion-ecommerce/products/uurnzkap1a3exehc1tzr.jpg"
+  ],
+  "hasImage": true,
+  "categoryId": {
+    "$oid": "68dfcc3f84cd07dea32e23b0"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-11-08T21:54:27.660Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-08T21:54:47.608Z"
+  },
+  "__v": 0,
+  "defaultPrice": 450000
+}]

@@ -80,6 +80,36 @@ services:
     networks:
       - fashion_network
 
+  # Chatbot Service
+  chatbot-service:
+    build:
+      context: ./backend/chatbot-service
+      dockerfile: Dockerfile
+    container_name: fashion_ecommerce_chatbot_service
+    restart: unless-stopped
+    ports:
+      - "3009:3009"
+    env_file:
+      - .env
+    environment:
+      - PORT=3009
+      - NODE_ENV=${NODE_ENV}
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+      - ORDER_SERVICE_URL=http://order-service:3003
+      - USER_SERVICE_URL=http://user-service:3001
+      - FASHION_SERVICE_URL=http://host.docker.internal:3008
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
+      - FRONTEND_URL=http://localhost:5173
+    depends_on:
+      - product-service
+      - order-service
+      - user-service
+    networks:
+      - fashion_network
+    volumes:
+      - ./backend/chatbot-service/logs:/app/logs
+
   # API Gateway
   api-gateway:
     build:
@@ -98,6 +128,7 @@ services:
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
       - FASHION_SERVICE_URL=http://host.docker.internal:3008
+      - CHATBOT_SERVICE_URL=http://chatbot-service:3009
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
@@ -106,6 +137,7 @@ services:
       - user-service
       - product-service
       - order-service
+      - chatbot-service
     networks:
       - fashion_network
 
@@ -114,14 +146,16 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:3000/api
+        - VITE_CHATBOT_URL=http://localhost:3009/api/chat
     container_name: fashion_ecommerce_frontend
     restart: unless-stopped
     ports:
       - "5173:80"
-    environment:
-      - REACT_APP_API_URL=http://localhost:3000/api
     depends_on:
       - api-gateway
+      - chatbot-service
     networks:
       - fashion_network
 
