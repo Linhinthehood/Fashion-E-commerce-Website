@@ -454,7 +454,12 @@ export default function DashboardAnalytics() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={({ status, count }) => `${status}: ${count}`}
+                  label={(props: { name?: string; value?: number }) => {
+                    // Access data from the entry - recharts passes the data entry as props
+                    const status = props.name || ''
+                    const count = props.value || 0
+                    return `${status}: ${count}`
+                  }}
                 >
                   {paymentStatusData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -478,7 +483,12 @@ export default function DashboardAnalytics() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={({ status, count }) => `${status}: ${count}`}
+                  label={(props: { name?: string; value?: number }) => {
+                    // Access data from the entry - recharts passes the data entry as props
+                    const status = props.name || ''
+                    const count = props.value || 0
+                    return `${status}: ${count}`
+                  }}
                 >
                   {shipmentStatusData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

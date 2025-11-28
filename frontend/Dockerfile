@@ -1,5 +1,6 @@
 # Multi-stage build for React frontend
-FROM node:18-alpine AS builder
+# Using Node.js 20 LTS (required by Vite 7, React Router 7, and @vitejs/plugin-react 5)
+FROM node:20-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -15,8 +16,9 @@ ENV VITE_CHATBOT_URL=$VITE_CHATBOT_URL
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies and clean cache
-RUN npm ci && npm cache clean --force
+# Install dependencies (npm install works with or without package-lock.json)
+# Frontend needs dev dependencies for building
+RUN npm install && npm cache clean --force
 
 # Copy source code
 COPY . .
