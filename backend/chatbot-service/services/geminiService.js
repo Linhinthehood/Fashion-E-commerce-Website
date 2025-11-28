@@ -1,6 +1,7 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const logger = require('../utils/logger');
 const promptLoader = require('../utils/promptLoader');
+const cacheService = require('./cacheService');
 
 class GeminiService {
   constructor() {
@@ -28,6 +29,17 @@ class GeminiService {
 
     if (!this.genAI) {
       throw new Error('Gemini API not configured. Please set GEMINI_API_KEY environment variable.');
+    }
+
+    // Check cache for repeated questions (only for non-order queries without products)
+    const shouldCache = intent?.intent !== 'order' && !productContext?.products?.length;
+    if (shouldCache) {
+      const cached = await cacheService.getCachedGeminiResponse(userMessage, intent);
+      if (cached) {
+        logger.info('Gemini response cache HIT', { message: userMessage.substring(0, 50) });
+        return cached;
+      }
+      logger.info('Gemini response cache MISS');
     }
 
     try {
@@ -142,15 +154,21 @@ IMPORTANT:
       const result = await chat.sendMessage(enhancedMessage);
       const response = result.response;
       const text = typeof response.text === 'function' ? response.text() : (response.text || '');
-      
-      logger.info('Generated AI response', { 
-        messageLength: userMessage.length, 
+
+      logger.info('Generated AI response', {
+        messageLength: userMessage.length,
         responseLength: text.length,
         productsProvided: productContext?.products?.length || 0,
         intent: intent?.intent || 'unknown',
-        contextUsed: intent?.intent === 'order' ? 'order-context' : 'system-context'
+        contextUsed: intent?.intent === 'order' ? 'order-context' : 'system-context',
+        cached: false
       });
-      
+
+      // Cache the response
+      if (shouldCache && text) {
+        await cacheService.setCachedGeminiResponse(userMessage, intent, text);
+      }
+
       return text;
 
     } catch (error) {

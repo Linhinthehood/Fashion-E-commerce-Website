@@ -1,5 +1,6 @@
 const axios = require('axios');
 const logger = require('../utils/logger');
+const { retryWithBackoff } = require('../utils/errorHandler');
 
 const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || 'http://localhost:3003';
 
@@ -17,33 +18,38 @@ const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || 'http://localhost:300
 async function getUserOrders(userId, filters = {}) {
   try {
     const { page = 1, limit = 10, paymentStatus, shipmentStatus } = filters;
-    
+
     const params = new URLSearchParams();
     params.append('page', page);
     params.append('limit', limit);
     if (paymentStatus) params.append('paymentStatus', paymentStatus);
     if (shipmentStatus) params.append('shipmentStatus', shipmentStatus);
 
-    const response = await axios.post(
-      `${ORDER_SERVICE_URL}/api/orders/my-orders?${params.toString()}`,
-      { userId },
-      { timeout: 5000 }
-    );
+    // Retry with backoff for network errors
+    const response = await retryWithBackoff(async () => {
+      return await axios.post(
+        `${ORDER_SERVICE_URL}/api/orders/my-orders?${params.toString()}`,
+        { userId },
+        { timeout: 5000 }
+      );
+    }, 2, 500); // 2 retries, 500ms base delay
 
     if (response.data?.success && response.data?.data?.orders) {
-      logger.info('Fetched user orders', { 
-        userId, 
-        orderCount: response.data.data.orders.length 
+      logger.info('Fetched user orders', {
+        userId,
+        orderCount: response.data.data.orders.length
       });
       return response.data.data.orders;
     }
-    
+
     return [];
   } catch (error) {
-    logger.error('Failed to get user orders', { 
-      error: error.message, 
-      userId 
+    logger.error('Failed to get user orders', {
+      error: error.message,
+      userId,
+      code: error.code
     });
+    // Return empty instead of throwing - graceful degradation
     return [];
   }
 }
@@ -55,21 +61,25 @@ async function getUserOrders(userId, filters = {}) {
  */
 async function getOrderById(orderId) {
   try {
-    const response = await axios.get(
-      `${ORDER_SERVICE_URL}/api/orders/${orderId}`,
-      { timeout: 5000 }
-    );
+    // Retry with backoff
+    const response = await retryWithBackoff(async () => {
+      return await axios.get(
+        `${ORDER_SERVICE_URL}/api/orders/${orderId}`,
+        { timeout: 5000 }
+      );
+    }, 2, 500);
 
     if (response.data?.success && response.data?.data) {
       logger.info('Fetched order details', { orderId });
       return response.data.data;
     }
-    
+
     return null;
   } catch (error) {
-    logger.error('Failed to get order by ID', { 
-      error: error.message, 
-      orderId 
+    logger.error('Failed to get order by ID', {
+      error: error.message,
+      orderId,
+      code: error.code
     });
     return null;
   }

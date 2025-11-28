@@ -9,6 +9,8 @@ dotenv.config();
 
 // Import routes
 const chatRoutes = require('./routes/chat');
+const conversationCache = require('./services/conversationCache');
+const sanitizeInput = require('./middleware/sanitize');
 
 const app = express();
 const PORT = process.env.PORT || 3009;
@@ -25,6 +27,9 @@ app.use(cors({
 // Body parser middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Input sanitization (security)
+app.use(sanitizeInput);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -69,10 +74,26 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`✓ Chatbot service running on port ${PORT}`);
   console.log(`✓ Environment: ${process.env.NODE_ENV}`);
   console.log(`✓ Gemini API: ${process.env.GEMINI_API_KEY ? 'Configured' : 'NOT CONFIGURED'}`);
+
+  // Initialize conversation cache (Redis or in-memory)
+  await conversationCache.initialize();
+});
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received, shutting down gracefully...');
+  await conversationCache.stopCleanup();
+  process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+  console.log('SIGINT received, shutting down gracefully...');
+  await conversationCache.stopCleanup();
+  process.exit(0);
 });
 
 module.exports = app;
