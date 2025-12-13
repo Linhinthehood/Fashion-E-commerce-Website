@@ -8,9 +8,46 @@ const conversationCache = require('../services/conversationCache');
 const logger = require('../utils/logger');
 
 /**
- * POST /api/chat/message
- * Send a message to the chatbot
- * FIXED: Added occasion parameter to ALL product searches for smart filtering
+ * @swagger
+ * /api/chat/message:
+ *   post:
+ *     summary: Send a message to the chatbot
+ *     tags: [Chatbot]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 description: User message
+ *                 example: "Show me red t-shirts for men"
+ *               userId:
+ *                 type: string
+ *                 description: User ID (optional, defaults to 'anonymous')
+ *                 example: "507f1f77bcf86cd799439011"
+ *     responses:
+ *       200:
+ *         description: Chatbot response with products/orders
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/ApiResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       $ref: '#/components/schemas/ChatMessage'
+ *       400:
+ *         description: Message is required
+ *       401:
+ *         description: Unauthorized (for order queries)
+ *       503:
+ *         description: Chatbot service not configured
  */
 router.post('/message', async (req, res) => {
   try {
@@ -401,8 +438,31 @@ router.post('/message', async (req, res) => {
 });
 
 /**
- * POST /api/chat/clear
- * Clear conversation history
+ * @swagger
+ * /api/chat/clear:
+ *   post:
+ *     summary: Clear conversation history for a user
+ *     tags: [Chatbot]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: User ID (defaults to 'anonymous')
+ *                 example: "507f1f77bcf86cd799439011"
+ *     responses:
+ *       200:
+ *         description: Conversation history cleared successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiResponse'
+ *       500:
+ *         description: Failed to clear conversation history
  */
 router.post('/clear', async (req, res) => {
   try {
@@ -425,8 +485,58 @@ router.post('/clear', async (req, res) => {
 });
 
 /**
- * POST /api/chat/orders
- * Get user's orders with AI assistance
+ * @swagger
+ * /api/chat/orders:
+ *   post:
+ *     summary: Get user's orders with AI assistance
+ *     tags: [Chatbot]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: User ID
+ *                 example: "507f1f77bcf86cd799439011"
+ *               question:
+ *                 type: string
+ *                 description: Question about orders
+ *                 default: "Show me my orders"
+ *                 example: "What are my recent orders?"
+ *     responses:
+ *       200:
+ *         description: Orders retrieved successfully with AI response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/ApiResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         message:
+ *                           type: string
+ *                         orders:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                         timestamp:
+ *                           type: string
+ *       400:
+ *         description: User ID is required
+ *       401:
+ *         description: Unauthorized or invalid session
+ *       503:
+ *         description: Chatbot service not configured
  */
 router.post('/orders', async (req, res) => {
   try {
@@ -529,8 +639,70 @@ router.post('/orders', async (req, res) => {
 });
 
 /**
- * POST /api/chat/order/:orderId
- * Get specific order details and answer questions about it
+ * @swagger
+ * /api/chat/order/{orderId}:
+ *   post:
+ *     summary: Get specific order details and answer questions about it
+ *     tags: [Chatbot]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Order ID
+ *         example: "507f1f77bcf86cd799439013"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: User ID
+ *                 example: "507f1f77bcf86cd799439011"
+ *               question:
+ *                 type: string
+ *                 description: Question about the order
+ *                 default: "Tell me about this order"
+ *                 example: "What items are in this order?"
+ *     responses:
+ *       200:
+ *         description: Order details retrieved successfully with AI response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/ApiResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         message:
+ *                           type: string
+ *                         order:
+ *                           type: object
+ *                         orderItems:
+ *                           type: array
+ *                         timestamp:
+ *                           type: string
+ *       400:
+ *         description: User ID is required
+ *       401:
+ *         description: Unauthorized or invalid session
+ *       403:
+ *         description: Permission denied (order doesn't belong to user)
+ *       404:
+ *         description: Order not found
+ *       503:
+ *         description: Chatbot service not configured
  */
 router.post('/order/:orderId', async (req, res) => {
   try {

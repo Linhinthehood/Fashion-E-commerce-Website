@@ -25,7 +25,9 @@
     "cors": "^2.8.5",
     "axios": "^1.7.9",
     "helmet": "^8.0.0",
-    "express-rate-limit": "^7.5.0"
+    "express-rate-limit": "^7.5.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

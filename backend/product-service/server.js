@@ -9,6 +9,9 @@ const productRoutes = require('./routes/products');
 const categoryRoutes = require('./routes/categories');
 const variantRoutes = require('./routes/variants');
 
+// Swagger configuration
+const { swaggerUi, swaggerSpec } = require('./config/swagger');
+
 const app = express();
 const PORT = process.env.PORT || 3002;
 
@@ -48,6 +51,31 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Service is running
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 timestamp:
+ *                   type: string
+ *                 service:
+ *                   type: string
+ *                 version:
+ *                   type: string
+ */
 app.get('/health', (req, res) => {
   res.json({
     success: true,
@@ -57,6 +85,12 @@ app.get('/health', (req, res) => {
     version: '1.0.0'
   });
 });
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Product Service API Documentation',
+}));
 
 // API routes
 app.use('/api/products', productRoutes);

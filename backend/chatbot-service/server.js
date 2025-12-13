@@ -10,6 +10,9 @@ dotenv.config();
 // Import routes
 const chatRoutes = require('./routes/chat');
 
+// Swagger configuration
+const { swaggerUi, swaggerSpec } = require('./config/swagger');
+
 const app = express();
 const PORT = process.env.PORT || 3009;
 
@@ -38,6 +41,29 @@ const limiter = rateLimit({
 app.use('/api/chat', limiter);
 
 // Health check endpoint
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Service is running
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 service:
+ *                   type: string
+ *                 timestamp:
+ *                   type: string
+ *                 geminiConfigured:
+ *                   type: boolean
+ */
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -46,6 +72,12 @@ app.get('/health', (req, res) => {
     geminiConfigured: !!process.env.GEMINI_API_KEY
   });
 });
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Chatbot Service API Documentation',
+}));
 
 // Routes
 app.use('/api/chat', chatRoutes);

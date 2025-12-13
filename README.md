@@ -257,6 +257,69 @@ When running services manually (without Docker), each service may need its own `
 
 ## 📚 API Documentation
 
+### Swagger/OpenAPI Documentation
+
+All backend services have Swagger documentation available for testing and exploring APIs:
+
+#### Access Swagger UI
+
+- **User Service**: http://localhost:3001/api-docs
+- **Product Service**: http://localhost:3002/api-docs
+- **Order Service**: http://localhost:3003/api-docs
+- **Chatbot Service**: http://localhost:3009/api-docs
+- **Fashion Service** (Python): http://localhost:3008/api-docs
+
+#### Features
+
+- ✅ Interactive API testing directly from browser
+- ✅ Complete request/response schemas
+- ✅ Authentication support (JWT Bearer tokens)
+- ✅ Try it out functionality for all endpoints
+- ✅ Auto-generated from code comments
+
+#### Using Swagger UI
+
+1. **Access the Swagger UI**: Navigate to `/api-docs` endpoint of any service
+2. **Authenticate** (if needed): Click "Authorize" button and enter your JWT token
+3. **Test Endpoints**: 
+   - Click on any endpoint to expand
+   - Click "Try it out"
+   - Fill in parameters/request body
+   - Click "Execute" to send request
+   - View response below
+
+#### Example: Testing User Login
+
+1. Go to http://localhost:3001/api-docs
+2. Find `POST /api/auth/login`
+3. Click "Try it out"
+4. Enter credentials:
+   ```json
+   {
+     "email": "user@example.com",
+     "password": "password123"
+   }
+   ```
+5. Click "Execute"
+6. Copy the `token` from response
+7. Click "Authorize" at top and paste token to test authenticated endpoints
+
+#### Services with Swagger
+
+| Service | Port | Swagger URL | Status |
+|---------|------|-------------|--------|
+| User Service | 3001 | http://localhost:3001/api-docs | ✅ Complete |
+| Product Service | 3002 | http://localhost:3002/api-docs | ✅ Complete |
+| Order Service | 3003 | http://localhost:3003/api-docs | ✅ Complete |
+| Chatbot Service | 3009 | http://localhost:3009/api-docs | ✅ Complete |
+| Fashion Service | 3008 | http://localhost:3008/api-docs | ✅ Complete |
+
+**Note**: After adding Swagger to services, rebuild Docker containers:
+```bash
+docker compose build
+docker compose up
+```
+
 
 ## 🧪 Testing
 

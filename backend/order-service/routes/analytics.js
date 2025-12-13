@@ -41,9 +41,159 @@ const overviewValidation = [
 ];
 
 // Analytics routes
+/**
+ * @swagger
+ * /api/orders/analytics/top-products:
+ *   get:
+ *     summary: Get top products by sales
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [day, month, year, all]
+ *           default: all
+ *         description: Time period
+ *       - in: query
+ *         name: date
+ *         schema:
+ *           type: string
+ *         description: Date filter (YYYY-MM-DD for day, YYYY-MM for month, YYYY for year)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *           maximum: 100
+ *         description: Number of top products to return
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [quantity, revenue]
+ *           default: revenue
+ *         description: Sort by quantity or revenue
+ *     responses:
+ *       200:
+ *         description: Top products retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiResponse'
+ *       401:
+ *         description: Unauthorized
+ */
 router.get('/top-products', topProductsValidation, getTopProducts);
+
+/**
+ * @swagger
+ * /api/orders/analytics/orders-stats:
+ *   get:
+ *     summary: Get order statistics
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [day, month, year, all]
+ *           default: all
+ *         description: Time period
+ *       - in: query
+ *         name: date
+ *         schema:
+ *           type: string
+ *         description: Date filter
+ *     responses:
+ *       200:
+ *         description: Order statistics retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiResponse'
+ *       401:
+ *         description: Unauthorized
+ */
 router.get('/orders-stats', ordersStatsValidation, getOrdersStats);
+
+/**
+ * @swagger
+ * /api/orders/analytics/top-customers:
+ *   get:
+ *     summary: Get top customers by order value
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [day, month, year, all]
+ *           default: all
+ *         description: Time period
+ *       - in: query
+ *         name: date
+ *         schema:
+ *           type: string
+ *         description: Date filter
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *           maximum: 100
+ *         description: Number of top customers to return
+ *     responses:
+ *       200:
+ *         description: Top customers retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiResponse'
+ *       401:
+ *         description: Unauthorized
+ */
 router.get('/top-customers', topCustomersValidation, getTopCustomers);
+
+/**
+ * @swagger
+ * /api/orders/analytics/overview:
+ *   get:
+ *     summary: Get dashboard overview (all metrics)
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [day, month, year, all]
+ *           default: all
+ *         description: Time period
+ *       - in: query
+ *         name: date
+ *         schema:
+ *           type: string
+ *         description: Date filter
+ *     responses:
+ *       200:
+ *         description: Dashboard overview retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiResponse'
+ *       401:
+ *         description: Unauthorized
+ */
 router.get('/overview', overviewValidation, getDashboardOverview);
 
 module.exports = router;

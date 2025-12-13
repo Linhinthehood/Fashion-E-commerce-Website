@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flasgger import Swagger
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -50,6 +51,47 @@ if not MODEL_PATH.exists():
 app = Flask(__name__)
 CORS(app)
 
+# Swagger configuration
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": "apispec",
+            "route": "/apispec.json",
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/api-docs"
+}
+
+swagger_template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "Fashion Recommendation Service API",
+        "description": "API documentation for Fashion Recommendation Service - Product recommendations using FashionCLIP and FAISS",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Fashion E-commerce Team"
+        }
+    },
+    "host": f"localhost:{PORT}",
+    "basePath": "/",
+    "schemes": ["http", "https"],
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+        }
+    }
+}
+
+swagger = Swagger(app, config=swagger_config, template=swagger_template)
+
 logger.info(f"Initializing Recommend Service on port {PORT}")
 logger.info(f"Product Service URL: {PRODUCT_SERVICE_URL}")
 logger.info(f"Redis: {REDIS_HOST}:{REDIS_PORT} (enabled: {REDIS_ENABLED})")
@@ -74,6 +116,33 @@ except Exception as e:
 
 @app.route('/health', methods=['GET'])
 def health():
+    """
+    Health check endpoint
+    ---
+    tags:
+      - Health
+    responses:
+      200:
+        description: Service health status
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: healthy
+            service:
+              type: string
+              example: recommend-service
+            version:
+              type: string
+              example: 1.0.0
+            mode:
+              type: string
+            indexed_products:
+              type: integer
+            device:
+              type: string
+    """
     stats = recommendation_service.get_stats()
     return jsonify({
         'status': 'healthy',
@@ -87,6 +156,70 @@ def health():
 
 @app.route('/api/recommendations/similar', methods=['POST'])
 def find_similar_products():
+    """
+    Find similar products using POST request
+    ---
+    tags:
+      - Recommendations
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - productId
+          properties:
+            productId:
+              type: string
+              description: Product ID to find similar products for
+              example: "507f1f77bcf86cd799439011"
+            limit:
+              type: integer
+              default: 6
+              minimum: 1
+              maximum: 50
+              description: Maximum number of recommendations
+            options:
+              type: object
+              properties:
+                priceTolerance:
+                  type: number
+                  default: 0.5
+                filterGender:
+                  type: boolean
+                  default: true
+                filterUsage:
+                  type: boolean
+                  default: true
+                sameCategoryOnly:
+                  type: boolean
+                  default: true
+                brandBoost:
+                  type: number
+                  default: 0.05
+                minSimilarity:
+                  type: number
+                  default: 0.6
+    responses:
+      200:
+        description: Similar products found
+        schema:
+          type: object
+          properties:
+            product:
+              type: object
+            recommendations:
+              type: array
+            count:
+              type: integer
+      400:
+        description: Invalid request
+      404:
+        description: Product not found
+      500:
+        description: Internal server error
+    """
     try:
         data = request.get_json()
         if not data or 'productId' not in data:
@@ -121,6 +254,75 @@ def find_similar_products():
 
 @app.route('/api/recommendations/product/<product_id>', methods=['GET'])
 def get_product_recommendations(product_id):
+    """
+    Get product recommendations based on product ID
+    ---
+    tags:
+      - Recommendations
+    parameters:
+      - name: product_id
+        in: path
+        type: string
+        required: true
+        description: Product ID to get recommendations for
+        example: "507f1f77bcf86cd799439011"
+      - name: limit
+        in: query
+        type: integer
+        default: 6
+        minimum: 1
+        maximum: 20
+        description: Maximum number of recommendations to return
+      - name: sameCategoryOnly
+        in: query
+        type: boolean
+        default: true
+        description: Filter recommendations to same category only
+      - name: minSimilarity
+        in: query
+        type: number
+        format: float
+        default: 0.6
+        minimum: 0
+        maximum: 1
+        description: Minimum similarity score threshold
+    responses:
+      200:
+        description: Recommendations retrieved successfully
+        schema:
+          type: object
+          properties:
+            product:
+              type: object
+              description: Original product information
+            recommendations:
+              type: array
+              items:
+                type: object
+                properties:
+                  product:
+                    type: object
+                  similarity:
+                    type: number
+            count:
+              type: integer
+              description: Number of recommendations returned
+            method:
+              type: string
+              description: Method used for recommendations
+      404:
+        description: Product not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Product not found"
+      400:
+        description: Invalid parameter
+      500:
+        description: Internal server error
+    """
     try:
         limit = min(int(request.args.get('limit', 6)), 20)
         same_category = request.args.get('sameCategoryOnly', 'true').lower() == 'true'
