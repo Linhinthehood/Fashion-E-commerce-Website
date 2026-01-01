@@ -15,16 +15,7 @@ services:
     environment:
       - PORT=3001
       - MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/users?retryWrites=true&w=majority&appName=Cluster0
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRE=${JWT_EXPIRE}
-      - NODE_ENV=${NODE_ENV}
-      - FRONTEND_URL=http://localhost:5173
-      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_SECURE=${SMTP_SECURE}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASS=${SMTP_PASS}
+      - FRONTEND_URL=${FRONTEND_URL}  # <--- Đã sửa: Lấy từ .env
     networks:
       - fashion_network
 
@@ -42,11 +33,7 @@ services:
     environment:
       - PORT=3002
       - MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/products?retryWrites=true&w=majority&appName=Cluster0
-      - NODE_ENV=${NODE_ENV}
-      - FRONTEND_URL=http://localhost:3000
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL} # <--- Đã sửa
     networks:
       - fashion_network
 
@@ -64,21 +51,39 @@ services:
     environment:
       - PORT=3003
       - MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/orders?retryWrites=true&w=majority&appName=Cluster0
-      - NODE_ENV=${NODE_ENV}
-      - FRONTEND_URL=http://localhost:5173
+      - FRONTEND_URL=${FRONTEND_URL} # <--- Đã sửa
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
-      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_SECURE=${SMTP_SECURE}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASS=${SMTP_PASS}
     depends_on:
       - user-service
       - product-service
     networks:
       - fashion_network
+
+  # Fashion Service (AI/ML)
+  fashion-service:
+    build:
+      context: ./backend/fashion-service
+      dockerfile: Dockerfile
+    container_name: fashion_ecommerce_fashion_service
+    restart: unless-stopped
+    ports:
+      - "3008:3008"
+    env_file:
+      - .env
+    environment:
+      - RECOMMEND_SERVICE_PORT=3008
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+      - ORDER_SERVICE_URL=http://order-service:3003
+      - API_GATEWAY_URL=http://api-gateway:3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - REDIS_ENABLED=true
+    networks:
+      - fashion_network
+    volumes:
+      - ./backend/fashion-service/models:/app/models
 
   # Chatbot Service
   chatbot-service:
@@ -93,18 +98,13 @@ services:
       - .env
     environment:
       - PORT=3009
-      - NODE_ENV=${NODE_ENV}
+      - FRONTEND_URL=${FRONTEND_URL} # <--- Đã sửa
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
       - USER_SERVICE_URL=http://user-service:3001
-      - FASHION_SERVICE_URL=http://host.docker.internal:3008
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
-      - FRONTEND_URL=http://localhost:5173
+      - FASHION_SERVICE_URL=http://fashion-service:3008
     depends_on:
-      - product-service
-      - order-service
-      - user-service
+      - fashion-service
     networks:
       - fashion_network
     volumes:
@@ -123,65 +123,49 @@ services:
       - .env
     environment:
       - PORT=3000
-      - FRONTEND_URL=http://localhost:5173
+      - FRONTEND_URL=${FRONTEND_URL} # <--- Đã sửa
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
-      - FASHION_SERVICE_URL=http://host.docker.internal:3008
+      - FASHION_SERVICE_URL=http://fashion-service:3008
       - CHATBOT_SERVICE_URL=http://chatbot-service:3009
-      - JWT_SECRET=${JWT_SECRET}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
     depends_on:
       - user-service
-      - product-service
-      - order-service
       - chatbot-service
     networks:
       - fashion_network
 
-  # Frontend (Development)
+  # Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://localhost:3000/api
-        - VITE_CHATBOT_URL=http://localhost:3009/api/chat
+        # QUAN TRỌNG: Lấy giá trị từ biến môi trường máy chủ lúc build
+        - VITE_API_URL=${VITE_API_URL} 
+        - VITE_CHATBOT_URL=${VITE_CHATBOT_URL}
     container_name: fashion_ecommerce_frontend
     restart: unless-stopped
     ports:
       - "5173:80"
     depends_on:
       - api-gateway
-      - chatbot-service
     networks:
       - fashion_network
 
-  # Redis Cache
+  # Redis
   redis:
     image: redis:7-alpine
     container_name: fashion_ecommerce_redis
     restart: unless-stopped
     ports:
       - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
     networks:
       - fashion_network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
 
 volumes:
   mongodb_data:
-    driver: local
   redis_data:
-    driver: local
 
 networks:
   fashion_network:
