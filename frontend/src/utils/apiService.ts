@@ -660,6 +660,8 @@ export const analyticsApi = {
   getOrdersStats: (params?: {
     period?: 'day' | 'month' | 'year' | 'all';
     date?: string;
+    startDate?: string;
+    endDate?: string;
   }) => {
     const searchParams = new URLSearchParams();
     if (params) {
@@ -695,6 +697,8 @@ export const analyticsApi = {
   getOverview: (params?: {
     period?: 'day' | 'month' | 'year' | 'all';
     date?: string;
+    startDate?: string;
+    endDate?: string;
   }) => {
     const searchParams = new URLSearchParams();
     if (params) {

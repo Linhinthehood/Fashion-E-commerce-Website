@@ -271,9 +271,6 @@ export default function UserManagement() {
                         <div className="flex flex-col">
                           <p className="font-semibold text-gray-900">{strategyConfig.name}</p>
                           <p className="text-xs text-gray-500 break-all">{strategyId}</p>
-                          <span className="inline-flex items-center mt-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
-                            Auto assigned
-                          </span>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-700">

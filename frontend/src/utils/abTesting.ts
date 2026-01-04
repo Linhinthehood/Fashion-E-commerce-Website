@@ -21,7 +21,7 @@ export const STRATEGIES: Record<StrategyVariant, StrategyConfig> = {
   A: {
     variant: 'A',
     name: 'Content-Focused',
-    description: 'Ưu tiên similarity (α=0.6, β=0.2, γ=0.2)',
+    description: 'prioritize similarity (α=0.6, β=0.2, γ=0.2)',
     alpha: 0.6,
     beta: 0.2,
     gamma: 0.2
@@ -29,7 +29,7 @@ export const STRATEGIES: Record<StrategyVariant, StrategyConfig> = {
   B: {
     variant: 'B',
     name: 'Trending-Focused',
-    description: 'Ưu tiên popularity (α=0.2, β=0.6, γ=0.2)',
+    description: 'prioritize popularity (α=0.2, β=0.6, γ=0.2)',
     alpha: 0.2,
     beta: 0.6,
     gamma: 0.2
@@ -37,7 +37,7 @@ export const STRATEGIES: Record<StrategyVariant, StrategyConfig> = {
   C: {
     variant: 'C',
     name: 'Personalization-Focused',
-    description: 'Ưu tiên user affinity (α=0.2, β=0.2, γ=0.6)',
+    description: 'prioritize user affinity (α=0.2, β=0.2, γ=0.6)',
     alpha: 0.2,
     beta: 0.2,
     gamma: 0.6
