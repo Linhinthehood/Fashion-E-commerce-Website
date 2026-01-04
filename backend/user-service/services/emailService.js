@@ -121,9 +121,110 @@ const sendForgotPasswordEmail = async (userData, temporaryPassword) => {
   return await sendEmail(userData.email, template.subject, template.html);
 };
 
+// Contact form email template
+const contactFormTemplate = (contactData) => {
+  const { name, email, phone, subject, message } = contactData;
+  
+  return {
+    subject: `New Contact Form Submission${subject ? `: ${subject}` : ''}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
+          .info-row { margin: 10px 0; padding: 10px 0; border-bottom: 1px solid #eee; }
+          .info-label { font-weight: bold; color: #667eea; display: inline-block; width: 120px; }
+          .message-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; white-space: pre-wrap; word-wrap: break-word; }
+          .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>📬 New Contact Form Message</h1>
+          </div>
+          <div class="content">
+            <p>You have received a new message from your website contact form.</p>
+            
+            <div class="info-box">
+              <h3 style="margin-top: 0; color: #667eea;">Contact Information</h3>
+              <div class="info-row">
+                <span class="info-label">Name:</span>
+                <span>${name}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span><a href="mailto:${email}">${email}</a></span>
+              </div>
+              ${phone ? `
+              <div class="info-row">
+                <span class="info-label">Phone:</span>
+                <span><a href="tel:${phone}">${phone}</a></span>
+              </div>
+              ` : ''}
+              ${subject ? `
+              <div class="info-row">
+                <span class="info-label">Subject:</span>
+                <span>${subject}</span>
+              </div>
+              ` : ''}
+              <div class="info-row" style="border-bottom: none;">
+                <span class="info-label">Date:</span>
+                <span>${new Date().toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div class="message-box">
+              <h3 style="margin-top: 0; color: #667eea;">Message:</h3>
+              <p>${message}</p>
+            </div>
+
+            <div class="footer">
+              <p>This is an automated message from your Fashion E-commerce website contact form.</p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
+  };
+};
+
+// Send contact form email to multiple recipients
+const sendContactFormEmail = async (contactData, recipients = []) => {
+  const template = contactFormTemplate(contactData);
+  const recipientEmails = recipients.join(', ');
+  
+  try {
+    const transporter = createTransporter();
+    
+    const mailOptions = {
+      from: `"Fashion E-commerce Contact" <${process.env.SMTP_USER}>`,
+      to: recipientEmails,
+      replyTo: contactData.email,
+      subject: template.subject,
+      html: template.html,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Contact form email sent successfully:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Error sending contact form email:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
   sendEmail,
   sendForgotPasswordEmail,
+  sendContactFormEmail,
   emailTemplates,
 };
 

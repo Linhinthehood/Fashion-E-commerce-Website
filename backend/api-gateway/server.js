@@ -146,6 +146,7 @@ app.options('*', cors({
 // User Service routes
 app.use('/api/auth', buildServiceProxy(USER_SERVICE_URL, 'user-service'));
 app.use('/api/customers', buildServiceProxy(USER_SERVICE_URL, 'user-service'));
+app.use('/api/contact', buildServiceProxy(USER_SERVICE_URL, 'user-service'));
 
 // Order Service routes
 app.use('/api/orders', buildServiceProxy(ORDER_SERVICE_URL, 'order-service'));
