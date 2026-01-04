@@ -2,7 +2,15 @@ const axios = require('axios');
 const logger = require('../utils/logger');
 
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:3001';
-const INTERNAL_SERVICE_TOKEN = process.env.INTERNAL_SERVICE_TOKEN || 'your-secret-service-token';
+const INTERNAL_SERVICE_TOKEN = process.env.INTERNAL_SERVICE_TOKEN;
+
+// Validate token is set (security)
+if (!INTERNAL_SERVICE_TOKEN || INTERNAL_SERVICE_TOKEN === 'your-secret-service-token') {
+  logger.error('⚠️  SECURITY WARNING: INTERNAL_SERVICE_TOKEN must be set to a secure value in .env');
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('INTERNAL_SERVICE_TOKEN not configured for production');
+  }
+}
 
 /**
  * User Service
@@ -20,21 +28,8 @@ async function validateUser(userId) {
       return null;
     }
 
-    // Development bypass: allow quick local testing without calling user-service
-    if (process.env.NODE_ENV === 'development' && process.env.DEV_AUTH_BYPASS === 'true') {
-      const bypassList = (process.env.DEV_BYPASS_USERS || '').split(',').map(s => s.trim()).filter(Boolean);
-      // If bypass enabled and user is in list (or list is empty = allow all)
-      if (bypassList.length === 0 || bypassList.includes(userId)) {
-        logger.info('User validation bypassed (dev mode)', { userId });
-        // Return a mock user object for development
-        return {
-          _id: userId,
-          email: `${userId}@test.local`,
-          name: 'Test User',
-          role: 'customer'
-        };
-      }
-    }
+    // SECURITY: Development bypass removed - always validate users
+    // If you need to test locally, use a real user from your database
 
     const response = await axios.get(
       `${USER_SERVICE_URL}/api/auth/internal/user/${userId}`,
@@ -103,20 +98,7 @@ async function isUserAuthenticated(userId) {
     return false;
   }
 
-  // Development bypass: allow quick local testing without calling user-service.
-  // Enable by setting DEV_AUTH_BYPASS=true in .env. Optionally set DEV_BYPASS_USERS
-  // to a comma-separated list of userIds to allow only specific test users.
-  try {
-    if (process.env.NODE_ENV === 'development' && process.env.DEV_AUTH_BYPASS === 'true') {
-      const bypassList = (process.env.DEV_BYPASS_USERS || '').split(',').map(s => s.trim()).filter(Boolean);
-      // If no explicit list is provided, bypass authentication for any userId (use with care)
-      if (bypassList.length === 0) return true;
-      if (bypassList.includes(userId)) return true;
-    }
-  } catch (e) {
-    // ignore and fall through to real validation
-  }
-
+  // SECURITY: Always validate - no bypasses
   const user = await validateUser(userId);
   return !!user;
 }

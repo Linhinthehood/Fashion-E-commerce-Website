@@ -10,6 +10,7 @@ const passport = require('./config/passport');
 
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
+const contactRoutes = require('./routes/contact');
 
 // Swagger configuration
 const { swaggerUi, swaggerSpec } = require('./config/swagger');
@@ -119,6 +120,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api/contact', contactRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

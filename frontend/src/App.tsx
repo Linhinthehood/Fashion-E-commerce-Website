@@ -20,6 +20,7 @@ import ProfilePage from './pages/ProfilePage'
 import AuthCallback from './pages/AuthCallback'
 import ForgotPassword from './pages/ForgotPassword'
 import ChangePassword from './pages/ChangePassword'
+import ContactPage from './pages/ContactPage'
 
 // Only ProductsPage is lazy loaded
 const ProductsPage = lazy(() => import('./pages/ProductsPage'))
@@ -49,6 +50,7 @@ function App() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/orders" element={<OrdersPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/contact" element={<ContactPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />

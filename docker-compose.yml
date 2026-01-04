@@ -101,10 +101,14 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
       - FRONTEND_URL=http://localhost:5173
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_ENABLED=true
     depends_on:
       - product-service
       - order-service
       - user-service
+      - redis
     networks:
       - fashion_network
     volumes:

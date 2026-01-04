@@ -69,7 +69,7 @@ router.post('/message', async (req, res) => {
     }
 
     // Load conversation history from cache
-    const conversationHistory = conversationCache.getHistory(userId);
+    const conversationHistory = await conversationCache.getHistory(userId);
     logger.logConversationHistory(userId, conversationHistory.length);
 
     // Log incoming message
@@ -90,8 +90,8 @@ router.post('/message', async (req, res) => {
         const aiResponse = "I'd love to help you check your orders, but you'll need to be logged in first. Please sign in to view your order history and track your packages!";
         
         logger.logConversation(userId, 'assistant', aiResponse);
-        conversationCache.addMessage(userId, 'user', message);
-        conversationCache.addMessage(userId, 'model', aiResponse);
+        await conversationCache.addMessage(userId, 'user', message);
+        await conversationCache.addMessage(userId, 'model', aiResponse);
 
         return res.json({
           success: true,
@@ -113,8 +113,8 @@ router.post('/message', async (req, res) => {
         
         logger.warn('Order query with invalid/unauthenticated userId', { userId });
         logger.logConversation(userId, 'assistant', aiResponse);
-        conversationCache.addMessage(userId, 'user', message);
-        conversationCache.addMessage(userId, 'model', aiResponse);
+        await conversationCache.addMessage(userId, 'user', message);
+        await conversationCache.addMessage(userId, 'model', aiResponse);
 
         return res.status(401).json({
           success: false,
@@ -154,8 +154,8 @@ router.post('/message', async (req, res) => {
       }
 
       logger.logConversation(userId, 'assistant', aiResponse);
-      conversationCache.addMessage(userId, 'user', message);
-      conversationCache.addMessage(userId, 'model', aiResponse);
+      await conversationCache.addMessage(userId, 'user', message);
+      await conversationCache.addMessage(userId, 'model', aiResponse);
 
       return res.json({
         success: true,
@@ -188,8 +188,8 @@ router.post('/message', async (req, res) => {
       );
       
       logger.logConversation(userId, 'assistant', aiResponse);
-      conversationCache.addMessage(userId, 'user', message);
-      conversationCache.addMessage(userId, 'model', aiResponse);
+      await conversationCache.addMessage(userId, 'user', message);
+      await conversationCache.addMessage(userId, 'model', aiResponse);
 
       res.json({
         success: true,
@@ -409,8 +409,8 @@ router.post('/message', async (req, res) => {
     }));
 
     // Save to conversation cache
-    conversationCache.addMessage(userId, 'user', message);
-    conversationCache.addMessage(userId, 'model', aiResponse);
+    await conversationCache.addMessage(userId, 'user', message);
+    await conversationCache.addMessage(userId, 'model', aiResponse);
 
     // Send response
     res.json({
@@ -468,7 +468,7 @@ router.post('/clear', async (req, res) => {
   try {
     const { userId = 'anonymous' } = req.body;
     
-    conversationCache.clearHistory(userId);
+    await conversationCache.clearHistory(userId);
     logger.info('Conversation history cleared', { userId });
     
     res.json({
@@ -574,7 +574,7 @@ router.post('/orders', async (req, res) => {
     logger.info('Authenticated user fetching orders', { userId });
 
     // Load conversation history
-    const conversationHistory = conversationCache.getHistory(userId);
+    const conversationHistory = await conversationCache.getHistory(userId);
 
     // Fetch user's recent orders (last 10)
     const orders = await orderService.getRecentOrders(userId, 10);
@@ -607,8 +607,8 @@ router.post('/orders', async (req, res) => {
     }
 
     // Save to conversation history
-    conversationCache.addMessage(userId, 'user', question);
-    conversationCache.addMessage(userId, 'model', aiResponse);
+    await conversationCache.addMessage(userId, 'user', question);
+    await conversationCache.addMessage(userId, 'model', aiResponse);
 
     res.json({
       success: true,
@@ -766,7 +766,7 @@ router.post('/order/:orderId', async (req, res) => {
     }
 
     // Load conversation history
-    const conversationHistory = conversationCache.getHistory(userId);
+    const conversationHistory = await conversationCache.getHistory(userId);
 
     // Build detailed order context
     const itemsList = orderItems.map((item, idx) => 
@@ -792,8 +792,8 @@ ${itemsList}`;
     );
 
     // Save to conversation history
-    conversationCache.addMessage(userId, 'user', question);
-    conversationCache.addMessage(userId, 'model', aiResponse);
+    await conversationCache.addMessage(userId, 'user', question);
+    await conversationCache.addMessage(userId, 'model', aiResponse);
 
     res.json({
       success: true,

@@ -1,5 +1,6 @@
 const axios = require('axios');
 const logger = require('../utils/logger');
+const cacheService = require('./cacheService');
 
 const FASHION_SERVICE_URL = process.env.FASHION_SERVICE_URL || 'http://localhost:3008';
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:3002';
@@ -118,6 +119,15 @@ async function getPersonalizedRecommendations(userId, limit = 8) {
  */
 async function searchProducts(filters = {}) {
   try {
+    // Check cache first
+    const cached = await cacheService.getCachedProductSearch(filters);
+    if (cached) {
+      logger.info('Product search cache HIT', { filters });
+      return cached;
+    }
+
+    logger.info('Product search cache MISS', { filters });
+
     const params = new URLSearchParams();
 
     // Helper: Check if value is MongoDB ObjectId
@@ -133,10 +143,21 @@ async function searchProducts(filters = {}) {
         const articleTerm = filters.articleType ? String(filters.articleType).trim() : '';
 
         try {
-          const catRes = await axios.get(`${PRODUCT_SERVICE_URL}/api/categories`, { timeout: 5000 });
-          const categories = Array.isArray(catRes.data?.data?.categories) ? catRes.data.data.categories : [];
+          // Check cache first
+          let categories = await cacheService.getCachedCategories();
 
-          logger.info('Fetched categories from database', { count: categories.length });
+          if (!categories) {
+            logger.info('Categories cache MISS - fetching from database');
+            const catRes = await axios.get(`${PRODUCT_SERVICE_URL}/api/categories`, { timeout: 5000 });
+            categories = Array.isArray(catRes.data?.data?.categories) ? catRes.data.data.categories : [];
+
+            // Cache categories
+            await cacheService.setCachedCategories(categories);
+          } else {
+            logger.info('Categories cache HIT', { count: categories.length });
+          }
+
+          logger.info('Using categories list', { count: categories.length });
 
           let found = null;
 
@@ -263,6 +284,10 @@ async function searchProducts(filters = {}) {
       }
 
       logger.info('✅ Final products after smart filtering', { count: products.length });
+
+      // Cache the results
+      await cacheService.setCachedProductSearch(filters, products);
+
       return products;
     }
     
